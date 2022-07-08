@@ -34,9 +34,12 @@ class FavoritesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo)}
+        recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo) }
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
-        recyclerViewAdaper.submitList(null)
+
+        viewModel.allFavorites.observe(viewLifecycleOwner) {
+            recyclerViewAdaper.submitList(it?.memos)
+        }
     }
 
     private fun adapterOnClick(memo: Memo) {

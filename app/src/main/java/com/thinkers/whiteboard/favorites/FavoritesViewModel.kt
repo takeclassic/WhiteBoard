@@ -1,10 +1,11 @@
 package com.thinkers.whiteboard.favorites
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.*
+import com.thinkers.whiteboard.database.entities.Memo
+import com.thinkers.whiteboard.database.entities.NoteAndMemos
 import com.thinkers.whiteboard.database.repositories.NoteRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
 class FavoritesViewModel(noteRepository: NoteRepository) : ViewModel() {
 
@@ -12,6 +13,8 @@ class FavoritesViewModel(noteRepository: NoteRepository) : ViewModel() {
         value = "This is gallery Fragment"
     }
     val text: LiveData<String> = _text
+
+    val allFavorites: LiveData<NoteAndMemos?> = noteRepository.getNoteWithMemos("favorites").asLiveData()
 }
 
 class FavoritesViewModelFactory(private val noteRepository: NoteRepository)
