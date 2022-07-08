@@ -1,4 +1,4 @@
-package com.thinkers.whiteboard.ui.home
+package com.thinkers.whiteboard.total
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.databinding.FragmentHomeBinding
 
-class HomeFragment : Fragment() {
+class TotalFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -22,14 +22,14 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val homeViewModel =
-            ViewModelProvider(this).get(HomeViewModel::class.java)
+        val totalViewModel =
+            ViewModelProvider(this).get(TotalViewModel::class.java)
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textHome
-        homeViewModel.text.observe(viewLifecycleOwner) {
+        totalViewModel.text.observe(viewLifecycleOwner) {
             textView.text = it
         }
         return root
