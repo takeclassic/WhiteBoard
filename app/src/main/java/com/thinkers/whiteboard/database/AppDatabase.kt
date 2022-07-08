@@ -17,27 +17,12 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun memoDao(): MemoDao
     abstract fun noteDao(): NoteDao
 
-    private class AppDatabaseCallback(
-        private val scope: CoroutineScope
-    ) : RoomDatabase.Callback() {
-
-        override fun onCreate(db: SupportSQLiteDatabase) {
-            super.onCreate(db)
-            INSTANCE?.let { database ->
-                scope.launch {
-
-                }
-            }
-        }
-    }
-
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
         fun getDatabase(
             context: Context,
-            scope: CoroutineScope
         ): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -45,7 +30,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "whiteboard_db"
                 )
-                    .addCallback(AppDatabaseCallback(scope))
+                    .createFromAsset("pre-data.db")
                     .build()
                 INSTANCE = instance
                 instance

@@ -7,14 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.thinkers.whiteboard.databinding.FragmentHomeBinding
+import com.thinkers.whiteboard.databinding.FragmentTotalBinding
 
 class TotalFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
-
-    // This property is only valid between onCreateView and
-    // onDestroyView.
+    private var _binding: FragmentTotalBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -23,9 +20,9 @@ class TotalFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         val totalViewModel =
-            ViewModelProvider(this).get(TotalViewModel::class.java)
+            ViewModelProvider(this)[TotalViewModel::class.java]
 
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentTotalBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
         val textView: TextView = binding.textHome
