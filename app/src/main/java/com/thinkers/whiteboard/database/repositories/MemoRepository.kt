@@ -11,17 +11,17 @@ class MemoRepository(private val memoDao: MemoDao) {
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
 
     @WorkerThread
-    suspend fun saveMemo(memo: Memo) {
+    fun saveMemo(memo: Memo) {
         memoDao.insertMemo(memo)
     }
 
     @WorkerThread
-    suspend fun updateMemo(memo: Memo) {
+    fun updateMemo(memo: Memo) {
         memoDao.updateMemo(memo)
     }
 
     @WorkerThread
-    suspend fun deleteMemo(memo: Memo) {
+    fun deleteMemo(memo: Memo) {
         memoDao.deleteMemo(memo)
     }
 }

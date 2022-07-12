@@ -5,8 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.navigation.fragment.findNavController
+import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.database.entities.Memo
@@ -27,7 +30,9 @@ class FavoritesFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(
                 this,
-                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
+                FavoritesViewModelFactory(
+                    WhiteBoardApplication.instance!!.noteRepository,
+                    requireActivity() as MainActivity)
             ).get(FavoritesViewModel::class.java)
 
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
@@ -44,7 +49,9 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun adapterOnClick(memo: Memo) {
-
+        //(requireActivity() as MainActivity).setMemoId(memo.memoId)
+        val action = FavoritesFragmentDirections.actionNavFavoritesToMemoFragment(memo.memoId)
+        this.findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

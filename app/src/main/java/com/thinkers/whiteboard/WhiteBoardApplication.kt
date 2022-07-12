@@ -13,7 +13,6 @@ import kotlinx.coroutines.SupervisorJob
 class WhiteBoardApplication: Application() {
     init {
         instance = this
-        Log.i("fatal", "init app class")
     }
 
     val database by lazy { AppDatabase.getDatabase(this) }
