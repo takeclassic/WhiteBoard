@@ -26,11 +26,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.thinkers.whiteboard.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
-    <fragment
         android:id="@+id/memoFragment"
         android:name="com.thinkers.whiteboard.common.memo.MemoFragment"
         android:label="fragment_memo"

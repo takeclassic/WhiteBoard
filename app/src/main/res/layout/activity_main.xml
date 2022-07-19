@@ -8,11 +8,65 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-    <include
-        android:id="@+id/app_bar_main"
-        layout="@layout/app_bar_main"
+    <include layout="@layout/content_main" />
+
+    <LinearLayout
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:gravity="bottom"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/appbar_menu_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:textSize="0sp"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/ic_appbar_menu"
+            app:iconGravity="textEnd"
+            app:iconPadding="8dp" />
+
+        <Button
+            android:id="@+id/appbar_search_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:textSize="0sp"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/ic_appbar_search"
+            app:iconGravity="textEnd"
+            app:iconPadding="8dp" />
+
+        <Button
+            android:id="@+id/appbar_favorites_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:textSize="0sp"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/ic_appbar_favorites"
+            app:iconGravity="textEnd" />
+
+        <Button
+            android:id="@+id/appbar_write_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:textSize="0sp"
+            app:cornerRadius="0dp"
+            app:icon="@drawable/ic_appbar_create"
+            app:iconGravity="textEnd" />
+    </LinearLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
@@ -20,6 +74,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        android:visibility="visible"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>
