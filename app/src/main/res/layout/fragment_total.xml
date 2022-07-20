@@ -6,4 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".total.TotalFragment">
 
+    <include layout="@layout/recyclerview_memolist"
+        android:id="@+id/total_recyclerview"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

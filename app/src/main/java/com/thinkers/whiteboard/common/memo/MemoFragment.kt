@@ -43,6 +43,11 @@ class MemoFragment : Fragment() {
             return
         }
 
+        val toolbar = binding.toolbar
+        toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
         val title = binding.fragmentMemoTitle
         val text = binding.fragmentMemoText
         viewModel.getMemo(memoId).observe(viewLifecycleOwner) { memo ->

@@ -30,9 +30,7 @@ class FavoritesFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(
                 this,
-                FavoritesViewModelFactory(
-                    WhiteBoardApplication.instance!!.noteRepository,
-                    requireActivity() as MainActivity)
+                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
             ).get(FavoritesViewModel::class.java)
 
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)

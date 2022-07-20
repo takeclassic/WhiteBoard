@@ -7,20 +7,34 @@ import android.view.Menu
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
-import com.thinkers.whiteboard.common.interfaces.IMemoInfoReceiver
 import com.thinkers.whiteboard.databinding.ActivityMainBinding
 
 
-class MainActivity : AppCompatActivity(), IMemoInfoReceiver {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
-    private var memoId: Int = -1
 
+    private val navigationViewListener = NavigationView.OnNavigationItemSelectedListener { menuItem ->
+        when(menuItem.itemId) {
+            R.id.nav_total -> {
+                navController.navigate(R.id.nav_total)
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                true
+            }
+            R.id.nav_favorites -> {
+                navController.navigate(R.id.nav_favorites)
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                true
+            }
+        }
+        false
+    }
     private val appBarMenuButtonClickListener = View.OnClickListener {
         if (!binding.drawerLayout.isDrawerOpen(Gravity.START)) {
             binding.drawerLayout.openDrawer(Gravity.START)
@@ -48,6 +62,7 @@ class MainActivity : AppCompatActivity(), IMemoInfoReceiver {
         val navView: NavigationView = binding.navView
         navController = findNavController(R.id.nav_host_fragment_content_main)
         navView.setupWithNavController(navController)
+        navView.setNavigationItemSelectedListener(navigationViewListener)
 
         binding.appbarMenuButton.setOnClickListener(appBarMenuButtonClickListener)
         binding.appbarSearchButton.setOnClickListener(appBarSearchButtonClickListener)
@@ -64,10 +79,6 @@ class MainActivity : AppCompatActivity(), IMemoInfoReceiver {
     override fun onSupportNavigateUp(): Boolean {
         //val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp() || super.onSupportNavigateUp()
-    }
-
-    override fun setMemoId(id: Int) {
-        memoId = id
     }
 
     override fun onBackPressed() {
