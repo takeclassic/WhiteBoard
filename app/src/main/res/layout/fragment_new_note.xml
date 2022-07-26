@@ -38,202 +38,199 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/new_note_close" />
 
-    <ImageView
-        android:id="@+id/new_note_color1"
-        android:layout_width="wrap_content"
+    <RadioGroup
+        android:id="@+id/new_note_radio_group_1"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
-        android:src="@drawable/ic_circle_48"
-        app:tint="#F44336"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_note_name" />
+        app:layout_constraintTop_toBottomOf="@+id/new_note_note_name">
 
-    <ImageView
-        android:id="@+id/new_note_color2"
-        android:layout_width="wrap_content"
+        <RadioButton
+            android:id="@+id/new_note_radio_button_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#F44336"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#E91E63" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#9C27B0" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#673AB7" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#3F51B5" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_6"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#2196F3" />
+
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/new_note_radio_group_2"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
-        android:src="@drawable/ic_circle_48"
-        app:tint="#E91E63"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color1"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_note_name" />
-
-    <ImageView
-        android:id="@+id/new_note_color3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color2"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_note_name"
-        app:tint="#9C27B0" />
-
-    <ImageView
-        android:id="@+id/new_note_color4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color3"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_note_name"
-        app:tint="#673AB7" />
-
-    <ImageView
-        android:id="@+id/new_note_color5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color4"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_note_name"
-        app:tint="#3F51B5" />
-
-    <ImageView
-        android:id="@+id/new_note_color6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color5"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_note_name"
-        app:tint="#03A9F4" />
-
-    <ImageView
-        android:id="@+id/new_note_color7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color1"
-        app:tint="#00BCD4" />
+        app:layout_constraintTop_toBottomOf="@+id/new_note_radio_group_1">
 
-    <ImageView
-        android:id="@+id/new_note_color8"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color7"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color2"
-        app:tint="#4CAF50" />
+        <RadioButton
+            android:id="@+id/new_note_radio_button_7"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#03A9F4" />
 
-    <ImageView
-        android:id="@+id/new_note_color9"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color8"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color3"
-        app:tint="#8BC34A" />
+        <RadioButton
+            android:id="@+id/new_note_radio_button_8"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#00BCD4" />
 
-    <ImageView
-        android:id="@+id/new_note_color10"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color9"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color4"
-        app:tint="#CDDC39" />
+        <RadioButton
+            android:id="@+id/new_note_radio_button_9"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#009688" />
 
-    <ImageView
-        android:id="@+id/new_note_color11"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color10"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color5"
-        app:tint="#FFEB3B" />
+        <RadioButton
+            android:id="@+id/new_note_radio_button_10"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#4CAF50" />
 
-    <ImageView
-        android:id="@+id/new_note_color12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color11"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color6"
-        app:tint="#FFC107" />
+        <RadioButton
+            android:id="@+id/new_note_radio_button_11"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#8BC34A" />
 
-    <ImageView
-        android:id="@+id/new_note_color13"
-        android:layout_width="wrap_content"
+        <RadioButton
+            android:id="@+id/new_note_radio_button_12"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#CDDC39" />
+
+    </RadioGroup>
+
+    <RadioGroup
+        android:id="@+id/new_note_radio_group_3"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color7"
-        app:tint="#CD853F" />
+        app:layout_constraintTop_toBottomOf="@+id/new_note_radio_group_2">
 
-    <ImageView
-        android:id="@+id/new_note_color14"
-        android:layout_width="wrap_content"
+        <RadioButton
+            android:id="@+id/new_note_radio_button_13"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#FFEB3B" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_14"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#FFC107" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_15"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#FF9800" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_16"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#FF5722" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_17"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#A9A9A9" />
+
+        <RadioButton
+            android:id="@+id/new_note_radio_button_18"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@drawable/new_memo_radio_button"
+            android:buttonTint="#000000" />
+
+    </RadioGroup>
+
+    <Button
+        android:id="@+id/new_note_save_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color13"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color7"
-        app:tint="#FFC0CB" />
+        android:layout_marginEnd="16dp"
+        android:minHeight="48dp"
+        android:text="추가하기"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/new_note_radio_group_3" />
 
-    <ImageView
-        android:id="@+id/new_note_color15"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color14"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color8"
-        app:tint="#C0C0C0" />
-
-    <ImageView
-        android:id="@+id/new_note_color16"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color15"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color9"
-        app:tint="#708090" />
-
-    <ImageView
-        android:id="@+id/new_note_color17"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color16"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color10"
-        app:tint="#A52A2A" />
-
-    <ImageView
-        android:id="@+id/new_note_color18"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:src="@drawable/ic_circle_48"
-        app:layout_constraintStart_toEndOf="@+id/new_note_color17"
-        app:layout_constraintTop_toBottomOf="@+id/new_note_color11"
-        app:tint="#000000" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
