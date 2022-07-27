@@ -73,13 +73,17 @@ class MemoFragment : Fragment() {
             text = binding.fragmentMemoText.text.toString(),
             createdTime = System.currentTimeMillis(),
             revisedTime = null,
-            "temp"
+            "내 메모"
         )
         viewModel.saveMemo(memo)
     }
 
     private fun updateExistMemo() {
-
+        memo?.let {
+            it.title = binding.fragmentMemoTitle.text.toString()
+            it.text = binding.fragmentMemoText.text.toString()
+            viewModel.updateMemo(it)
+        }
     }
 
     private fun showExistMemo(memoId: Int) {

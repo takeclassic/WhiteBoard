@@ -7,9 +7,9 @@ import androidx.room.PrimaryKey
 @Entity
 data class Memo(
     @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "memo_id") val memoId: Int,
-    @ColumnInfo(name = "title") val title: String?,
-    @ColumnInfo(name = "text") val text: String,
+    @ColumnInfo(name = "title") var title: String?,
+    @ColumnInfo(name = "text") var text: String,
     @ColumnInfo(name = "created_time") val createdTime: Long,
-    @ColumnInfo(name = "revised_time") val revisedTime: Long?,
-    @ColumnInfo(name = "note_name") val noteName: String
+    @ColumnInfo(name = "revised_time") var revisedTime: Long?,
+    @ColumnInfo(name = "note_name") var noteName: String
 )

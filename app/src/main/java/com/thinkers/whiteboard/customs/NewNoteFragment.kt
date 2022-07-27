@@ -109,20 +109,18 @@ class NewNoteFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-                val noteName = binding.newNoteNoteName.text.toString()
-                note = Note(noteName, System.currentTimeMillis(), noteColor)
-                val res = viewModel.saveNote(note)
-                Log.i(TAG, "save result: $res")
-                if (res == -1L) {
-                    Toast.makeText(
-                        requireContext(),
-                        "이미 같은 이름의 노트가 존재합니다",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    requireActivity().onBackPressed()
-                }
+            val noteName = binding.newNoteNoteName.text.toString()
+            note = Note(noteName, System.currentTimeMillis(), noteColor)
+            val res = viewModel.saveNote(note)
+            Log.i(TAG, "save result: $res")
+            if (res == -1L) {
+                Toast.makeText(
+                    requireContext(),
+                    "이미 같은 이름의 노트가 존재합니다",
+                    Toast.LENGTH_SHORT
+                ).show()
+            } else {
+                requireActivity().onBackPressed()
             }
         }
     }
