@@ -56,6 +56,10 @@ class MemoFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
+        if (memo?.title.isNullOrBlank() || memo?.text.isNullOrBlank()) {
+            return
+        }
+
         when (memo) {
             null -> saveNewMemo()
             else -> updateExistMemo()

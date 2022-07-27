@@ -15,7 +15,7 @@ class NoteRepository(private val noteDao: NoteDao) {
     }
 
     @WorkerThread
-    suspend fun saveNote(note: Note): Long {
+    fun saveNote(note: Note): Long {
         return noteDao.insertNote(note)
     }
 

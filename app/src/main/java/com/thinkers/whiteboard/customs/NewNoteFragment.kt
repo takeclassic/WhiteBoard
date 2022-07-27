@@ -1,9 +1,8 @@
 package com.thinkers.whiteboard.customs
 
-import android.content.res.ColorStateList
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.text.Editable
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +10,12 @@ import android.view.ViewGroup
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
-import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.database.entities.Note
-import com.thinkers.whiteboard.databinding.FragmentCustomNoteBinding
 import com.thinkers.whiteboard.databinding.FragmentNewNoteBinding
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class NewNoteFragment : Fragment() {
@@ -44,6 +43,7 @@ class NewNoteFragment : Fragment() {
         RadioGroup.OnCheckedChangeListener { group, checkedId ->
             val selected = requireActivity().findViewById<RadioButton>(checkedId)
             noteColor = selected.buttonTintList!!.defaultColor
+
             with(binding) {
                 newNoteRadioGroup1.setOnCheckedChangeListener(null)
                 newNoteRadioGroup3.setOnCheckedChangeListener(null)
@@ -60,6 +60,7 @@ class NewNoteFragment : Fragment() {
         RadioGroup.OnCheckedChangeListener { group, checkedId ->
             val selected = requireActivity().findViewById<RadioButton>(checkedId)
             noteColor = selected.buttonTintList!!.defaultColor
+
             with(binding) {
                 newNoteRadioGroup1.setOnCheckedChangeListener(null)
                 newNoteRadioGroup2.setOnCheckedChangeListener(null)
@@ -90,20 +91,43 @@ class NewNoteFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.newNoteClose.setOnClickListener {
+            requireActivity().onBackPressed()
+        }
+
+        binding.newNoteRadioGroup1.setOnCheckedChangeListener(radioGroup1Listener)
+        binding.newNoteRadioGroup2.setOnCheckedChangeListener(radioGroup2Listener)
+        binding.newNoteRadioGroup3.setOnCheckedChangeListener(radioGroup3Listener)
+
         binding.newNoteSaveButton.setOnClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
+            if (binding.newNoteNoteName.text.isNullOrBlank()) {
+                Toast.makeText(
+                    requireContext(),
+                    "노트의 이름을 지정하세요",
+                    Toast.LENGTH_SHORT
+                ).show()
+                return@setOnClickListener
+            }
+
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                 val noteName = binding.newNoteNoteName.text.toString()
-                note = Note(noteName, System.currentTimeMillis())
+                note = Note(noteName, System.currentTimeMillis(), noteColor)
                 val res = viewModel.saveNote(note)
+                Log.i(TAG, "save result: $res")
                 if (res == -1L) {
                     Toast.makeText(
                         requireContext(),
                         "이미 같은 이름의 노트가 존재합니다",
                         Toast.LENGTH_SHORT
-                    )
+                    ).show()
+                } else {
+                    requireActivity().onBackPressed()
                 }
             }
         }
     }
 
+    companion object {
+        val TAG = "NewNoteFragment"
+    }
 }

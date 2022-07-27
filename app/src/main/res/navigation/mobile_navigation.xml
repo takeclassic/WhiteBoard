@@ -12,7 +12,7 @@
         tools:layout="@layout/fragment_total" >
         <action
             android:id="@+id/action_nav_total_to_memoFragment"
-            app:destination="@id/memoFragment" />
+            app:destination="@id/nav_memo" />
     </fragment>
 
     <fragment
@@ -22,11 +22,11 @@
         tools:layout="@layout/fragment_favorites" >
         <action
             android:id="@+id/action_nav_favorites_to_memoFragment"
-            app:destination="@id/memoFragment" />
+            app:destination="@id/nav_memo" />
     </fragment>
 
     <fragment
-        android:id="@+id/memoFragment"
+        android:id="@+id/nav_memo"
         android:name="com.thinkers.whiteboard.common.memo.MemoFragment"
         android:label="fragment_memo"
         tools:layout="@layout/fragment_memo" >
@@ -35,4 +35,9 @@
             app:argType="integer"
             android:defaultValue="-1" />
     </fragment>
+    <fragment
+        android:id="@+id/nav_add_note"
+        android:name="com.thinkers.whiteboard.customs.NewNoteFragment"
+        android:label="NewNoteFragment"
+        tools:layout="@layout/fragment_new_note"/>
 </navigation>

@@ -32,6 +32,11 @@ class MainActivity : AppCompatActivity() {
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
+            R.id.nav_add_note -> {
+                navController.navigate(R.id.nav_add_note)
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                true
+            }
         }
         false
     }
@@ -50,7 +55,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val appBarWriteButtonClickListener = View.OnClickListener {
-
+        navController.navigate(R.id.nav_memo)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
