@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
-    <group android:checkableBehavior="single">
+    <group android:orderInCategory="1">
         <item
             android:id="@+id/nav_total"
             android:icon="@drawable/ic_navview_circle"
@@ -12,13 +12,13 @@
             android:id="@+id/nav_favorites"
             android:icon="@drawable/ic_appbar_favorites"
             android:title="@string/menu_favorites" />
-        <item
-            android:id="@+id/nav_default"
-            android:icon="@drawable/ic_navview_circle"
-            android:title="@string/menu_slideshow" />
     </group>
 
-    <group android:id="@+id/nav_group_edit">
+    <group android:id="@+id/nav_view_note_group">
+    </group>
+
+    <group android:id="@+id/nav_group_edit"
+        android:orderInCategory="99">
         <item
             android:id="@+id/nav_add_note"
             android:icon="@drawable/ic_menu_note_add"

@@ -26,6 +26,16 @@
     </fragment>
 
     <fragment
+        android:id="@+id/nav_custom_note"
+        android:name="com.thinkers.whiteboard.customs.CustomNoteFragment"
+        android:label="fragment_custom_note"
+        tools:layout="@layout/fragment_custom_note" >
+        <argument
+            android:name="noteName"
+            app:argType="string" />
+    </fragment>
+
+    <fragment
         android:id="@+id/nav_memo"
         android:name="com.thinkers.whiteboard.common.memo.MemoFragment"
         android:label="fragment_memo"
@@ -40,4 +50,5 @@
         android:name="com.thinkers.whiteboard.customs.NewNoteFragment"
         android:label="NewNoteFragment"
         tools:layout="@layout/fragment_new_note"/>
+
 </navigation>

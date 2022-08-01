@@ -25,6 +25,7 @@ class NewNoteFragment : Fragment() {
    private val radioGroup1Listener: RadioGroup.OnCheckedChangeListener =
        RadioGroup.OnCheckedChangeListener { group, checkedId ->
            val selected = requireActivity().findViewById<RadioButton>(checkedId)
+           Log.i(TAG, "button tint color: ${selected.buttonTintList!!.defaultColor}")
            noteColor = selected.buttonTintList!!.defaultColor
 
            with(binding) {
@@ -42,6 +43,7 @@ class NewNoteFragment : Fragment() {
     private val radioGroup2Listener: RadioGroup.OnCheckedChangeListener =
         RadioGroup.OnCheckedChangeListener { group, checkedId ->
             val selected = requireActivity().findViewById<RadioButton>(checkedId)
+            Log.i(TAG, "button tint color: ${selected.buttonTintList!!.defaultColor}")
             noteColor = selected.buttonTintList!!.defaultColor
 
             with(binding) {
@@ -59,6 +61,7 @@ class NewNoteFragment : Fragment() {
     private val radioGroup3Listener: RadioGroup.OnCheckedChangeListener =
         RadioGroup.OnCheckedChangeListener { group, checkedId ->
             val selected = requireActivity().findViewById<RadioButton>(checkedId)
+            Log.i(TAG, "button tint color: ${selected.buttonTintList!!.defaultColor}")
             noteColor = selected.buttonTintList!!.defaultColor
 
             with(binding) {
@@ -92,6 +95,7 @@ class NewNoteFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.newNoteClose.setOnClickListener {
+            Log.i(TAG, "clicked close button")
             requireActivity().onBackPressed()
         }
 
@@ -111,6 +115,7 @@ class NewNoteFragment : Fragment() {
 
             val noteName = binding.newNoteNoteName.text.toString()
             note = Note(noteName, System.currentTimeMillis(), noteColor)
+            Log.i(TAG, "saving note info: $note")
             val res = viewModel.saveNote(note)
             Log.i(TAG, "save result: $res")
             if (res == -1L) {

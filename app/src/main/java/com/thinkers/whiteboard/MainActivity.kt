@@ -1,24 +1,35 @@
 package com.thinkers.whiteboard
 
+import android.content.res.ColorStateList
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.Menu
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.get
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavArgs
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.thinkers.whiteboard.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
+    private lateinit var viewModel: MainActivityViewModel
 
     private val navigationViewListener = NavigationView.OnNavigationItemSelectedListener { menuItem ->
         when(menuItem.itemId) {
@@ -29,6 +40,12 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.nav_favorites -> {
                 navController.navigate(R.id.nav_favorites)
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                true
+            }
+            R.id.nav_custom_note -> {
+                val bundle = bundleOf("noteName" to menuItem.title)
+                navController.navigate(R.id.nav_custom_note, bundle)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
@@ -60,14 +77,38 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(this,
+            MainActivityViewModelFactory(
+                WhiteBoardApplication.instance!!.noteRepository
+            )
+        ).get(MainActivityViewModel::class.java)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val navView: NavigationView = binding.navView
-        navController = findNavController(R.id.nav_host_fragment_content_main)
-        navView.setupWithNavController(navController)
-        navView.setNavigationItemSelectedListener(navigationViewListener)
+        lifecycle.coroutineScope.launch {
+            viewModel.getAllCustomNotes.collect { list ->
+                navView.menu.removeGroup(R.id.nav_view_note_group)
+                var order = 3
+                for (note in list) {
+                    navView.menu.add(
+                        R.id.nav_view_note_group,
+                        R.id.nav_custom_note,
+                        order++,
+                        note.noteName
+                    ).apply {
+                            Log.i(TAG, "note color: ${note.noteColor}")
+                            this.setIcon(R.drawable.ic_navview_circle)
+                            this.setIconTintList(ColorStateList.valueOf(note.noteColor))
+                            Log.i(TAG, "tint: ${this.iconTintList!!.defaultColor}")
+                        }
+                }
+                navController = findNavController(R.id.nav_host_fragment_content_main)
+                navView.setupWithNavController(navController)
+                navView.setNavigationItemSelectedListener(navigationViewListener)
+            }
+        }
 
         binding.appbarMenuButton.setOnClickListener(appBarMenuButtonClickListener)
         binding.appbarSearchButton.setOnClickListener(appBarSearchButtonClickListener)

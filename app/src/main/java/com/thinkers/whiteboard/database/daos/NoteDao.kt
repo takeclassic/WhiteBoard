@@ -10,7 +10,7 @@ interface NoteDao {
     @Query("SELECT * FROM note")
     fun getAllNotes(): Flow<List<Note>>
 
-    @Query("SELECT * FROM note WHERE note_name LIKE (:noteName)")
+    @Query("SELECT * FROM note WHERE note_name LIKE :noteName")
     fun getNote(noteName: String): Flow<Note>
 
     @Transaction
