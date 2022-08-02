@@ -2,6 +2,7 @@ package com.thinkers.whiteboard.customs
 
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.core.view.iterator
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.thinkers.whiteboard.R
@@ -105,6 +107,15 @@ class NewNoteFragment : Fragment() {
         binding.newNoteRadioGroup2.setOnCheckedChangeListener(radioGroup2Listener)
         binding.newNoteRadioGroup3.setOnCheckedChangeListener(radioGroup3Listener)
 
+        val bundle = requireArguments()
+        val args = NewNoteFragmentArgs.fromBundle(bundle)
+        args.note?.let {
+            binding.newNoteNoteName.text =
+                Editable.Factory().newEditable(it.noteName)
+            binding.newNoteSaveButton.text = "수정하기"
+            checkSavedNoteColor(it.noteColor)
+        }
+
         binding.newNoteSaveButton.setOnClickListener {
             if (binding.newNoteNoteName.text.isNullOrBlank()) {
                 Toast.makeText(
@@ -135,6 +146,26 @@ class NewNoteFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun checkSavedNoteColor(color: Int) {
+        val iter = binding.newNoteRadioGroup1.iterator()
+        iter.forEach {
+            val button = it as RadioButton
+            Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+        }
+
+        val iter2 = binding.newNoteRadioGroup2.iterator()
+        iter2.forEach {
+            val button = it as RadioButton
+            Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+        }
+
+        val iter3 = binding.newNoteRadioGroup3.iterator()
+        iter3.forEach {
+            val button = it as RadioButton
+            Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+        }
     }
 
     companion object {

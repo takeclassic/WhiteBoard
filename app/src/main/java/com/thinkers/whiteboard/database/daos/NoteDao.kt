@@ -20,8 +20,8 @@ interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertNote(note: Note): Long
 
-    @Update
-    fun updateNote(note: Note)
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    fun updateNote(note: Note): Int
 
     @Delete
     fun deleteNote(note: Note)

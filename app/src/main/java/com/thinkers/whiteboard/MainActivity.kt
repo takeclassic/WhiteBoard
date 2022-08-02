@@ -138,17 +138,12 @@ class MainActivity : AppCompatActivity() {
                         order++,
                         note.noteName
                     ).apply {
-                            Log.i(TAG, "note color: ${note.noteColor}")
-                            //this.setIcon(R.drawable.ic_navview_circle)
                             val normalDrawable: Drawable = resources.getDrawable(R.drawable.ic_navview_circle, null)
                             val wrapDrawable = DrawableCompat.wrap(normalDrawable)
                             DrawableCompat.setTint(wrapDrawable, note.noteColor)
                             this.setIcon(wrapDrawable)
-                            //tintMenuIcon(this, note.noteColor)
-                            //Log.i(TAG, "tint: ${this.iconTintList!!.defaultColor}")
                         }
                 }
-                //navView.menu.setGroupCheckable(R.id.nav_view_note_group, true, false)
                 navController = findNavController(R.id.nav_host_fragment_content_main)
                 navView.setupWithNavController(navController)
                 navView.setNavigationItemSelectedListener(navigationViewListener)

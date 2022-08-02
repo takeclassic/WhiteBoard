@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.NoteListAdapter
@@ -43,11 +45,13 @@ class EditNoteFragment : Fragment() {
     }
 
     private fun onDelete(note: Note) {
-
+        viewModel.deleteNote(note)
     }
 
     private fun onEdit(note: Note) {
-
+        val bundle = bundleOf("note" to note)
+        findNavController().navigate(R.id.nav_add_note, bundle)
+    //val result = viewModel.updateNote(note)
     }
 
     override fun onDestroyView() {

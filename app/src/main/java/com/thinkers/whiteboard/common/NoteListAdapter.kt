@@ -22,8 +22,8 @@ class NoteListAdapter(
         private val onEdit: (Note) -> Unit
     ): RecyclerView.ViewHolder(itemView) {
         private val noteName: TextView = itemView.findViewById(R.id.item_note_name)
-        private val editNoteName: ImageView = itemView.findViewById(R.id.item_note_delete)
-        private val deleteNote: ImageView = itemView.findViewById(R.id.item_note_edit)
+        private val editNoteName: ImageView = itemView.findViewById(R.id.item_note_edit)
+        private val deleteNote: ImageView = itemView.findViewById(R.id.item_note_delete)
 
         private var currentNote: Note? = null
 
