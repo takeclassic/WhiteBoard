@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
+import androidx.core.view.children
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.NavController
@@ -31,7 +33,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var viewModel: MainActivityViewModel
 
+    private var menuItemCache: MenuItem? = null
     private val navigationViewListener = NavigationView.OnNavigationItemSelectedListener { menuItem ->
+
         when(menuItem.itemId) {
             R.id.nav_total -> {
                 navController.navigate(R.id.nav_total)
@@ -44,6 +48,10 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.nav_custom_note -> {
+                menuItemCache?.setCheckable(false)
+                menuItem.setCheckable(true)
+                menuItemCache = menuItem
+
                 val bundle = bundleOf("noteName" to menuItem.title)
                 navController.navigate(R.id.nav_custom_note, bundle)
                 binding.drawerLayout.closeDrawer(Gravity.START)
@@ -79,6 +87,25 @@ class MainActivity : AppCompatActivity() {
     private val appBarWriteButtonClickListener = View.OnClickListener {
         navController.navigate(R.id.nav_memo)
     }
+
+    private val mainDestinationChangedListener =
+        NavController.OnDestinationChangedListener { controller, destination, arguments ->
+
+            when(controller.currentDestination?.id) {
+                R.id.nav_edit_note -> {
+                    binding.appBar.visibility = View.GONE
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
+                R.id.nav_add_note -> {
+                    binding.appBar.visibility = View.GONE
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
+                }
+                else -> {
+                    binding.appBar.visibility = View.VISIBLE
+                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
+                }
+            }
+        }
 
     fun tintMenuIcon(item: MenuItem, @ColorRes color: Int) {
         val normalDrawable: Drawable = item.getIcon()
@@ -121,9 +148,12 @@ class MainActivity : AppCompatActivity() {
                             //Log.i(TAG, "tint: ${this.iconTintList!!.defaultColor}")
                         }
                 }
+                //navView.menu.setGroupCheckable(R.id.nav_view_note_group, true, false)
                 navController = findNavController(R.id.nav_host_fragment_content_main)
                 navView.setupWithNavController(navController)
                 navView.setNavigationItemSelectedListener(navigationViewListener)
+
+                navController.addOnDestinationChangedListener(mainDestinationChangedListener)
             }
         }
 
@@ -148,17 +178,14 @@ class MainActivity : AppCompatActivity() {
         if (binding.drawerLayout.isDrawerVisible(Gravity.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
-            if (navController.currentDestination == null) {
-                Log.i(TAG, "current destination is null")
+            when(navController.currentDestination?.id) {
+                R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo -> {
+                    super.onBackPressed()
+                }
+                else -> {
+                    finish()
+                }
             }
-
-            Log.i(TAG, "id: ${navController.currentDestination?.id}")
-
-            if (navController.currentDestination?.id == R.id.nav_favorites) {
-                Log.i(TAG, "it is favorites")
-                finish()
-            }
-            super.onBackPressed()
         }
     }
 

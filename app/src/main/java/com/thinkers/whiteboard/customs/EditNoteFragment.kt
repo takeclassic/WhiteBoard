@@ -30,8 +30,6 @@ class EditNoteFragment : Fragment() {
             EditNoteViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
         ).get(EditNoteViewModel::class.java)
 
-        requireActivity().findViewById<LinearLayout>(R.id.app_bar).visibility = View.GONE
-
         _binding = FragmentEditNoteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -54,6 +52,6 @@ class EditNoteFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().findViewById<LinearLayout>(R.id.app_bar).visibility = View.VISIBLE
+        _binding = null
     }
 }

@@ -80,7 +80,7 @@ class NewNoteFragment : Fragment() {
 
     private lateinit var viewModel: NewNoteViewModel
     private lateinit var note: Note
-    private var noteColor: Int = -1
+    private var noteColor: Int = -769226
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,8 +90,6 @@ class NewNoteFragment : Fragment() {
             this,
             NewNoteViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
         ).get(NewNoteViewModel::class.java)
-
-        requireActivity().findViewById<LinearLayout>(R.id.app_bar).visibility = View.GONE
 
         _binding = FragmentNewNoteBinding.inflate(inflater, container, false)
         return binding.root
@@ -136,7 +134,7 @@ class NewNoteFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().findViewById<LinearLayout>(R.id.app_bar).visibility = View.VISIBLE
+        _binding = null
     }
 
     companion object {
