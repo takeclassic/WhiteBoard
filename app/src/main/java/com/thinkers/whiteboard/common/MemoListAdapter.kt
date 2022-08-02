@@ -60,10 +60,10 @@ class MemoListAdapter(private val onClick: (Memo) -> Unit) :
 
 object MemoDiffCallback : DiffUtil.ItemCallback<Memo>() {
     override fun areItemsTheSame(oldItem: Memo, newItem: Memo): Boolean {
-        return oldItem == newItem
+        return oldItem.memoId == newItem.memoId
     }
 
     override fun areContentsTheSame(oldItem: Memo, newItem: Memo): Boolean {
-        return oldItem.memoId == newItem.memoId
+        return oldItem == newItem
     }
 }

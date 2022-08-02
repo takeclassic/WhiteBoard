@@ -7,11 +7,13 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
+import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentNewNoteBinding
@@ -89,6 +91,8 @@ class NewNoteFragment : Fragment() {
             NewNoteViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
         ).get(NewNoteViewModel::class.java)
 
+        requireActivity().findViewById<LinearLayout>(R.id.app_bar).visibility = View.GONE
+
         _binding = FragmentNewNoteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -128,6 +132,11 @@ class NewNoteFragment : Fragment() {
                 requireActivity().onBackPressed()
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        requireActivity().findViewById<LinearLayout>(R.id.app_bar).visibility = View.VISIBLE
     }
 
     companion object {

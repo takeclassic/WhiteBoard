@@ -1,22 +1,22 @@
 package com.thinkers.whiteboard
 
-import android.content.res.ColorStateList
+import android.content.Context
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffColorFilter
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
-import androidx.activity.viewModels
+import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
-import androidx.lifecycle.get
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavArgs
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
@@ -54,6 +54,11 @@ class MainActivity : AppCompatActivity() {
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
+            R.id.nav_edit_note -> {
+                navController.navigate(R.id.nav_edit_note)
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                true
+            }
         }
         false
     }
@@ -75,6 +80,13 @@ class MainActivity : AppCompatActivity() {
         navController.navigate(R.id.nav_memo)
     }
 
+    fun tintMenuIcon(item: MenuItem, @ColorRes color: Int) {
+        val normalDrawable: Drawable = item.getIcon()
+        val wrapDrawable = DrawableCompat.wrap(normalDrawable)
+        DrawableCompat.setTint(wrapDrawable, color)
+        item.setIcon(wrapDrawable)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this,
@@ -87,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navView: NavigationView = binding.navView
+        navView.itemIconTintList = null;
         lifecycle.coroutineScope.launch {
             viewModel.getAllCustomNotes.collect { list ->
                 navView.menu.removeGroup(R.id.nav_view_note_group)
@@ -99,9 +112,13 @@ class MainActivity : AppCompatActivity() {
                         note.noteName
                     ).apply {
                             Log.i(TAG, "note color: ${note.noteColor}")
-                            this.setIcon(R.drawable.ic_navview_circle)
-                            this.setIconTintList(ColorStateList.valueOf(note.noteColor))
-                            Log.i(TAG, "tint: ${this.iconTintList!!.defaultColor}")
+                            //this.setIcon(R.drawable.ic_navview_circle)
+                            val normalDrawable: Drawable = resources.getDrawable(R.drawable.ic_navview_circle, null)
+                            val wrapDrawable = DrawableCompat.wrap(normalDrawable)
+                            DrawableCompat.setTint(wrapDrawable, note.noteColor)
+                            this.setIcon(wrapDrawable)
+                            //tintMenuIcon(this, note.noteColor)
+                            //Log.i(TAG, "tint: ${this.iconTintList!!.defaultColor}")
                         }
                 }
                 navController = findNavController(R.id.nav_host_fragment_content_main)
