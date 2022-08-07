@@ -33,6 +33,9 @@
         <argument
             android:name="noteName"
             app:argType="string" />
+        <action
+            android:id="@+id/action_nav_custom_note_to_nav_memo"
+            app:destination="@id/nav_memo" />
     </fragment>
 
     <fragment

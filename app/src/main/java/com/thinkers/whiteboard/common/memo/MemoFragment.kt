@@ -79,7 +79,7 @@ class MemoFragment : Fragment() {
             viewModel.getMemoBelongNoteName()
         )
         viewModel.saveMemo(memo)
-        Log.i(TAG, "try saveNewMemo")
+        Log.i(TAG, "try saveNewMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
     }
 
     private fun updateExistMemo() {
@@ -88,6 +88,7 @@ class MemoFragment : Fragment() {
             it.text = binding.fragmentMemoText.text.toString()
             it.noteName = viewModel.getMemoBelongNoteName()
             viewModel.updateMemo(it)
+            Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
         }
     }
 

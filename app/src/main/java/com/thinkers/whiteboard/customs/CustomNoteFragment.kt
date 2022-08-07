@@ -57,7 +57,7 @@ class CustomNoteFragment : Fragment() {
 
     private fun adapterOnClick(memo: Memo) {
         //(requireActivity() as MainActivity).setMemoId(memo.memoId)
-        val action = FavoritesFragmentDirections.actionNavFavoritesToMemoFragment(memo.memoId)
+        val action = CustomNoteFragmentDirections.actionNavCustomNoteToNavMemo(memo.memoId)
         this.findNavController().navigate(action)
     }
 
