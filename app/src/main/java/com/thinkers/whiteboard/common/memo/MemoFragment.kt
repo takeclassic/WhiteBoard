@@ -2,6 +2,7 @@ package com.thinkers.whiteboard.common.memo
 
 import android.os.Bundle
 import android.text.Editable
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -56,7 +57,9 @@ class MemoFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
-        if (memo?.title.isNullOrBlank() || memo?.text.isNullOrBlank()) {
+        if (binding.fragmentMemoTitle.text.isNullOrBlank()
+            && binding.fragmentMemoText.text.isNullOrBlank()) {
+            Log.i(TAG, "title and text are empty")
             return
         }
 
@@ -73,15 +76,17 @@ class MemoFragment : Fragment() {
             text = binding.fragmentMemoText.text.toString(),
             createdTime = System.currentTimeMillis(),
             revisedTime = null,
-            "내 메모"
+            viewModel.getMemoBelongNoteName()
         )
         viewModel.saveMemo(memo)
+        Log.i(TAG, "try saveNewMemo")
     }
 
     private fun updateExistMemo() {
         memo?.let {
             it.title = binding.fragmentMemoTitle.text.toString()
             it.text = binding.fragmentMemoText.text.toString()
+            it.noteName = viewModel.getMemoBelongNoteName()
             viewModel.updateMemo(it)
         }
     }
@@ -98,5 +103,9 @@ class MemoFragment : Fragment() {
             }
             text.text = Editable.Factory.getInstance().newEditable(it.text)
         }
+    }
+
+    companion object {
+        val TAG = "MemoFragment"
     }
 }

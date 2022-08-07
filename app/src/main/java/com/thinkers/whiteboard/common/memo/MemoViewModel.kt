@@ -28,6 +28,10 @@ class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
             memoRepository.deleteMemo(memo)
         }
     }
+
+    fun getMemoBelongNoteName(): String {
+        return memoRepository.noteName
+    }
 }
 
 class MemoViewModelFactory(private val memoRepository: MemoRepository)

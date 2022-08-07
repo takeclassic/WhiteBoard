@@ -38,16 +38,19 @@ class MainActivity : AppCompatActivity() {
 
         when(menuItem.itemId) {
             R.id.nav_total -> {
+                viewModel.setMemoBelongNote("내 메모")
                 navController.navigate(R.id.nav_total)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
             R.id.nav_favorites -> {
+                viewModel.setMemoBelongNote("favorites")
                 navController.navigate(R.id.nav_favorites)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
             R.id.nav_custom_note -> {
+                viewModel.setMemoBelongNote(menuItem.title.toString())
                 menuItemCache?.setCheckable(false)
                 menuItem.setCheckable(true)
                 menuItemCache = menuItem
@@ -119,7 +122,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this,
             MainActivityViewModelFactory(
-                WhiteBoardApplication.instance!!.noteRepository
+                WhiteBoardApplication.instance!!.noteRepository,
+                WhiteBoardApplication.instance!!.memoRepository
             )
         ).get(MainActivityViewModel::class.java)
 

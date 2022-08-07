@@ -6,7 +6,7 @@ import com.thinkers.whiteboard.database.entities.Memo
 import kotlinx.coroutines.flow.Flow
 
 class MemoRepository(private val memoDao: MemoDao) {
-    var noteName: String = ""
+    var noteName: String = "내 메모"
 
     val allMemos: Flow<List<Memo>> = memoDao.getAllMemos()
 
