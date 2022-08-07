@@ -1,5 +1,6 @@
 package com.thinkers.whiteboard.customs
 
+import android.content.DialogInterface
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
@@ -12,6 +13,7 @@ import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.iterator
 import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
@@ -83,6 +85,7 @@ class NewNoteFragment : Fragment() {
     private lateinit var viewModel: NewNoteViewModel
     private lateinit var note: Note
     private var noteColor: Int = -769226
+    private var isNew = true
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -113,7 +116,9 @@ class NewNoteFragment : Fragment() {
             binding.newNoteNoteName.text =
                 Editable.Factory().newEditable(it.noteName)
             binding.newNoteSaveButton.text = "수정하기"
+            noteColor = it.noteColor
             checkSavedNoteColor(it.noteColor)
+            isNew = false
         }
 
         binding.newNoteSaveButton.setOnClickListener {
@@ -129,16 +134,31 @@ class NewNoteFragment : Fragment() {
             val noteName = binding.newNoteNoteName.text.toString()
             note = Note(noteName, System.currentTimeMillis(), noteColor)
             Log.i(TAG, "saving note info: $note")
-            val res = viewModel.saveNote(note)
-            Log.i(TAG, "save result: $res")
-            if (res == -1L) {
-                Toast.makeText(
-                    requireContext(),
-                    "이미 같은 이름의 노트가 존재합니다",
-                    Toast.LENGTH_SHORT
-                ).show()
+
+            if (isNew) {
+                val res = viewModel.saveNote(note)
+                Log.i(TAG, "save result: $res")
+                if (res == -1L) {
+                    Toast.makeText(
+                        requireContext(),
+                        "이미 같은 이름의 노트가 존재합니다",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    requireActivity().onBackPressed()
+                }
             } else {
-                requireActivity().onBackPressed()
+                val res = viewModel.updateNote(note)
+                Log.i(TAG, "update result: $res")
+                if (res == 0) {
+                    Toast.makeText(
+                        requireContext(),
+                        "수정을 원하시면 노트 이름을 변경하세요",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    requireActivity().onBackPressed()
+                }
             }
         }
     }
@@ -152,19 +172,31 @@ class NewNoteFragment : Fragment() {
         val iter = binding.newNoteRadioGroup1.iterator()
         iter.forEach {
             val button = it as RadioButton
-            Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+            if (button.buttonTintList?.defaultColor == color) {
+                button.isChecked = true
+                Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+                return
+            }
         }
 
         val iter2 = binding.newNoteRadioGroup2.iterator()
         iter2.forEach {
             val button = it as RadioButton
-            Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+            if (button.buttonTintList?.defaultColor == color) {
+                button.isChecked = true
+                Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+                return
+            }
         }
 
         val iter3 = binding.newNoteRadioGroup3.iterator()
         iter3.forEach {
             val button = it as RadioButton
-            Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+            if (button.buttonTintList?.defaultColor == color) {
+                button.isChecked = true
+                Log.i(TAG, "button.buttonTintList?.defaultColor: ${button.buttonTintList?.defaultColor}, color: $color")
+                return
+            }
         }
     }
 

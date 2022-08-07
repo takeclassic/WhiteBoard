@@ -15,6 +15,10 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
     fun saveNote(note: Note): Long = runBlocking(Dispatchers.IO) {
         noteRepository.saveNote(note)
     }
+
+    fun updateNote(note: Note): Int = runBlocking(Dispatchers.IO) {
+        noteRepository.updateNote(note)
+    }
 }
 
 class NewNoteViewModelFactory(

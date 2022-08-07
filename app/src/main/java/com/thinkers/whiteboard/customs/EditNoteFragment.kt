@@ -1,11 +1,14 @@
 package com.thinkers.whiteboard.customs
 
+import android.content.DialogInterface
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
+import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
@@ -37,6 +40,11 @@ class EditNoteFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.editNoteClose.setOnClickListener {
+            Log.i(TAG, "clicked close button")
+            requireActivity().onBackPressed()
+        }
+
         recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit)
         binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.allEditableNotes.observe(viewLifecycleOwner) {
@@ -45,17 +53,38 @@ class EditNoteFragment : Fragment() {
     }
 
     private fun onDelete(note: Note) {
-        viewModel.deleteNote(note)
+        onDeleteAlertDialog(note)
     }
 
     private fun onEdit(note: Note) {
         val bundle = bundleOf("note" to note)
         findNavController().navigate(R.id.nav_add_note, bundle)
-    //val result = viewModel.updateNote(note)
+    }
+
+    private fun onDeleteAlertDialog(note: Note) {
+        requireActivity().let {
+            val builder = AlertDialog.Builder(it)
+            builder.apply {
+                setTitle("노트 삭제")
+                setMessage("삭제하실 경우 노트안의 모든 메모가 함께 삭제됩니다")
+                setPositiveButton("삭제",
+                    DialogInterface.OnClickListener { dialog, id ->
+                        viewModel.deleteNote(note)
+                    })
+                setNegativeButton("취소",
+                    DialogInterface.OnClickListener { dialog, id ->
+                    })
+            }
+            builder.create().show()
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    companion object {
+        val TAG = "EditNoteFragment"
     }
 }

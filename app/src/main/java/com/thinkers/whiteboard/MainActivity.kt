@@ -81,6 +81,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val appBarFavoriteButtonClickListener = View.OnClickListener {
+        binding.navView.menu.findItem(R.id.nav_favorites).let {
+            menuItemCache?.setCheckable(false)
+            it.setCheckable(true)
+        }
         navController.navigate(R.id.nav_favorites)
     }
 
@@ -90,13 +94,10 @@ class MainActivity : AppCompatActivity() {
 
     private val mainDestinationChangedListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
-
             when(controller.currentDestination?.id) {
-                R.id.nav_edit_note -> {
-                    binding.appBar.visibility = View.GONE
-                    binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
-                }
-                R.id.nav_add_note -> {
+                R.id.nav_edit_note,
+                R.id.nav_add_note,
+                R.id.nav_memo -> {
                     binding.appBar.visibility = View.GONE
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
