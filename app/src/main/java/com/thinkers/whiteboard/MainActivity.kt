@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.nav_favorites -> {
-                viewModel.setMemoBelongNote("favorites")
                 navController.navigate(R.id.nav_favorites)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true

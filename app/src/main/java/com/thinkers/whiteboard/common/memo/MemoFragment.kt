@@ -1,5 +1,7 @@
 package com.thinkers.whiteboard.common.memo
 
+import android.content.res.ColorStateList
+import android.media.Image
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -7,7 +9,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.lifecycle.ViewModelProvider
+import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
@@ -19,6 +23,7 @@ class MemoFragment : Fragment() {
 
     private lateinit var viewModel: MemoViewModel
     private var memo: Memo? = null
+    private var favoritesFlag = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +43,12 @@ class MemoFragment : Fragment() {
         val toolbar = binding.toolbar
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
+        }
+
+        binding.memoFragmentFavoriteButton.setOnClickListener {
+            val button = it as ImageButton
+            button.setImageResource(R.drawable.ic_favorite_clicked_24)
+            button.imageTintList = ColorStateList.valueOf(-5317)
         }
 
         val bundle = requireArguments()
@@ -86,7 +97,6 @@ class MemoFragment : Fragment() {
         memo?.let {
             it.title = binding.fragmentMemoTitle.text.toString()
             it.text = binding.fragmentMemoText.text.toString()
-            it.noteName = viewModel.getMemoBelongNoteName()
             viewModel.updateMemo(it)
             Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
         }

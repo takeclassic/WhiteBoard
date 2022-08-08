@@ -10,6 +10,8 @@ class MemoRepository(private val memoDao: MemoDao) {
 
     val allMemos: Flow<List<Memo>> = memoDao.getAllMemos()
 
+    val allFavoriteMemos: Flow<List<Memo>> = memoDao.getAllFavoriteMemos()
+
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
 
     @WorkerThread

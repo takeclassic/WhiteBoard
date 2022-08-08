@@ -30,7 +30,7 @@ class FavoritesFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(
                 this,
-                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
+                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
             ).get(FavoritesViewModel::class.java)
 
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
@@ -42,7 +42,7 @@ class FavoritesFragment : Fragment() {
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
         viewModel.allFavorites.observe(viewLifecycleOwner) {
-            recyclerViewAdaper.submitList(it?.memos)
+            recyclerViewAdaper.submitList(it)
         }
     }
 

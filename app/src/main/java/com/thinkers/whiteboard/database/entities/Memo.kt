@@ -11,5 +11,6 @@ data class Memo(
     @ColumnInfo(name = "text") var text: String,
     @ColumnInfo(name = "created_time") val createdTime: Long,
     @ColumnInfo(name = "revised_time") var revisedTime: Long?,
-    @ColumnInfo(name = "note_name") var noteName: String
+    @ColumnInfo(name = "note_name") var noteName: String,
+    @ColumnInfo(name = "is_favorite") var isFavorite: Boolean = false
 )
