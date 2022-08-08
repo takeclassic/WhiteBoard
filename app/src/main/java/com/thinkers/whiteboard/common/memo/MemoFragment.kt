@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import androidx.annotation.ColorInt
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
@@ -46,9 +47,8 @@ class MemoFragment : Fragment() {
         }
 
         binding.memoFragmentFavoriteButton.setOnClickListener {
-            val button = it as ImageButton
-            button.setImageResource(R.drawable.ic_favorite_clicked_24)
-            button.imageTintList = ColorStateList.valueOf(-5317)
+            changeFavoriteIcon(!favoritesFlag)
+            favoritesFlag = !favoritesFlag
         }
 
         val bundle = requireArguments()
@@ -113,6 +113,17 @@ class MemoFragment : Fragment() {
                 title.visibility = View.GONE
             }
             text.text = Editable.Factory.getInstance().newEditable(it.text)
+            changeFavoriteIcon(it.isFavorite)
+        }
+    }
+
+    private fun changeFavoriteIcon(flag: Boolean) {
+        if (flag) {
+            binding.memoFragmentFavoriteButton.setImageResource(R.drawable.ic_favorite_clicked_24)
+            binding.memoFragmentFavoriteButton.imageTintList = ColorStateList.valueOf(-5317)
+        } else {
+            binding.memoFragmentFavoriteButton.setImageResource(R.drawable.ic_appbar_favorites)
+            //binding.memoFragmentFavoriteButton.imageTintList = ColorStateList.valueOf(0x696969)
         }
     }
 
