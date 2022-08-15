@@ -51,6 +51,10 @@ class CustomNoteFragment : Fragment() {
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
         viewModel.allCustomNotes(noteName).observe(viewLifecycleOwner) {
+            if (it?.memos == null || it.memos.isNotEmpty()) {
+                binding.customNoteTextView.visibility = View.GONE
+                binding.customsRecyclerview.recyclerView.visibility = View.VISIBLE
+            }
             recyclerViewAdaper.submitList(it?.memos)
         }
     }
@@ -63,6 +67,8 @@ class CustomNoteFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.customNoteTextView.visibility = View.VISIBLE
+        binding.customsRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
     }
 

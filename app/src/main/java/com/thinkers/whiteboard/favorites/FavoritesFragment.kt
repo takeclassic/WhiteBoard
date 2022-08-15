@@ -42,6 +42,10 @@ class FavoritesFragment : Fragment() {
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
         viewModel.allFavorites.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                binding.favoritesNoteTextView.visibility = View.GONE
+                binding.favoritesRecyclerview.recyclerView.visibility = View.VISIBLE
+            }
             recyclerViewAdaper.submitList(it)
         }
     }
@@ -54,6 +58,8 @@ class FavoritesFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.favoritesNoteTextView.visibility = View.VISIBLE
+        binding.favoritesRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
     }
 }

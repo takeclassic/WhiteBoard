@@ -41,6 +41,10 @@ class TotalFragment : Fragment() {
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
         viewModel.allMemos.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                binding.totalNoteTextView.visibility = View.GONE
+                binding.totalRecyclerview.recyclerView.visibility = View.VISIBLE
+            }
             recyclerViewAdaper.submitList(it)
         }
     }
@@ -52,6 +56,8 @@ class TotalFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.totalNoteTextView.visibility = View.VISIBLE
+        binding.totalRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
     }
 }

@@ -6,6 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".customs.CustomNoteFragment">
 
-    <include layout="@layout/recyclerview_memolist"
-        android:id="@+id/customs_recyclerview"/>
+
+    <TextView
+        android:id="@+id/custom_note_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="빈 노트입니다"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/customs_recyclerview"
+        layout="@layout/recyclerview_memolist" />
 </androidx.constraintlayout.widget.ConstraintLayout>
