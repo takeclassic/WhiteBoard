@@ -1,6 +1,7 @@
 package com.thinkers.whiteboard.common.memo
 
 import android.content.res.ColorStateList
+import android.graphics.Color
 import android.media.Image
 import android.os.Bundle
 import android.text.Editable
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
@@ -23,8 +25,9 @@ class MemoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: MemoViewModel
+    private lateinit var favoriteButton: ImageButton
     private var memo: Memo? = null
-    private var favoritesFlag = false
+    private var isFavorite: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,10 +48,11 @@ class MemoFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
         }
-
-        binding.memoFragmentFavoriteButton.setOnClickListener {
-            changeFavoriteIcon(!favoritesFlag)
-            favoritesFlag = !favoritesFlag
+        favoriteButton = binding.memoFragmentFavoriteButton
+        favoriteButton.setOnClickListener {
+            favoriteButton.isSelected = !favoriteButton.isSelected
+            changeFavoriteIcon(favoriteButton.isSelected)
+            isFavorite = favoriteButton.isSelected
         }
 
         val bundle = requireArguments()
@@ -87,7 +91,8 @@ class MemoFragment : Fragment() {
             text = binding.fragmentMemoText.text.toString(),
             createdTime = System.currentTimeMillis(),
             revisedTime = null,
-            viewModel.getMemoBelongNoteName()
+            viewModel.getMemoBelongNoteName(),
+            isFavorite = isFavorite
         )
         viewModel.saveMemo(memo)
         Log.i(TAG, "try saveNewMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
@@ -97,6 +102,7 @@ class MemoFragment : Fragment() {
         memo?.let {
             it.title = binding.fragmentMemoTitle.text.toString()
             it.text = binding.fragmentMemoText.text.toString()
+            it.isFavorite = isFavorite
             viewModel.updateMemo(it)
             Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
         }
@@ -113,6 +119,8 @@ class MemoFragment : Fragment() {
                 title.visibility = View.GONE
             }
             text.text = Editable.Factory.getInstance().newEditable(it.text)
+            favoriteButton.isSelected = it.isFavorite
+            isFavorite = it.isFavorite
             changeFavoriteIcon(it.isFavorite)
         }
     }
@@ -120,10 +128,10 @@ class MemoFragment : Fragment() {
     private fun changeFavoriteIcon(flag: Boolean) {
         if (flag) {
             binding.memoFragmentFavoriteButton.setImageResource(R.drawable.ic_favorite_clicked_24)
-            binding.memoFragmentFavoriteButton.imageTintList = ColorStateList.valueOf(-5317)
+            binding.memoFragmentFavoriteButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.favorite_selected))
         } else {
             binding.memoFragmentFavoriteButton.setImageResource(R.drawable.ic_appbar_favorites)
-            //binding.memoFragmentFavoriteButton.imageTintList = ColorStateList.valueOf(0x696969)
+            binding.memoFragmentFavoriteButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.default_icon))
         }
     }
 
