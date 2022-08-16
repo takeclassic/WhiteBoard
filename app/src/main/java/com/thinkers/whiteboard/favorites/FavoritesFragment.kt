@@ -45,6 +45,9 @@ class FavoritesFragment : Fragment() {
             if (it.isNotEmpty()) {
                 binding.favoritesNoteTextView.visibility = View.GONE
                 binding.favoritesRecyclerview.recyclerView.visibility = View.VISIBLE
+            } else {
+                binding.favoritesNoteTextView.visibility = View.VISIBLE
+                binding.favoritesRecyclerview.recyclerView.visibility = View.GONE
             }
             recyclerViewAdaper.submitList(it)
         }

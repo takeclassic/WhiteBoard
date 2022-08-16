@@ -54,6 +54,9 @@ class CustomNoteFragment : Fragment() {
             if (it?.memos == null || it.memos.isNotEmpty()) {
                 binding.customNoteTextView.visibility = View.GONE
                 binding.customsRecyclerview.recyclerView.visibility = View.VISIBLE
+            } else {
+                binding.customNoteTextView.visibility = View.VISIBLE
+                binding.customsRecyclerview.recyclerView.visibility = View.GONE
             }
             recyclerViewAdaper.submitList(it?.memos)
         }

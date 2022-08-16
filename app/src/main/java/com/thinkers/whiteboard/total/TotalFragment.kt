@@ -44,6 +44,9 @@ class TotalFragment : Fragment() {
             if (it.isNotEmpty()) {
                 binding.totalNoteTextView.visibility = View.GONE
                 binding.totalRecyclerview.recyclerView.visibility = View.VISIBLE
+            } else {
+                binding.totalNoteTextView.visibility = View.VISIBLE
+                binding.totalRecyclerview.recyclerView.visibility = View.GONE
             }
             recyclerViewAdaper.submitList(it)
         }
