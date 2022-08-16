@@ -48,6 +48,13 @@ class EditNoteFragment : Fragment() {
         recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit)
         binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.allEditableNotes.observe(viewLifecycleOwner) {
+            if (it.isNotEmpty()) {
+                binding.editNoteTextView.visibility = View.GONE
+                binding.editNoteRecyclerview.recyclerView.visibility = View.VISIBLE
+            } else {
+                binding.editNoteTextView.visibility = View.VISIBLE
+                binding.editNoteRecyclerview.recyclerView.visibility = View.GONE
+            }
             recyclerViewAdaper.submitList(it)
         }
     }
@@ -81,6 +88,8 @@ class EditNoteFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.editNoteTextView.visibility = View.VISIBLE
+        binding.editNoteRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
     }
 
