@@ -1,6 +1,8 @@
 package com.thinkers.whiteboard.customs
 
 import android.content.DialogInterface
+import android.graphics.Canvas
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +14,8 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.RecyclerView
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.NoteListAdapter
@@ -47,6 +51,9 @@ class EditNoteFragment : Fragment() {
 
         recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit)
         binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper
+        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        binding.editNoteRecyclerview.recyclerView.addItemDecoration(decoration)
+
         viewModel.allEditableNotes.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 binding.editNoteTextView.visibility = View.GONE
