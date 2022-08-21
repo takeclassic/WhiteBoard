@@ -54,6 +54,7 @@ class MemoFragment : Fragment() {
             changeFavoriteIcon(favoriteButton.isSelected)
             isFavorite = favoriteButton.isSelected
         }
+        binding.fragmentMemoTitle.visibility = View.VISIBLE
 
         val bundle = requireArguments()
         val args = MemoFragmentArgs.fromBundle(bundle)
@@ -115,8 +116,6 @@ class MemoFragment : Fragment() {
             memo = it
             if (!it.title.isNullOrBlank()) {
                 title.text = Editable.Factory.getInstance().newEditable(it.title)
-            } else {
-                title.visibility = View.GONE
             }
             text.text = Editable.Factory.getInstance().newEditable(it.text)
             favoriteButton.isSelected = it.isFavorite

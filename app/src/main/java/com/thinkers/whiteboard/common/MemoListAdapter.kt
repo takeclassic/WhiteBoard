@@ -1,5 +1,6 @@
 package com.thinkers.whiteboard.common
 
+import android.text.format.DateFormat.getDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,6 +32,9 @@ class MemoListAdapter(private val onClick: (Memo) -> Unit) :
 
         fun bind(memo: Memo) {
             currentMemo = memo
+            if (memo.title.isNullOrBlank()) {
+                memoTitle.visibility = View.GONE
+            }
             memoTitle.text = memo.title
             memoText.text = memo.text
             memoNoteName.text = memo.noteName

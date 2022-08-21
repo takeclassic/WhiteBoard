@@ -1,8 +1,10 @@
 package com.thinkers.whiteboard
 
 import android.content.Context
+import android.graphics.Canvas
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +12,7 @@ import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
@@ -22,6 +25,7 @@ import androidx.lifecycle.coroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 import com.thinkers.whiteboard.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
@@ -32,6 +36,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private lateinit var viewModel: MainActivityViewModel
+    private var time: Long = 0
 
     private var menuItemCache: MenuItem? = null
     private val navigationViewListener = NavigationView.OnNavigationItemSelectedListener { menuItem ->
@@ -182,6 +187,15 @@ class MainActivity : AppCompatActivity() {
                     super.onBackPressed()
                 }
                 else -> {
+                    if (System.currentTimeMillis() - time > 1000L) {
+                        time = System.currentTimeMillis()
+                        Toast.makeText(
+                            applicationContext,
+                            "뒤로 버튼을 한번 더 누르시면 종료됩니다",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return
+                    }
                     finish()
                 }
             }
