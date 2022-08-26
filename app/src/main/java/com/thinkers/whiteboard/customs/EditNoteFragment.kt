@@ -1,26 +1,27 @@
 package com.thinkers.whiteboard.customs
 
 import android.content.DialogInterface
-import android.graphics.Canvas
-import android.graphics.Rect
+import android.graphics.BlendMode
+import android.graphics.BlendModeColorFilter
+import android.graphics.ColorFilter
+import android.graphics.drawable.InsetDrawable
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.RecyclerView
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.NoteListAdapter
 import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentEditNoteBinding
+
 
 class EditNoteFragment : Fragment() {
 
@@ -51,8 +52,7 @@ class EditNoteFragment : Fragment() {
 
         recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit)
         binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper
-        val decoration = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-        binding.editNoteRecyclerview.recyclerView.addItemDecoration(decoration)
+        drawDivider()
 
         viewModel.allEditableNotes.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
@@ -64,6 +64,13 @@ class EditNoteFragment : Fragment() {
             }
             recyclerViewAdaper.submitList(it)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.editNoteTextView.visibility = View.VISIBLE
+        binding.editNoteRecyclerview.recyclerView.visibility = View.GONE
+        _binding = null
     }
 
     private fun onDelete(note: Note) {
@@ -93,11 +100,17 @@ class EditNoteFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        binding.editNoteTextView.visibility = View.VISIBLE
-        binding.editNoteRecyclerview.recyclerView.visibility = View.GONE
-        _binding = null
+    private fun drawDivider() {
+        val attrs = intArrayOf(android.R.attr.listDivider)
+        val a = requireContext().obtainStyledAttributes(attrs)
+        val divider = a.getDrawable(0)
+        divider?.colorFilter = BlendModeColorFilter(R.color.default_icon, BlendMode.DST)
+        val insetDivider = InsetDrawable(divider, 0, 30, 0, 0)
+        a.recycle()
+
+        val decor = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
+        decor.setDrawable(insetDivider)
+        binding.editNoteRecyclerview.recyclerView.addItemDecoration(decor)
     }
 
     companion object {
