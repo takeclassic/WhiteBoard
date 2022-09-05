@@ -14,6 +14,10 @@ class MemoRepository(private val memoDao: MemoDao) {
 
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
 
+    fun getPaginatedMemos(page: Int, loadSize: Int) {
+
+    }
+
     @WorkerThread
     fun saveMemo(memo: Memo) {
         memoDao.insertMemo(memo)
