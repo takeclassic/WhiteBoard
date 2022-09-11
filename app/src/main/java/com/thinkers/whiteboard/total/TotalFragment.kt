@@ -1,19 +1,27 @@
 package com.thinkers.whiteboard.total
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
+import com.thinkers.whiteboard.common.MemoPagingAdapter
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentTotalBinding
 import com.thinkers.whiteboard.favorites.FavoritesFragmentDirections
 import com.thinkers.whiteboard.favorites.FavoritesViewModel
 import com.thinkers.whiteboard.favorites.FavoritesViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class TotalFragment : Fragment() {
 
@@ -21,7 +29,12 @@ class TotalFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: TotalViewModel
-    private lateinit var recyclerViewAdaper: MemoListAdapter
+    private lateinit var recyclerViewAdaper: MemoPagingAdapter
+
+    private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
+        recyclerViewAdaper.refresh()
+        binding.totalSwipeLayout.isRefreshing = false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,24 +50,23 @@ class TotalFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo) }
+        binding.totalSwipeLayout.setOnRefreshListener(onSwipeRefresh)
+
+        recyclerViewAdaper = MemoPagingAdapter { memo -> adapterOnClick(memo) }
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
-        viewModel.allMemos.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                binding.totalNoteTextView.visibility = View.GONE
-                binding.totalRecyclerview.recyclerView.visibility = View.VISIBLE
-            } else {
-                binding.totalNoteTextView.visibility = View.VISIBLE
-                binding.totalRecyclerview.recyclerView.visibility = View.GONE
-            }
-            recyclerViewAdaper.submitList(it)
-        }
-    }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            recyclerViewAdaper.loadStateFlow.collectLatest { loadStates ->
+//                Log.i(TAG, "loadStates: $loadStates")
+//                binding.totalNoteTextView.isVisible = loadStates.refresh is LoadState.NotLoading
+//                binding.totalRecyclerview.recyclerView.isVisible = loadStates.refresh !is LoadState.NotLoading
+//            }
+//        }
 
-    private fun adapterOnClick(memo: Memo) {
-        val action = TotalFragmentDirections.actionNavTotalToMemoFragment(memo.memoId)
-        this.findNavController().navigate(action)
+        viewModel.pagingMemos.observe(viewLifecycleOwner) {
+            recyclerViewAdaper.submitData(this.lifecycle, it)
+            Log.i(TAG, "data: ${recyclerViewAdaper.snapshot()}")
+        }
     }
 
     override fun onDestroyView() {
@@ -62,5 +74,14 @@ class TotalFragment : Fragment() {
         binding.totalNoteTextView.visibility = View.VISIBLE
         binding.totalRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
+    }
+
+    private fun adapterOnClick(memo: Memo) {
+        val action = TotalFragmentDirections.actionNavTotalToMemoFragment(memo.memoId)
+        this.findNavController().navigate(action)
+    }
+
+    companion object {
+        val TAG = "TotalFragment"
     }
 }

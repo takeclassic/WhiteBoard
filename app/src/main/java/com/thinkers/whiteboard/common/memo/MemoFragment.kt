@@ -44,7 +44,7 @@ class MemoFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        val toolbar = binding.toolbar
+        val toolbar = binding.memoToolbar
         toolbar.setNavigationOnClickListener {
             requireActivity().onBackPressed()
         }

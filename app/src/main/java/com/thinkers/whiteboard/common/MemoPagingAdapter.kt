@@ -1,22 +1,21 @@
 package com.thinkers.whiteboard.common
 
-import android.text.format.DateFormat.getDateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.database.entities.Memo
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MemoListAdapter(private val onClick: (Memo) -> Unit) :
-    ListAdapter<Memo, MemoListAdapter.MemoViewHolder>(MemoDiffCallback) {
+class MemoPagingAdapter(private val onClick: (Memo) -> Unit) :
+    PagingDataAdapter<Memo, MemoPagingAdapter.MemoPagingViewHolder>(MemoPagingDiffCallback) {
 
-    class MemoViewHolder(itemView: View, val onClick: (Memo) -> Unit): RecyclerView.ViewHolder(itemView) {
+    class MemoPagingViewHolder(itemView: View, val onClick: (Memo) -> Unit): RecyclerView.ViewHolder(itemView) {
         private val memoTitle: TextView = itemView.findViewById(R.id.memo_title)
         private val memoText: TextView = itemView.findViewById(R.id.memo_text)
         private val memoNoteName: TextView = itemView.findViewById(R.id.memo_note_name)
@@ -50,19 +49,21 @@ class MemoListAdapter(private val onClick: (Memo) -> Unit) :
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoPagingViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_memo, parent, false)
-        return MemoViewHolder(view, onClick)
+        return MemoPagingViewHolder(view, onClick)
     }
 
-    override fun onBindViewHolder(holder: MemoViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: MemoPagingViewHolder, position: Int) {
         val memo = getItem(position)
-        holder.bind(memo)
+        if (memo != null) {
+            holder.bind(memo)
+        }
     }
 }
 
-object MemoDiffCallback : DiffUtil.ItemCallback<Memo>() {
+object MemoPagingDiffCallback : DiffUtil.ItemCallback<Memo>() {
     override fun areItemsTheSame(oldItem: Memo, newItem: Memo): Boolean {
         return oldItem.memoId == newItem.memoId
     }
