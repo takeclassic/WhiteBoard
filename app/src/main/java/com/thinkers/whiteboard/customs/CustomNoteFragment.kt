@@ -6,15 +6,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.paging.filter
 import com.thinkers.whiteboard.WhiteBoardApplication
 
 import com.thinkers.whiteboard.common.MemoListAdapter
+import com.thinkers.whiteboard.common.MemoPagingAdapter
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentCustomNoteBinding
 import com.thinkers.whiteboard.favorites.FavoritesFragmentDirections
+import com.thinkers.whiteboard.total.TotalFragment
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 class CustomNoteFragment : Fragment() {
@@ -23,7 +31,7 @@ class CustomNoteFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: CustomNoteViewModel
-    private lateinit var recyclerViewAdaper: MemoListAdapter
+    private lateinit var recyclerViewAdaper: MemoPagingAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,18 +55,32 @@ class CustomNoteFragment : Fragment() {
         }
         Log.i(TAG, "noteName: $noteName")
 
-        recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo) }
+        recyclerViewAdaper = MemoPagingAdapter { memo -> adapterOnClick(memo) }
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
-        viewModel.allCustomNotes(noteName).observe(viewLifecycleOwner) {
-            if (it?.memos == null || it.memos.isNotEmpty()) {
-                binding.customNoteTextView.visibility = View.GONE
-                binding.customsRecyclerview.recyclerView.visibility = View.VISIBLE
-            } else {
-                binding.customNoteTextView.visibility = View.VISIBLE
-                binding.customsRecyclerview.recyclerView.visibility = View.GONE
+//        viewModel.allCustomNotes(noteName).observe(viewLifecycleOwner) {
+//            if (it?.memos == null || it.memos.isNotEmpty()) {
+//                binding.customNoteTextView.visibility = View.GONE
+//                binding.customsRecyclerview.recyclerView.visibility = View.VISIBLE
+//            } else {
+//                binding.customNoteTextView.visibility = View.VISIBLE
+//                binding.customsRecyclerview.recyclerView.visibility = View.GONE
+//            }
+//            recyclerViewAdaper.submitList(it?.memos)
+//        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            recyclerViewAdaper.loadStateFlow.collectLatest { loadStates ->
+                if (loadStates.refresh is LoadState.NotLoading) {
+                    binding.customNoteTextView.isVisible = recyclerViewAdaper.itemCount < 1
+                    binding.customsRecyclerview.recyclerView.isVisible = recyclerViewAdaper.itemCount >= 1
+                }
             }
-            recyclerViewAdaper.submitList(it?.memos)
+        }
+
+        viewModel.allPagingCustomNotes(noteName).observe(viewLifecycleOwner) {
+            recyclerViewAdaper.submitData(this.lifecycle, it)
+            Log.i(TotalFragment.TAG, "data: ${recyclerViewAdaper.snapshot()}")
         }
     }
 

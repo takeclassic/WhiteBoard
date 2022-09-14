@@ -3,6 +3,7 @@ package com.thinkers.whiteboard.database.daos
 import androidx.paging.PagingSource
 import androidx.room.*
 import com.thinkers.whiteboard.database.entities.Memo
+import com.thinkers.whiteboard.database.entities.NoteAndMemos
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -21,6 +22,12 @@ interface MemoDao {
 
     @Query("SELECT * FROM memo ORDER BY created_time DESC LIMIT :loadSize OFFSET (:page-1) * :loadSize")
     fun getPaginatedMemos(page: Int, loadSize: Int): List<Memo>
+
+    @Transaction
+    @Query("SELECT * FROM memo " +
+            "LEFT JOIN note ON memo.note_name = note.note_name " +
+            "WHERE memo.note_name = :noteName ORDER BY created_time DESC")
+    fun getPaginatedMemosByNotename(noteName: String): NoteAndMemos
 
     @Insert
     fun insertMemo(memo: Memo)

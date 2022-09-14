@@ -31,9 +31,6 @@ class MemoPagingAdapter(private val onClick: (Memo) -> Unit) :
 
         fun bind(memo: Memo) {
             currentMemo = memo
-            if (memo.title.isNullOrBlank()) {
-                memoTitle.visibility = View.GONE
-            }
             memoTitle.text = memo.title
             memoText.text = memo.text
             memoNoteName.text = memo.noteName

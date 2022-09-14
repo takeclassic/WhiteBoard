@@ -1,6 +1,9 @@
 package com.thinkers.whiteboard.customs
 
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.entities.NoteAndMemos
 import com.thinkers.whiteboard.database.repositories.NoteRepository
 import com.thinkers.whiteboard.favorites.FavoritesViewModel
@@ -10,6 +13,10 @@ class CustomNoteViewModel(
 ) : ViewModel() {
     fun allCustomNotes(noteName: String): LiveData<NoteAndMemos?> {
         return noteRepository.getNoteWithMemos(noteName).asLiveData()
+    }
+
+    fun allPagingCustomNotes(noteName: String): LiveData<PagingData<Memo>> {
+        return noteRepository.getPagingNoteAndMemos(noteName).cachedIn(viewModelScope).asLiveData()
     }
 }
 

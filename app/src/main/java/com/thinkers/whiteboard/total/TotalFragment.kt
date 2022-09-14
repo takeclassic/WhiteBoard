@@ -55,18 +55,24 @@ class TotalFragment : Fragment() {
         recyclerViewAdaper = MemoPagingAdapter { memo -> adapterOnClick(memo) }
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            recyclerViewAdaper.loadStateFlow.collectLatest { loadStates ->
-//                Log.i(TAG, "loadStates: $loadStates")
-//                binding.totalNoteTextView.isVisible = loadStates.refresh is LoadState.NotLoading
-//                binding.totalRecyclerview.recyclerView.isVisible = loadStates.refresh !is LoadState.NotLoading
-//            }
-//        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            recyclerViewAdaper.loadStateFlow.collectLatest { loadStates ->
+                if (loadStates.refresh is LoadState.NotLoading) {
+                    binding.totalNoteTextView.isVisible = recyclerViewAdaper.itemCount < 1
+                    binding.totalRecyclerview.recyclerView.isVisible = recyclerViewAdaper.itemCount >= 1
+                }
+            }
+        }
 
         viewModel.pagingMemos.observe(viewLifecycleOwner) {
             recyclerViewAdaper.submitData(this.lifecycle, it)
             Log.i(TAG, "data: ${recyclerViewAdaper.snapshot()}")
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        recyclerViewAdaper.refresh()
     }
 
     override fun onDestroyView() {

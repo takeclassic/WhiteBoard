@@ -1,9 +1,12 @@
 package com.thinkers.whiteboard.database.repositories
 
 import androidx.annotation.WorkerThread
+import androidx.paging.*
 import com.thinkers.whiteboard.database.daos.NoteDao
+import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.database.entities.NoteAndMemos
+import com.thinkers.whiteboard.database.pagingsource.NoteAndMemosDataSource
 import kotlinx.coroutines.flow.Flow
 
 class NoteRepository(private val noteDao: NoteDao) {
@@ -27,5 +30,17 @@ class NoteRepository(private val noteDao: NoteDao) {
     @WorkerThread
     fun deleteNote(note: Note) {
         noteDao.deleteNote(note)
+    }
+
+    fun getPagingNoteAndMemos(noteName: String): Flow<PagingData<Memo>> {
+        return Pager(
+            PagingConfig(
+                initialLoadSize = 10,
+                pageSize = 10,
+                prefetchDistance = 10
+            )
+        ) {
+            NoteAndMemosDataSource(noteDao, noteName)
+        }.flow
     }
 }
