@@ -31,16 +31,4 @@ class NoteRepository(private val noteDao: NoteDao) {
     fun deleteNote(note: Note) {
         noteDao.deleteNote(note)
     }
-
-    fun getPagingNoteAndMemos(noteName: String): Flow<PagingData<Memo>> {
-        return Pager(
-            PagingConfig(
-                initialLoadSize = 10,
-                pageSize = 10,
-                prefetchDistance = 10
-            )
-        ) {
-            NoteAndMemosDataSource(noteDao, noteName)
-        }.flow
-    }
 }

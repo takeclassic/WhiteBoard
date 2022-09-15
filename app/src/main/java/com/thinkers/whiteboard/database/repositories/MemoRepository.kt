@@ -4,14 +4,14 @@ import androidx.annotation.WorkerThread
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import com.thinkers.whiteboard.database.daos.MemoDao
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.pagingsource.MemoDataSource
+import com.thinkers.whiteboard.database.pagingsource.NoteAndMemosDataSource
 import kotlinx.coroutines.flow.Flow
 
 class MemoRepository(private val memoDao: MemoDao) {
-    val memoDataSource = MemoDataSource(memoDao)
-
     var noteName: String = "내 메모"
 
     val allMemos: Flow<List<Memo>> = memoDao.getAllMemos()
@@ -35,7 +35,7 @@ class MemoRepository(private val memoDao: MemoDao) {
         memoDao.deleteMemo(memo)
     }
 
-    fun getPagingMemos(): Flow<PagingData<Memo>> {
+    fun getAllPagingMemos(): Flow<PagingData<Memo>> {
         return Pager(
             PagingConfig(
                 initialLoadSize = 10,
@@ -43,8 +43,19 @@ class MemoRepository(private val memoDao: MemoDao) {
                 prefetchDistance = 10
             )
         ) {
-            //memoDao.getPagingAllMemos()
             MemoDataSource(memoDao)
+        }.flow
+    }
+
+    fun getCustomPagingMemos(noteName: String): Flow<PagingData<Memo>> {
+        return Pager(
+            PagingConfig(
+                initialLoadSize = 10,
+                pageSize = 10,
+                prefetchDistance = 10
+            )
+        ) {
+            NoteAndMemosDataSource(memoDao, noteName)
         }.flow
     }
 }

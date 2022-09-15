@@ -24,10 +24,11 @@ interface MemoDao {
     fun getPaginatedMemos(page: Int, loadSize: Int): List<Memo>
 
     @Transaction
-    @Query("SELECT * FROM memo " +
+    @Query("SELECT memo.* FROM memo " +
             "LEFT JOIN note ON memo.note_name = note.note_name " +
-            "WHERE memo.note_name = :noteName ORDER BY created_time DESC")
-    fun getPaginatedMemosByNotename(noteName: String): NoteAndMemos
+            "WHERE memo.note_name = :noteName ORDER BY created_time DESC " +
+            "LIMIT :loadSize OFFSET (:page-1) * :loadSize")
+    fun getPaginatedMemosByNotename(noteName: String, page: Int, loadSize: Int): List<Memo>
 
     @Insert
     fun insertMemo(memo: Memo)

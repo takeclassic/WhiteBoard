@@ -40,7 +40,7 @@ class CustomNoteFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(
             this,
-            CustomNoteViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
+            CustomNoteViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
         ).get(CustomNoteViewModel::class.java)
 
         _binding = FragmentCustomNoteBinding.inflate(inflater, container, false)
@@ -57,17 +57,6 @@ class CustomNoteFragment : Fragment() {
 
         recyclerViewAdaper = MemoPagingAdapter { memo -> adapterOnClick(memo) }
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
-
-//        viewModel.allCustomNotes(noteName).observe(viewLifecycleOwner) {
-//            if (it?.memos == null || it.memos.isNotEmpty()) {
-//                binding.customNoteTextView.visibility = View.GONE
-//                binding.customsRecyclerview.recyclerView.visibility = View.VISIBLE
-//            } else {
-//                binding.customNoteTextView.visibility = View.VISIBLE
-//                binding.customsRecyclerview.recyclerView.visibility = View.GONE
-//            }
-//            recyclerViewAdaper.submitList(it?.memos)
-//        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             recyclerViewAdaper.loadStateFlow.collectLatest { loadStates ->
