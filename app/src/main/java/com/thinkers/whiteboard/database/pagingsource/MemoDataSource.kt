@@ -9,7 +9,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 
 
-class MemoDataSource(private val memoDao: MemoDao): PagingSource<Int, Memo>() {
+class MemoDataSource(
+    private val memoDao: MemoDao,
+    private val key: String,
+    private val noteName: String
+    ): PagingSource<Int, Memo>() {
     override fun getRefreshKey(state: PagingState<Int, Memo>): Int? {
         return state.anchorPosition?.let { achorPosition ->
             Log.i(TAG,"achorPosition $achorPosition")
@@ -22,12 +26,23 @@ class MemoDataSource(private val memoDao: MemoDao): PagingSource<Int, Memo>() {
         runBlocking(Dispatchers.IO) {
             val nextPageNumber = params.key ?: 1
             Log.i(TAG, "nextPageNumber: $nextPageNumber")
-            val pageMemos = memoDao.getPaginatedMemos(nextPageNumber, params.loadSize)
+            var pageMemos: List<Memo>? = null
+            when (key) {
+                "total" -> {
+                    pageMemos = memoDao.getPaginatedMemos(nextPageNumber, params.loadSize)
+                }
+                "favorites" -> {
+                    pageMemos = memoDao.getPaginatedFavoriteMemos(nextPageNumber, params.loadSize)
+                }
+                "custom" -> {
+                    pageMemos = memoDao.getPaginatedMemosByNotename(noteName, nextPageNumber, params.loadSize)
+                }
+            }
             Log.i(TAG, "$pageMemos")
             LoadResult.Page(
-                data = pageMemos,
+                data = pageMemos ?: listOf(),
                 prevKey = if (nextPageNumber == 1) null else nextPageNumber - 1,
-                nextKey = if (pageMemos.isEmpty()) null else nextPageNumber + 1
+                nextKey = if (pageMemos.isNullOrEmpty()) null else nextPageNumber + 1
             )
         }
 

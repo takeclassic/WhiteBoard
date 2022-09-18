@@ -1,6 +1,8 @@
 package com.thinkers.whiteboard.favorites
 
 import androidx.lifecycle.*
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 
@@ -8,6 +10,9 @@ class FavoritesViewModel(
     private val memoRepository: MemoRepository
 ) : ViewModel() {
     val allFavorites: LiveData<List<Memo>> = memoRepository.allFavoriteMemos.asLiveData()
+    fun allPagingFavoriteNotes(): LiveData<PagingData<Memo>> {
+        return memoRepository.getFavoritePagingMemos().cachedIn(viewModelScope).asLiveData()
+    }
 }
 
 class FavoritesViewModelFactory(

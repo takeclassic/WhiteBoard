@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.filter
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.thinkers.whiteboard.WhiteBoardApplication
 
 import com.thinkers.whiteboard.common.MemoListAdapter
@@ -32,6 +33,11 @@ class CustomNoteFragment : Fragment() {
 
     private lateinit var viewModel: CustomNoteViewModel
     private lateinit var recyclerViewAdaper: MemoPagingAdapter
+
+    private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
+        recyclerViewAdaper.refresh()
+        binding.customSwipeLayout.isRefreshing = false
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -55,6 +61,8 @@ class CustomNoteFragment : Fragment() {
         }
         Log.i(TAG, "noteName: $noteName")
 
+        binding.customSwipeLayout.setOnRefreshListener(onSwipeRefresh)
+
         recyclerViewAdaper = MemoPagingAdapter { memo -> adapterOnClick(memo) }
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
@@ -74,7 +82,6 @@ class CustomNoteFragment : Fragment() {
     }
 
     private fun adapterOnClick(memo: Memo) {
-        //(requireActivity() as MainActivity).setMemoId(memo.memoId)
         val action = CustomNoteFragmentDirections.actionNavCustomNoteToNavMemo(memo.memoId)
         this.findNavController().navigate(action)
     }

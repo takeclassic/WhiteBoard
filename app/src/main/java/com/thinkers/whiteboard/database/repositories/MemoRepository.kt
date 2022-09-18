@@ -43,7 +43,7 @@ class MemoRepository(private val memoDao: MemoDao) {
                 prefetchDistance = 10
             )
         ) {
-            MemoDataSource(memoDao)
+            MemoDataSource(memoDao, "total", "")
         }.flow
     }
 
@@ -55,7 +55,20 @@ class MemoRepository(private val memoDao: MemoDao) {
                 prefetchDistance = 10
             )
         ) {
-            NoteAndMemosDataSource(memoDao, noteName)
+            //NoteAndMemosDataSource(memoDao, noteName)
+            MemoDataSource(memoDao, "custom", noteName)
+        }.flow
+    }
+
+    fun getFavoritePagingMemos(): Flow<PagingData<Memo>> {
+        return Pager(
+            PagingConfig(
+                initialLoadSize = 10,
+                pageSize = 10,
+                prefetchDistance = 10
+            )
+        ) {
+            MemoDataSource(memoDao, "favorites", "")
         }.flow
     }
 }

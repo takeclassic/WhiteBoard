@@ -17,6 +17,11 @@ interface MemoDao {
     @Query("SELECT * FROM memo WHERE is_favorite LIKE 1")
     fun getAllFavoriteMemos(): Flow<List<Memo>>
 
+    @Query("SELECT * FROM memo WHERE is_favorite LIKE 1 " +
+            "ORDER BY created_time DESC " +
+            "LIMIT :loadSize OFFSET (:page-1) * :loadSize")
+    fun getPaginatedFavoriteMemos(page: Int, loadSize: Int): List<Memo>
+
     @Query("SELECT * FROM memo WHERE memo_id LIKE (:memoId)")
     fun getMemo(memoId: Int): Flow<Memo>
 
