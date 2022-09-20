@@ -84,7 +84,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val appBarSearchButtonClickListener = View.OnClickListener {
-
+        navController.navigate(R.id.nav_search)
     }
 
     private val appBarFavoriteButtonClickListener = View.OnClickListener {
@@ -102,6 +102,7 @@ class MainActivity : AppCompatActivity() {
     private val mainDestinationChangedListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
             when(controller.currentDestination?.id) {
+                R.id.nav_search,
                 R.id.nav_edit_note,
                 R.id.nav_add_note,
                 R.id.nav_memo -> {

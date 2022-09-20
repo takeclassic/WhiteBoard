@@ -1,10 +1,19 @@
 package com.thinkers.whiteboard.search
 
+import android.text.Editable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 
 class SearchViewModel(private val memoRepository: MemoRepository) : ViewModel() {
+    private fun sanitizeSearchQuery(query: Editable?): String {
+        if (query == null) {
+            return "";
+        }
+        val queryWithEscapedQuotes = query.replace(Regex.fromLiteral("\""), "\"\"")
+        return "*\"$queryWithEscapedQuotes\"*"
+    }
+
 
 }
 

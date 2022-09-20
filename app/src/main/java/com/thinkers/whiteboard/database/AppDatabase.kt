@@ -8,11 +8,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import com.thinkers.whiteboard.database.daos.MemoDao
 import com.thinkers.whiteboard.database.daos.NoteDao
 import com.thinkers.whiteboard.database.entities.Memo
+import com.thinkers.whiteboard.database.entities.MemoFTS
 import com.thinkers.whiteboard.database.entities.Note
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [Memo::class, Note::class], version = 1)
+@Database(entities = [Memo::class, Note::class, MemoFTS::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memoDao(): MemoDao
     abstract fun noteDao(): NoteDao
@@ -31,6 +32,13 @@ abstract class AppDatabase : RoomDatabase() {
                     "whiteboard_db"
                 )
                     .createFromAsset("pre-data.db")
+                    .addCallback(object : RoomDatabase.Callback() {
+                        override fun onCreate(db: SupportSQLiteDatabase) {
+                            super.onCreate(db)
+                            db.execSQL("INSERT INTO memo_fts(memo_fts) VALUES ('rebuild')")
+                        }
+                    })
+                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance
