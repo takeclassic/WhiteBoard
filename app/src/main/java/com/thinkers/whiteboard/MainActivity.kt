@@ -184,7 +184,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             when(navController.currentDestination?.id) {
-                R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo -> {
+                R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo, R.id.nav_search -> {
                     super.onBackPressed()
                 }
                 else -> {

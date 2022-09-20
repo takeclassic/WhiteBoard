@@ -33,7 +33,7 @@ class SearchFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        
+        binding.searchToolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
     }
 
     override fun onDestroy() {
