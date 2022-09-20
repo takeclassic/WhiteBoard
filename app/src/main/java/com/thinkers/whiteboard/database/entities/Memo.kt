@@ -1,6 +1,7 @@
 package com.thinkers.whiteboard.database.entities
 
 import androidx.room.*
+import org.jetbrains.annotations.NotNull
 
 @Entity(
     foreignKeys = [

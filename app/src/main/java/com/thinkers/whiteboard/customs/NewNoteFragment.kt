@@ -83,7 +83,7 @@ class NewNoteFragment : Fragment() {
         }
 
     private lateinit var viewModel: NewNoteViewModel
-    private lateinit var note: Note
+    private var noteNumber: Int = 0
     private var noteColor: Int = -769226
     private var isNew = true
 
@@ -119,6 +119,7 @@ class NewNoteFragment : Fragment() {
             noteColor = it.noteColor
             checkSavedNoteColor(it.noteColor)
             isNew = false
+            noteNumber = it.noteNumber
         }
 
         binding.newNoteSaveButton.setOnClickListener {
@@ -132,7 +133,7 @@ class NewNoteFragment : Fragment() {
             }
 
             val noteName = binding.newNoteNoteName.text.toString()
-            note = Note(noteName, System.currentTimeMillis(), noteColor)
+            val note = Note(noteNumber, noteName, System.currentTimeMillis(), noteColor)
             Log.i(TAG, "saving note info: $note")
 
             if (isNew) {

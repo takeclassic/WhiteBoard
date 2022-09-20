@@ -1,15 +1,11 @@
 package com.thinkers.whiteboard.customs
 
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.database.repositories.NoteRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
 
 class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel() {
     fun saveNote(note: Note): Long = runBlocking(Dispatchers.IO) {
@@ -30,5 +26,6 @@ class NewNoteViewModelFactory(
             @Suppress("UNCHECKED_CAST")
             return NewNoteViewModel(noteRepository) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")    }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }

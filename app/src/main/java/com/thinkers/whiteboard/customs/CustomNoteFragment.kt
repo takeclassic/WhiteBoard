@@ -77,7 +77,7 @@ class CustomNoteFragment : Fragment() {
 
         viewModel.allPagingCustomNotes(noteName).observe(viewLifecycleOwner) {
             recyclerViewAdaper.submitData(this.lifecycle, it)
-            Log.i(TotalFragment.TAG, "data: ${recyclerViewAdaper.snapshot()}")
+            Log.i(TAG, "data: ${recyclerViewAdaper.snapshot()}")
         }
     }
 
