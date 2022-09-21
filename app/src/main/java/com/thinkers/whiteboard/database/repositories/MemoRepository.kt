@@ -1,5 +1,7 @@
 package com.thinkers.whiteboard.database.repositories
 
+import android.text.Editable
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
@@ -71,4 +73,14 @@ class MemoRepository(private val memoDao: MemoDao) {
             MemoDataSource(memoDao, "favorites", "")
         }.flow
     }
+
+    fun getSearchingMemos(query: String): Flow<List<Memo>> {
+        Log.i(TAG, "query: $query")
+        return memoDao.getSearchingMemos(query)
+    }
+
+    companion object {
+        val TAG = "MemoRepository"
+    }
+
 }

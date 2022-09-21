@@ -1,6 +1,8 @@
 package com.thinkers.whiteboard.database.entities
 
+import android.os.Parcelable
 import androidx.room.*
+import kotlinx.parcelize.Parcelize
 import org.jetbrains.annotations.NotNull
 
 @Entity(
@@ -17,6 +19,7 @@ import org.jetbrains.annotations.NotNull
         Index("note_name")
     ]
 )
+@Parcelize
 data class Memo(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "memo_id")
@@ -33,4 +36,4 @@ data class Memo(
     var noteName: String,
     @ColumnInfo(name = "is_favorite")
     var isFavorite: Boolean = false
-)
+): Parcelable
