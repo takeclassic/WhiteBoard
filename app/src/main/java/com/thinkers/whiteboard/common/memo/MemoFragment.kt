@@ -54,7 +54,6 @@ class MemoFragment : Fragment() {
             changeFavoriteIcon(favoriteButton.isSelected)
             isFavorite = favoriteButton.isSelected
         }
-        binding.fragmentMemoTitle.visibility = View.VISIBLE
 
         val bundle = requireArguments()
         val args = MemoFragmentArgs.fromBundle(bundle)
@@ -73,9 +72,8 @@ class MemoFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
-        if (binding.fragmentMemoTitle.text.isNullOrBlank()
-            && binding.fragmentMemoText.text.isNullOrBlank()) {
-            Log.i(TAG, "title and text are empty")
+        if (binding.fragmentMemoText.text.isNullOrBlank()) {
+            Log.i(TAG, "text is empty")
             return
         }
 
@@ -88,7 +86,6 @@ class MemoFragment : Fragment() {
     private fun saveNewMemo() {
         val memo = Memo(
             memoId = 0,
-            title = binding.fragmentMemoTitle.text.toString(),
             text = binding.fragmentMemoText.text.toString(),
             createdTime = System.currentTimeMillis(),
             revisedTime = null,
@@ -101,7 +98,6 @@ class MemoFragment : Fragment() {
 
     private fun updateExistMemo() {
         memo?.let {
-            it.title = binding.fragmentMemoTitle.text.toString()
             it.text = binding.fragmentMemoText.text.toString()
             it.isFavorite = isFavorite
             viewModel.updateMemo(it)
@@ -110,13 +106,9 @@ class MemoFragment : Fragment() {
     }
 
     private fun showExistMemo(memoId: Int) {
-        val title = binding.fragmentMemoTitle
         val text = binding.fragmentMemoText
         viewModel.getMemo(memoId).observe(viewLifecycleOwner) { it ->
             memo = it
-            if (!it.title.isNullOrBlank()) {
-                title.text = Editable.Factory.getInstance().newEditable(it.title)
-            }
             text.text = Editable.Factory.getInstance().newEditable(it.text)
             favoriteButton.isSelected = it.isFavorite
             isFavorite = it.isFavorite

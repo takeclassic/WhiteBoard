@@ -38,24 +38,6 @@
     </androidx.appcompat.widget.Toolbar>
 
     <EditText
-        android:id="@+id/fragment_memo_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:background="@null"
-        android:ems="12"
-        android:hint="제목을 입력하세요 (생략가능)"
-        android:inputType="textPersonName"
-        android:minHeight="48dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/memo_toolbar" />
-
-    <EditText
         android:id="@+id/fragment_memo_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -72,5 +54,5 @@
         android:paddingEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fragment_memo_title" />
+        app:layout_constraintTop_toBottomOf="@+id/memo_toolbar" />
 </androidx.constraintlayout.widget.ConstraintLayout>

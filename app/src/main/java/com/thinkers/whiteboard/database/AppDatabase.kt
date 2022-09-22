@@ -38,7 +38,6 @@ abstract class AppDatabase : RoomDatabase() {
                             db.execSQL("INSERT INTO memo_fts(memo_fts) VALUES ('rebuild')")
                         }
                     })
-                    .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance
                 instance

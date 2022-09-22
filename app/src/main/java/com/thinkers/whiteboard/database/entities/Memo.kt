@@ -24,8 +24,6 @@ data class Memo(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "memo_id")
     val memoId: Int,
-    @ColumnInfo(name = "title")
-    var title: String?,
     @ColumnInfo(name = "text")
     var text: String,
     @ColumnInfo(name = "created_time")

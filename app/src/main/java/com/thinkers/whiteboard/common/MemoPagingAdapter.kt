@@ -16,7 +16,6 @@ class MemoPagingAdapter(private val onClick: (Memo) -> Unit) :
     PagingDataAdapter<Memo, MemoPagingAdapter.MemoPagingViewHolder>(MemoPagingDiffCallback) {
 
     class MemoPagingViewHolder(itemView: View, val onClick: (Memo) -> Unit): RecyclerView.ViewHolder(itemView) {
-        private val memoTitle: TextView = itemView.findViewById(R.id.memo_title)
         private val memoText: TextView = itemView.findViewById(R.id.memo_text)
         private val memoNoteName: TextView = itemView.findViewById(R.id.memo_note_name)
         private val memoDate: TextView = itemView.findViewById(R.id.memo_date)
@@ -31,7 +30,6 @@ class MemoPagingAdapter(private val onClick: (Memo) -> Unit) :
 
         fun bind(memo: Memo) {
             currentMemo = memo
-            memoTitle.text = memo.title
             memoText.text = memo.text
             memoNoteName.text = memo.noteName
             memoDate.text = getDateFormat(memo.createdTime)

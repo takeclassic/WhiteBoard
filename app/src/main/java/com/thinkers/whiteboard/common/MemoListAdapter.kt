@@ -17,7 +17,6 @@ class MemoListAdapter(private val onClick: (Memo) -> Unit) :
     ListAdapter<Memo, MemoListAdapter.MemoViewHolder>(MemoDiffCallback) {
 
     class MemoViewHolder(itemView: View, val onClick: (Memo) -> Unit): RecyclerView.ViewHolder(itemView) {
-        private val memoTitle: TextView = itemView.findViewById(R.id.memo_title)
         private val memoText: TextView = itemView.findViewById(R.id.memo_text)
         private val memoNoteName: TextView = itemView.findViewById(R.id.memo_note_name)
         private val memoDate: TextView = itemView.findViewById(R.id.memo_date)
@@ -32,10 +31,6 @@ class MemoListAdapter(private val onClick: (Memo) -> Unit) :
 
         fun bind(memo: Memo) {
             currentMemo = memo
-            if (memo.title.isNullOrBlank()) {
-                memoTitle.visibility = View.GONE
-            }
-            memoTitle.text = memo.title
             memoText.text = memo.text
             memoNoteName.text = memo.noteName
             memoDate.text = getDateFormat(memo.createdTime)
