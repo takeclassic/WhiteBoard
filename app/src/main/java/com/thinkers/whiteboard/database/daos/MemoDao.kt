@@ -35,9 +35,10 @@ interface MemoDao {
             "LIMIT :loadSize OFFSET (:page-1) * :loadSize")
     fun getPaginatedMemosByNotename(noteName: String, page: Int, loadSize: Int): List<Memo>
 
-    @Query("SELECT memo.* FROM memo " +
-            "JOIN memo_fts ON memo.text = memo_fts.text " +
-            "WHERE memo_fts MATCH :query")
+    @Transaction
+    @Query("SELECT memo.* FROM " +
+            "(SELECT rowid, * FROM memo_fts WHERE memo_fts MATCH :query) AS fts, memo " +
+            "WHERE fts.rowid = memo.rowid")
     fun getSearchingMemos(query: String): Flow<List<Memo>>
 
     @Insert
