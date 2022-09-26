@@ -23,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -65,12 +66,22 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.nav_add_note -> {
-                navController.navigate(R.id.nav_add_note)
+                val navOptions = NavOptions
+                    .Builder()
+                    .setPopExitAnim(R.anim.bottom_down_disapper)
+                    .build()
+
+                navController.navigate(R.id.nav_add_note, null, navOptions)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
             R.id.nav_edit_note -> {
-                navController.navigate(R.id.nav_edit_note)
+                val navOptions = NavOptions
+                    .Builder()
+                    .setPopExitAnim(R.anim.bottom_down_disapper)
+                    .build()
+
+                navController.navigate(R.id.nav_edit_note, null, navOptions)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
@@ -84,19 +95,39 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val appBarSearchButtonClickListener = View.OnClickListener {
-        navController.navigate(R.id.nav_search)
+        val navOptions = NavOptions
+                                .Builder()
+                                .setEnterAnim(R.anim.bottom_up_appear)
+                                .setPopExitAnim(R.anim.bottom_down_disapper)
+                                .build()
+
+        navController.navigate(R.id.nav_search, null, navOptions)
     }
 
     private val appBarFavoriteButtonClickListener = View.OnClickListener {
+        if (binding.navView.menu.findItem(R.id.nav_favorites).isChecked) {
+            return@OnClickListener
+        }
+
         binding.navView.menu.findItem(R.id.nav_favorites).let {
             menuItemCache?.setCheckable(false)
             it.setCheckable(true)
         }
-        navController.navigate(R.id.nav_favorites)
+
+        val navOptions = NavOptions
+            .Builder()
+            .setEnterAnim(R.anim.bottom_up_appear)
+            .build()
+        navController.navigate(R.id.nav_favorites, null, navOptions)
     }
 
     private val appBarWriteButtonClickListener = View.OnClickListener {
-        navController.navigate(R.id.nav_memo)
+        val navOptions = NavOptions
+            .Builder()
+            .setEnterAnim(R.anim.bottom_up_appear)
+            .setPopExitAnim(R.anim.bottom_down_disapper)
+            .build()
+        navController.navigate(R.id.nav_memo, null, navOptions)
     }
 
     private val mainDestinationChangedListener =
