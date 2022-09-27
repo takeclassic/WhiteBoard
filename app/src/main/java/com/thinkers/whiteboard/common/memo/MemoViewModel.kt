@@ -4,9 +4,15 @@ import androidx.lifecycle.*
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 
 class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
+    fun setHasUpdate() {
+        memoRepository.hasDataUpdated = true
+    }
+
     fun getMemo(id: Int): LiveData<Memo> {
         return memoRepository.getMemoById(id).asLiveData()
     }
@@ -41,5 +47,6 @@ class MemoViewModelFactory(private val memoRepository: MemoRepository)
             @Suppress("UNCHECKED_CAST")
             return MemoViewModel(memoRepository) as T
         }
-        throw IllegalArgumentException("Unknown ViewModel class")    }
+        throw IllegalArgumentException("Unknown ViewModel class")
+    }
 }

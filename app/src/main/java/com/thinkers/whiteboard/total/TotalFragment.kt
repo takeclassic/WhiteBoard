@@ -2,6 +2,7 @@ package com.thinkers.whiteboard.total
 
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +12,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.common.MemoPagingAdapter
@@ -36,6 +39,19 @@ class TotalFragment : Fragment() {
         binding.totalSwipeLayout.isRefreshing = false
     }
 
+    //TODO: RecyclerView Header
+//    private val onScrollListener = object: RecyclerView.OnScrollListener() {
+//        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//            super.onScrollStateChanged(recyclerView, newState)
+//            if (!recyclerView.canScrollVertically(-1)
+//                && newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                binding.totalNoteTitle.textSize = 40f
+//            } else {
+//                binding.totalNoteTitle.textSize = 20f
+//            }
+//        }
+//    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -51,6 +67,8 @@ class TotalFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.totalSwipeLayout.setOnRefreshListener(onSwipeRefresh)
+        //TODO: RecyclerView Header
+        //binding.totalRecyclerview.recyclerView.addOnScrollListener(onScrollListener)
 
         recyclerViewAdaper = MemoPagingAdapter { memo -> adapterOnClick(memo) }
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
@@ -58,7 +76,7 @@ class TotalFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             recyclerViewAdaper.loadStateFlow.collectLatest { loadStates ->
                 if (loadStates.refresh is LoadState.NotLoading) {
-                    binding.totalNoteTextView.isVisible = recyclerViewAdaper.itemCount < 1
+                    binding.totalNoteEmptyText.isVisible = recyclerViewAdaper.itemCount < 1
                     binding.totalRecyclerview.recyclerView.isVisible = recyclerViewAdaper.itemCount >= 1
                 }
             }
@@ -72,12 +90,18 @@ class TotalFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        recyclerViewAdaper.refresh()
+        //TODO: FIX! Not WORKING, hasDataUpdated is not changed when totalFragment access it due to Async.
+        Log.i(TAG, "hasDataUpdated: ${viewModel.hasDataUpdated}")
+        if (viewModel.hasDataUpdated) {
+            viewModel.invalidateData()
+            viewModel.resetDataUpdateInfo()
+        }
+        //recyclerViewAdaper.refresh()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        binding.totalNoteTextView.visibility = View.VISIBLE
+        binding.totalNoteEmptyText.visibility = View.VISIBLE
         binding.totalRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
     }

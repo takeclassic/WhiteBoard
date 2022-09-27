@@ -1,13 +1,32 @@
 package com.thinkers.whiteboard.total
 
+import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 
 class TotalViewModel(private val memoRepository: MemoRepository) : ViewModel() {
-   val allMemos = memoRepository.allMemos.asLiveData()
+    val allMemos = memoRepository.allMemos.asLiveData()
 
     val pagingMemos = memoRepository.getAllPagingMemos().cachedIn(viewModelScope).asLiveData()
+
+    fun invalidateData() {
+        try {
+            memoRepository.dataSourceHolder.getDataSource().invalidate()
+        } catch (e: NullPointerException) {
+            Log.w(TAG, "${e.stackTrace}")
+        }
+    }
+
+    val hasDataUpdated = memoRepository.hasDataUpdated
+
+    fun resetDataUpdateInfo() {
+        memoRepository.hasDataUpdated = false
+    }
+
+    companion object {
+        val TAG = "TotalViewModel"
+    }
 }
 
 class TotalViewModelFactory(

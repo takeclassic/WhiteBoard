@@ -7,8 +7,10 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.thinkers.whiteboard.common.memo.MemoDataChangeInfoSender
 import com.thinkers.whiteboard.database.daos.MemoDao
 import com.thinkers.whiteboard.database.entities.Memo
+import com.thinkers.whiteboard.database.pagingsource.DataSourceHolder
 import com.thinkers.whiteboard.database.pagingsource.MemoDataSource
 import com.thinkers.whiteboard.database.pagingsource.NoteAndMemosDataSource
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +21,10 @@ class MemoRepository(private val memoDao: MemoDao) {
     val allMemos: Flow<List<Memo>> = memoDao.getAllMemos()
 
     val allFavoriteMemos: Flow<List<Memo>> = memoDao.getAllFavoriteMemos()
+
+    val dataSourceHolder: DataSourceHolder<MemoDataSource> = DataSourceHolder()
+
+    var hasDataUpdated: Boolean = false
 
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
 
@@ -40,12 +46,14 @@ class MemoRepository(private val memoDao: MemoDao) {
     fun getAllPagingMemos(): Flow<PagingData<Memo>> {
         return Pager(
             PagingConfig(
-                initialLoadSize = 10,
-                pageSize = 10,
+                initialLoadSize = 20,
+                pageSize = 20,
                 prefetchDistance = 10
             )
         ) {
-            MemoDataSource(memoDao, "total", "")
+            dataSourceHolder.create(MemoDataSource(memoDao, "total", ""))
+            dataSourceHolder.getDataSource()
+            //MemoDataSource(memoDao, "total", "")
         }.flow
     }
 
@@ -58,7 +66,9 @@ class MemoRepository(private val memoDao: MemoDao) {
             )
         ) {
             //NoteAndMemosDataSource(memoDao, noteName)
-            MemoDataSource(memoDao, "custom", noteName)
+            dataSourceHolder.create(MemoDataSource(memoDao, "custom", noteName))
+            dataSourceHolder.getDataSource()
+            //MemoDataSource(memoDao, "custom", noteName)
         }.flow
     }
 
@@ -70,7 +80,9 @@ class MemoRepository(private val memoDao: MemoDao) {
                 prefetchDistance = 10
             )
         ) {
-            MemoDataSource(memoDao, "favorites", "")
+            dataSourceHolder.create(MemoDataSource(memoDao, "favorites", ""))
+            dataSourceHolder.getDataSource()
+            //MemoDataSource(memoDao, "favorites", "")
         }.flow
     }
 
