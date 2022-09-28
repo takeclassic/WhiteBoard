@@ -82,21 +82,19 @@ class TotalFragment : Fragment() {
             }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.hasDataUpdated.collect { isUpdated ->
+                Log.i(TAG, "isUpdated: $isUpdated")
+                if (isUpdated) {
+                    viewModel.invalidateData()
+                }
+            }
+        }
+
         viewModel.pagingMemos.observe(viewLifecycleOwner) {
             recyclerViewAdaper.submitData(this.lifecycle, it)
             Log.i(TAG, "data: ${recyclerViewAdaper.snapshot()}")
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        //TODO: FIX! Not WORKING, hasDataUpdated is not changed when totalFragment access it due to Async.
-        Log.i(TAG, "hasDataUpdated: ${viewModel.hasDataUpdated}")
-        if (viewModel.hasDataUpdated) {
-            viewModel.invalidateData()
-            viewModel.resetDataUpdateInfo()
-        }
-        //recyclerViewAdaper.refresh()
     }
 
     override fun onDestroyView() {

@@ -4,13 +4,13 @@ import androidx.lifecycle.*
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
-    fun setHasUpdate() {
-        memoRepository.hasDataUpdated = true
+    fun setHasUpdate(isUpdated: Boolean) {
+        memoRepository.getDataUpdated(isUpdated)
     }
 
     fun getMemo(id: Int): LiveData<Memo> {

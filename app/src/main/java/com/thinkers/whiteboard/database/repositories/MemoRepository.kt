@@ -14,6 +14,9 @@ import com.thinkers.whiteboard.database.pagingsource.DataSourceHolder
 import com.thinkers.whiteboard.database.pagingsource.MemoDataSource
 import com.thinkers.whiteboard.database.pagingsource.NoteAndMemosDataSource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class MemoRepository(private val memoDao: MemoDao) {
     var noteName: String = "내 메모"
@@ -24,7 +27,12 @@ class MemoRepository(private val memoDao: MemoDao) {
 
     val dataSourceHolder: DataSourceHolder<MemoDataSource> = DataSourceHolder()
 
-    var hasDataUpdated: Boolean = false
+    private val _newMemoState = MutableStateFlow(false) // private mutable state flow
+    val newMemoState = _newMemoState.asStateFlow()
+
+    fun getDataUpdated(isUpdated: Boolean) {
+        _newMemoState.value = isUpdated
+    }
 
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
 

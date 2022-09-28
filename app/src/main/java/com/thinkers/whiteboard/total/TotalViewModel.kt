@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
 import com.thinkers.whiteboard.database.repositories.MemoRepository
+import kotlinx.coroutines.flow.StateFlow
 
 class TotalViewModel(private val memoRepository: MemoRepository) : ViewModel() {
     val allMemos = memoRepository.allMemos.asLiveData()
@@ -18,11 +19,7 @@ class TotalViewModel(private val memoRepository: MemoRepository) : ViewModel() {
         }
     }
 
-    val hasDataUpdated = memoRepository.hasDataUpdated
-
-    fun resetDataUpdateInfo() {
-        memoRepository.hasDataUpdated = false
-    }
+    val hasDataUpdated: StateFlow<Boolean> = memoRepository.newMemoState
 
     companion object {
         val TAG = "TotalViewModel"

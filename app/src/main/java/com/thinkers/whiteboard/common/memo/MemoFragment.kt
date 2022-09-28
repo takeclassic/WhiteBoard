@@ -5,11 +5,13 @@ import android.graphics.Color
 import android.media.Image
 import android.os.Bundle
 import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageButton
 import androidx.annotation.ColorInt
 import androidx.core.content.ContextCompat
@@ -26,8 +28,31 @@ class MemoFragment : Fragment() {
 
     private lateinit var viewModel: MemoViewModel
     private lateinit var favoriteButton: ImageButton
+    private lateinit var memoText: EditText
+
     private var memo: Memo? = null
     private var isFavorite: Boolean = false
+    private var beforeTextChangeEditable: Editable? = null
+    private var afterTextChangeEditable: Editable? = null
+
+    private val textWatcher = object: TextWatcher {
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            Log.i(TAG, "beforeTextChanged $p0")
+            p0?.let {
+                beforeTextChangeEditable = Editable.Factory.getInstance().newEditable(p0)
+            }
+        }
+
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+        }
+
+        override fun afterTextChanged(p0: Editable?) {
+            Log.i(TAG, "afterTextChanged $p0")
+            p0?.let {
+                afterTextChangeEditable = p0
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +79,8 @@ class MemoFragment : Fragment() {
             changeFavoriteIcon(favoriteButton.isSelected)
             isFavorite = favoriteButton.isSelected
         }
+        memoText = binding.fragmentMemoText
+        memoText.addTextChangedListener(textWatcher)
 
         val bundle = requireArguments()
         val args = MemoFragmentArgs.fromBundle(bundle)
@@ -72,7 +99,7 @@ class MemoFragment : Fragment() {
     override fun onStop() {
         super.onStop()
 
-        if (binding.fragmentMemoText.text.isNullOrBlank()) {
+        if (memoText.text.isNullOrBlank()) {
             Log.i(TAG, "text is empty")
             return
         }
@@ -86,30 +113,35 @@ class MemoFragment : Fragment() {
     private fun saveNewMemo() {
         val memo = Memo(
             memoId = 0,
-            text = binding.fragmentMemoText.text.toString(),
+            text = memoText.text.toString(),
             createdTime = System.currentTimeMillis(),
             revisedTime = null,
             viewModel.getMemoBelongNoteName(),
             isFavorite = isFavorite
         )
         viewModel.saveMemo(memo)
+        viewModel.setHasUpdate(true)
         Log.i(TAG, "try saveNewMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
     }
 
     private fun updateExistMemo() {
-        memo?.let {
-            it.text = binding.fragmentMemoText.text.toString()
-            it.isFavorite = isFavorite
-            viewModel.updateMemo(it)
-            Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
+        if (hasChanges()) {
+            memo?.let {
+                it.text = binding.fragmentMemoText.text.toString()
+                it.isFavorite = isFavorite
+                viewModel.updateMemo(it)
+                viewModel.setHasUpdate(true)
+                Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
+            }
+            return
         }
+        viewModel.setHasUpdate(false)
     }
 
     private fun showExistMemo(memoId: Int) {
-        val text = binding.fragmentMemoText
         viewModel.getMemo(memoId).observe(viewLifecycleOwner) { it ->
             memo = it
-            text.text = Editable.Factory.getInstance().newEditable(it.text)
+            memoText.text = Editable.Factory.getInstance().newEditable(it.text)
             favoriteButton.isSelected = it.isFavorite
             isFavorite = it.isFavorite
             changeFavoriteIcon(it.isFavorite)
@@ -124,6 +156,16 @@ class MemoFragment : Fragment() {
             binding.memoFragmentFavoriteButton.setImageResource(R.drawable.ic_appbar_favorites)
             binding.memoFragmentFavoriteButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.default_icon))
         }
+    }
+
+    private fun hasChanges(): Boolean {
+        if (!beforeTextChangeEditable.isNullOrBlank()
+            && beforeTextChangeEditable != afterTextChangeEditable) {
+            return true
+        } else if(memo?.isFavorite != isFavorite) {
+            return true
+        }
+        return false
     }
 
     companion object {
