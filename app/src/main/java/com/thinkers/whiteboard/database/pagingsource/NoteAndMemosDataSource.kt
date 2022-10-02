@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.thinkers.whiteboard.database.daos.MemoDao
-import com.thinkers.whiteboard.database.daos.NoteDao
 import com.thinkers.whiteboard.database.entities.Memo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -24,7 +23,7 @@ class NoteAndMemosDataSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Memo> =
         runBlocking(Dispatchers.IO) {
             val nextPageNumber = params.key ?: 1
-            val memoList = memoDao.getPaginatedMemosByNotename(noteName, nextPageNumber, params.loadSize)
+            val memoList = memoDao.getPaginatedMemosByNoteName(noteName, nextPageNumber, params.loadSize)
 
             LoadResult.Page(
                 data = memoList,
