@@ -3,7 +3,7 @@ package com.thinkers.whiteboard.total
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
-import com.thinkers.whiteboard.common.interfaces.TotalPagingMemoListener
+import com.thinkers.whiteboard.common.interfaces.PagingMemoUpdateListener
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 
 class TotalViewModel(
     private val memoRepository: MemoRepository,
-    private val memoListUpdateListener: TotalPagingMemoListener
+    private val memoListUpdateListener: PagingMemoUpdateListener
 ) : ViewModel() {
     val allMemos = memoRepository.allMemos.asLiveData()
 
@@ -24,6 +24,7 @@ class TotalViewModel(
 
     private var _memoList = mutableListOf<Memo>()
     val memoList: List<Memo> = _memoList
+
     val memoMap = mutableMapOf<Int, Int>()
     var memoToUpdate: Memo = Memo(-1, "", 0,0, "")
 
@@ -56,7 +57,7 @@ class TotalViewModel(
         )
     }
 
-    fun setPageNumber(pageNumber: Int) {
+    fun getNextPage(pageNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             val list = memoRepository
                 .getPaginatedMemoList(pageNumber + 1, TotalFragment.PAGE_SIZE)
@@ -79,7 +80,7 @@ class TotalViewModel(
 
 class TotalViewModelFactory(
     private val memoRepository: MemoRepository,
-    private val memoListUpdateListener: TotalPagingMemoListener
+    private val memoListUpdateListener: PagingMemoUpdateListener
 )
     : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

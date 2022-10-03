@@ -28,6 +28,7 @@ class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
     val allFavoriteMemos: Flow<List<Memo>> = memoDao.getAllFavoriteMemos()
     val dataSourceHolder: DataSourceHolder<MemoDataSource> = DataSourceHolder()
     val totalMemoCount: Flow<Int> = memoDao.getAllMemosCount()
+    val favoritesMemoCount: Flow<Int> = memoDao.getFavoriteMemosCount()
 
     private val _newMemoState = MutableStateFlow<Memo>(
         Memo(-1, "", 0,0, "")
@@ -118,8 +119,13 @@ class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
     fun getPaginatedMemos(pageNum: Int, pageSize: Int): Flow<List<Memo>> {
         return memoDao.getPaginatedMemoFlow(pageNum, pageSize)
     }
+
     fun getPaginatedMemoList(pageNum: Int, pageSize: Int): List<Memo> {
         return memoDao.getPaginatedMemos(pageNum, pageSize)
+    }
+
+    fun getPaginatedFavoriteMemoList(pageNum: Int, pageSize: Int): List<Memo> {
+        return memoDao.getPaginatedFavoriteMemos(pageNum, pageSize)
     }
 
     override fun setLastCheckedMemo(memo: Memo, position: Int) {

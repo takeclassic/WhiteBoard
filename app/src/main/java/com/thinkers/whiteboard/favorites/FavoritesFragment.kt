@@ -5,36 +5,48 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavController
-import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
-import androidx.paging.LoadState
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
-import com.thinkers.whiteboard.common.MemoPagingAdapter
+import com.thinkers.whiteboard.common.interfaces.PagingMemoUpdateListener
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentFavoritesBinding
 import com.thinkers.whiteboard.total.TotalFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class FavoritesFragment : Fragment() {
+class FavoritesFragment : Fragment(), PagingMemoUpdateListener {
 
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var viewModel: FavoritesViewModel
-    private lateinit var recyclerViewAdaper: MemoPagingAdapter
+    private lateinit var recyclerViewAdaper: MemoListAdapter
+    private lateinit var recyclerView: RecyclerView
+
+    private var favoritesMemoCount: Int = 0
+    private var currentPage: Int = 1
 
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
-        recyclerViewAdaper.refresh()
         binding.favoritesSwipeLayout.isRefreshing = false
+    }
+
+    private val onScrollListener = object: RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+            if (recyclerViewAdaper.itemCount < favoritesMemoCount
+                && (recyclerViewAdaper.itemCount == currentPage * TotalFragment.PAGE_SIZE
+                        || recyclerViewAdaper.itemCount - 1 == currentPage * TotalFragment.PAGE_SIZE)
+            ) {
+                viewModel.getNextPage(currentPage)
+                currentPage++
+            }
+        }
     }
 
     override fun onCreateView(
@@ -44,7 +56,7 @@ class FavoritesFragment : Fragment() {
     ): View {
         viewModel = ViewModelProvider(
                 this,
-                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
+                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.memoRepository, this)
             ).get(FavoritesViewModel::class.java)
 
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
@@ -52,28 +64,27 @@ class FavoritesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        recyclerView = binding.favoritesRecyclerview.recyclerView
         binding.favoritesSwipeLayout.setOnRefreshListener(onSwipeRefresh)
+        recyclerView.addOnScrollListener(onScrollListener)
 
-        recyclerViewAdaper = MemoPagingAdapter { memo -> adapterOnClick(memo) }
+        recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo) }
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
+        viewModel.initKeepUpdated()
+        viewModel.getNextPage(0)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            recyclerViewAdaper.loadStateFlow.collectLatest { loadStates ->
-                if (loadStates.refresh is LoadState.NotLoading) {
-                    binding.favoritesNoteTextView.isVisible = recyclerViewAdaper.itemCount < 1
-                    binding.favoritesRecyclerview.recyclerView.isVisible = recyclerViewAdaper.itemCount >= 1
+            viewModel.FavoriteMemoCount(this).collectLatest {
+                favoritesMemoCount = it
+                if (favoritesMemoCount > 0) {
+                    binding.favoritesNoteTextView.visibility = View.GONE
                 }
+                Log.i(TAG, "favoritesMemoCount: $favoritesMemoCount")
             }
-        }
-
-        viewModel.allPagingFavoriteNotes().observe(viewLifecycleOwner) {
-            recyclerViewAdaper.submitData(this.lifecycle, it)
-            Log.i(TAG, "data: ${recyclerViewAdaper.snapshot()}")
         }
     }
 
     private fun adapterOnClick(memo: Memo) {
-        //(requireActivity() as MainActivity).setMemoId(memo.memoId)
         val action = FavoritesFragmentDirections.actionNavFavoritesToMemoFragment(memo.memoId)
         this.findNavController().navigate(action)
     }
@@ -85,7 +96,13 @@ class FavoritesFragment : Fragment() {
         _binding = null
     }
 
+    override fun onMemoListUpdated(memoList: List<Memo>) {
+        Log.i(TAG, "data: $memoList")
+        recyclerViewAdaper.submitList(memoList.toList())
+    }
+
     companion object {
         val TAG = "FavoritesFragment"
+        val PAGE_SIZE = 30
     }
 }
