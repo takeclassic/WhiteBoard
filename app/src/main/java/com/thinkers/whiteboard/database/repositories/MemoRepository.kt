@@ -128,6 +128,10 @@ class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
         return memoDao.getPaginatedFavoriteMemos(pageNum, pageSize)
     }
 
+    fun getPaginatedMemosByNoteName(noteName: String, pageNum: Int, pageSize: Int): List<Memo> {
+        return memoDao.getPaginatedMemosByNoteName(noteName, pageNum, pageSize)
+    }
+
     override fun setLastCheckedMemo(memo: Memo, position: Int) {
         lastCheckedMemo = memo
         this.position = position
@@ -136,6 +140,11 @@ class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
     fun getLastCheckedMemoId(): Int {
         return lastCheckedMemo?.memoId ?: 0
     }
+
+    fun getCustomNoteMemoCount(noteName: String): Flow<Int> {
+        return memoDao.getCustomMemosCountByNoteName(noteName)
+    }
+
     companion object {
         val TAG = "MemoRepository"
     }
