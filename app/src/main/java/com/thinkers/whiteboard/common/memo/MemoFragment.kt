@@ -120,7 +120,6 @@ class MemoFragment : Fragment() {
             isFavorite = isFavorite
         )
         viewModel.saveMemo(memo)
-        viewModel.setHasUpdate(true)
         Log.i(TAG, "try saveNewMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
     }
 
@@ -130,12 +129,12 @@ class MemoFragment : Fragment() {
                 it.text = binding.fragmentMemoText.text.toString()
                 it.isFavorite = isFavorite
                 viewModel.updateMemo(it)
-                viewModel.setHasUpdate(true)
+                viewModel.setHasUpdate(it)
                 Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
             }
             return
         }
-        viewModel.setHasUpdate(false)
+        viewModel.setHasUpdate(Memo(-1, "", 0,0, ""))
     }
 
     private fun showExistMemo(memoId: Int) {

@@ -46,20 +46,24 @@ class TotalFragment : Fragment(), TotalPagingMemoListener {
     private val onScrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
+            //Log.i(TAG, "itemCount: ${recyclerViewAdaper.itemCount}, pageNum: $currentPage, total: ${currentPage * PAGE_SIZE}")
+
             if (recyclerViewAdaper.itemCount < totalMemoCount
-                && (recyclerViewAdaper.itemCount == currentPage * PAGE_SIZE)
+                && (recyclerViewAdaper.itemCount == currentPage * PAGE_SIZE
+                        || recyclerViewAdaper.itemCount - 1 == currentPage * PAGE_SIZE)
             ) {
-                Log.i(TAG, "itemCount: ${recyclerViewAdaper.itemCount}, pageNum: $currentPage, total: ${currentPage * PAGE_SIZE}")
                 viewModel.setPageNumber(currentPage)
                 currentPage++
             }
-
-            if (!recyclerView.canScrollVertically(1)) {
-                //scrolled to BOTTOM
-            } else if (!recyclerView.canScrollVertically(-1) && dy < 0) {
-                //scrolled to TOP
-            }
         }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(
+            this,
+            TotalViewModelFactory(WhiteBoardApplication.instance!!.memoRepository, this)
+        ).get(TotalViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -67,10 +71,6 @@ class TotalFragment : Fragment(), TotalPagingMemoListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(
-            this,
-            TotalViewModelFactory(WhiteBoardApplication.instance!!.memoRepository, this)
-        ).get(TotalViewModel::class.java)
         _binding = FragmentTotalBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -84,31 +84,51 @@ class TotalFragment : Fragment(), TotalPagingMemoListener {
 
         recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo) }
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.hasDataUpdated.collectLatest { isUpdated ->
-                Log.i(TAG, "isUpdated: $isUpdated")
-                if (isUpdated) {
-                    // TODO: Refresh data for update
-                }
-            }
-        }
+        viewModel.initKeepUpdated()
+        viewModel.setPageNumber(0)
 
         viewLifecycleOwner.lifecycleScope.launch {
              viewModel.totalMemoCount(this).collectLatest {
                  totalMemoCount = it
+                 if (totalMemoCount > 0) {
+                     binding.totalNoteEmptyText.visibility = View.GONE
+                 }
                  Log.i(TAG, "totalMemoCount: $totalMemoCount")
             }
         }
-
-        recyclerViewAdaper.submitList(viewModel.memoList.toList())
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        Log.i(TAG, "onDestroyView")
         binding.totalNoteEmptyText.visibility = View.VISIBLE
         binding.totalRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.i(TAG, "onStart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.i(TAG, "onResume")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.i(TAG, "onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.i(TAG, "onStop")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(TAG, "onDestroy")
     }
 
     private fun adapterOnClick(memo: Memo) {

@@ -16,36 +16,31 @@ class TotalViewModel(
     private val memoRepository: MemoRepository,
     private val memoListUpdateListener: TotalPagingMemoListener
 ) : ViewModel() {
-    init {
-        viewModelScope.launch {
-            memoRepository
-                .getPaginatedMemos(1, TotalFragment.PAGE_SIZE)
-                .flowOn(Dispatchers.IO)
-                .collectLatest {
-                    val newList = it.filter { !memoMap.containsKey(it.memoId) }
-                    _memoList.addAll(newList)
-                    Log.i("TotalFragment", "viewmodel data init: $memoList")
-                    memoListUpdateListener.onMemoListUpdated(memoList)
-                    newList.forEach { memoMap.put(it.memoId, true) }
-            }
-        }
-    }
-
     val allMemos = memoRepository.allMemos.asLiveData()
 
     val pagingMemos = memoRepository.getAllPagingMemos().cachedIn(viewModelScope).asLiveData().distinctUntilChanged()
 
-    val hasDataUpdated: StateFlow<Boolean> = memoRepository.newMemoState
+    val hasDataUpdated: StateFlow<Memo> = memoRepository.newMemoState
 
     private var _memoList = mutableListOf<Memo>()
     val memoList: List<Memo> = _memoList
-    val memoMap = mutableMapOf<Int, Boolean>()
+    val memoMap = mutableMapOf<Int, Int>()
+    var memoToUpdate: Memo = Memo(-1, "", 0,0, "")
 
     fun invalidateData() {
         try {
             memoRepository.dataSourceHolder.getDataSource().invalidate()
         } catch (e: NullPointerException) {
             Log.w(TAG, "${e.stackTrace}")
+        }
+    }
+
+    fun initKeepUpdated() {
+        viewModelScope.launch(Dispatchers.IO) {
+            memoRepository.newMemoState.collectLatest { updatedMemo ->
+                Log.i(TAG, "TotalFragment updatedMemo: ${updatedMemo.memoId}")
+                memoToUpdate = updatedMemo
+            }
         }
     }
 
@@ -62,17 +57,18 @@ class TotalViewModel(
     }
 
     fun setPageNumber(pageNumber: Int) {
-        viewModelScope.launch {
-            memoRepository
-                .getPaginatedMemos(pageNumber+1, TotalFragment.PAGE_SIZE)
-                .flowOn(Dispatchers.IO)
-                .collectLatest {
-                    val newList = it.filter { !memoMap.containsKey(it.memoId) }
-                    _memoList.addAll(newList)
-                    Log.i("TotalFragment", "pagenumber: $pageNumber, viewmodel data changed: $it")
-                    memoListUpdateListener.onMemoListUpdated(memoList)
-                    newList.forEach { memoMap.put(it.memoId, true) }
+        viewModelScope.launch(Dispatchers.IO) {
+            val list = memoRepository
+                .getPaginatedMemoList(pageNumber + 1, TotalFragment.PAGE_SIZE)
+                .filter { !memoMap.containsKey(it.memoId) }
+
+            _memoList.addAll(list)
+            _memoList.sortByDescending { it.memoId }
+            _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
+            if (memoMap.containsKey(memoToUpdate.memoId)) {
+                _memoList[memoMap[memoToUpdate.memoId]!!] = memoToUpdate
             }
+            memoListUpdateListener.onMemoListUpdated(memoList)
         }
     }
 

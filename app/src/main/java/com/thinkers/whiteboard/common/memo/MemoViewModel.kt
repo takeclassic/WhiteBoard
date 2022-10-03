@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
-    fun setHasUpdate(isUpdated: Boolean) {
-        memoRepository.getDataUpdated(isUpdated)
+    fun setHasUpdate(updatedMemo: Memo) {
+        memoRepository.getDataUpdated(updatedMemo)
     }
 
     fun getMemo(id: Int): LiveData<Memo> {

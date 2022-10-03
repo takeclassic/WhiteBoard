@@ -29,7 +29,9 @@ class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
     val dataSourceHolder: DataSourceHolder<MemoDataSource> = DataSourceHolder()
     val totalMemoCount: Flow<Int> = memoDao.getAllMemosCount()
 
-    private val _newMemoState = MutableStateFlow(false) // private mutable state flow
+    private val _newMemoState = MutableStateFlow<Memo>(
+        Memo(-1, "", 0,0, "")
+    ) // private mutable state flow
     val newMemoState = _newMemoState.asStateFlow()
 
     private var lastCheckedMemo: Memo? = null
@@ -43,12 +45,8 @@ class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
         }
     }
 
-    fun getDataUpdated(isUpdated: Boolean) {
-        _newMemoState.value = isUpdated
-        if (isUpdated) {
-            Log.i(TAG, "KKKKK updated")
-            //dataSourceHolder.getDataSource().invalidate()
-        }
+    fun getDataUpdated(updatedMemo: Memo) {
+        _newMemoState.value = updatedMemo
     }
 
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
@@ -119,6 +117,9 @@ class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
 
     fun getPaginatedMemos(pageNum: Int, pageSize: Int): Flow<List<Memo>> {
         return memoDao.getPaginatedMemoFlow(pageNum, pageSize)
+    }
+    fun getPaginatedMemoList(pageNum: Int, pageSize: Int): List<Memo> {
+        return memoDao.getPaginatedMemos(pageNum, pageSize)
     }
 
     override fun setLastCheckedMemo(memo: Memo, position: Int) {
