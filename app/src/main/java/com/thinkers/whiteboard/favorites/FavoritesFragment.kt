@@ -68,7 +68,7 @@ class FavoritesFragment : Fragment(), PagingMemoUpdateListener {
         binding.favoritesSwipeLayout.setOnRefreshListener(onSwipeRefresh)
         recyclerView.addOnScrollListener(onScrollListener)
 
-        recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo) }
+        recyclerViewAdaper = MemoListAdapter(adapterOnClick, memoItemLongClick)
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.initKeepUpdated()
         viewModel.getNextPage(0)
@@ -84,9 +84,13 @@ class FavoritesFragment : Fragment(), PagingMemoUpdateListener {
         }
     }
 
-    private fun adapterOnClick(memo: Memo) {
+    private val adapterOnClick: (Memo) -> Unit = { memo ->
         val action = FavoritesFragmentDirections.actionNavFavoritesToMemoFragment(memo.memoId)
         this.findNavController().navigate(action)
+    }
+
+    private val memoItemLongClick: (View, Memo) -> Boolean = { _, _ ->
+        true
     }
 
     override fun onDestroyView() {

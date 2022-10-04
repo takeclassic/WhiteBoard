@@ -13,10 +13,17 @@ import com.thinkers.whiteboard.database.entities.Memo
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MemoListAdapter(private val onClick: (Memo) -> Unit) :
+class MemoListAdapter(
+    private val onClick: (Memo) -> Unit,
+    private val onLongClick: (View, Memo) -> Boolean
+    ) :
     ListAdapter<Memo, MemoListAdapter.MemoViewHolder>(MemoDiffCallback) {
 
-    class MemoViewHolder(itemView: View, val onClick: (Memo) -> Unit): RecyclerView.ViewHolder(itemView) {
+    class MemoViewHolder(
+        itemView: View,
+        onClick: (Memo) -> Unit,
+        onLongClick: (View, Memo) -> Boolean
+    ): RecyclerView.ViewHolder(itemView) {
         private val memoText: TextView = itemView.findViewById(R.id.memo_text)
         private val memoNoteName: TextView = itemView.findViewById(R.id.memo_note_name)
         private val memoDate: TextView = itemView.findViewById(R.id.memo_date)
@@ -26,6 +33,9 @@ class MemoListAdapter(private val onClick: (Memo) -> Unit) :
         init {
             itemView.setOnClickListener {
                 currentMemo?.let(onClick)
+            }
+            itemView.setOnLongClickListener { view ->
+                onLongClick(view, currentMemo!!)
             }
         }
 
@@ -48,7 +58,7 @@ class MemoListAdapter(private val onClick: (Memo) -> Unit) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_memo, parent, false)
-        return MemoViewHolder(view, onClick)
+        return MemoViewHolder(view, onClick, onLongClick)
     }
 
     override fun onBindViewHolder(holder: MemoViewHolder, position: Int) {

@@ -54,16 +54,19 @@ class MemoFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(
+            this,
+            MemoViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
+        ).get(MemoViewModel::class.java)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(
-            this,
-            MemoViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
-        ).get(MemoViewModel::class.java)
-
         _binding = FragmentMemoBinding.inflate(inflater, container, false)
         return binding.root
     }

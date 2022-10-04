@@ -20,6 +20,7 @@ import com.thinkers.whiteboard.common.memo.MemoViewModelFactory
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
 import com.thinkers.whiteboard.databinding.FragmentSearchBinding
+import com.thinkers.whiteboard.favorites.FavoritesFragmentDirections
 import com.thinkers.whiteboard.total.TotalFragmentDirections
 import kotlinx.coroutines.launch
 
@@ -63,14 +64,18 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.searchToolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
-        recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo) }
+        recyclerViewAdaper = MemoListAdapter(adapterOnClick, memoItemLongClick)
         binding.searchRecyclerview.recyclerView.adapter = recyclerViewAdaper
         binding.searchSearchText.setOnQueryTextListener(queryTextListener)
     }
 
-    private fun adapterOnClick(memo: Memo) {
-        val action = SearchFragmentDirections.actionNavSearchToNavMemo(memo.memoId)
+    private val adapterOnClick: (Memo) -> Unit = { memo ->
+        val action = FavoritesFragmentDirections.actionNavFavoritesToMemoFragment(memo.memoId)
         this.findNavController().navigate(action)
+    }
+
+    private val memoItemLongClick: (View, Memo) -> Boolean = { _, _ ->
+        true
     }
 
     override fun onDestroy() {

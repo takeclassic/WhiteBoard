@@ -80,7 +80,7 @@ class CustomNoteFragment : Fragment(), PagingMemoUpdateListener {
         recyclerView.addOnScrollListener(onScrollListener)
         binding.customSwipeLayout.setOnRefreshListener(onSwipeRefresh)
 
-        recyclerViewAdaper = MemoListAdapter { memo -> adapterOnClick(memo) }
+        recyclerViewAdaper = MemoListAdapter(adapterOnClick, memoItemLongClick)
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
 
         viewModel.initKeepUpdated()
@@ -97,9 +97,12 @@ class CustomNoteFragment : Fragment(), PagingMemoUpdateListener {
         }
     }
 
-    private fun adapterOnClick(memo: Memo) {
+    private val adapterOnClick: (Memo) -> Unit = { memo ->
         val action = CustomNoteFragmentDirections.actionNavCustomNoteToNavMemo(memo.memoId)
         this.findNavController().navigate(action)
+    }
+    private val memoItemLongClick: (View, Memo) -> Boolean = { _, _ ->
+        true
     }
 
     override fun onDestroyView() {
