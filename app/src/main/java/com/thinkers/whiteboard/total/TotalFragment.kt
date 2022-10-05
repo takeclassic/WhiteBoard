@@ -16,7 +16,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
-import com.thinkers.whiteboard.common.actionmode.ActionModeManager
+import com.thinkers.whiteboard.common.actionmode.ActionModeHandler
 import com.thinkers.whiteboard.common.interfaces.PagingMemoUpdateListener
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentTotalBinding
@@ -37,8 +37,7 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
 
     private var actionMode: ActionMode? = null
     private lateinit var actionModeSetMemoList: MutableList<Memo>
-    private var actionModeSetMemo: Memo? = null
-    private var actionModeSetView: View? = null
+    private lateinit var actionModeSetViewList: MutableList<View>
 
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
         binding.totalSwipeLayout.isRefreshing = false
@@ -75,15 +74,13 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        actionModeSetMemoList = mutableListOf()
-
         recyclerView = binding.totalRecyclerview.recyclerView
 
         binding.totalSwipeLayout.setOnRefreshListener(onSwipeRefresh)
         //TODO: RecyclerView Header
         recyclerView.addOnScrollListener(onScrollListener)
 
-        recyclerViewAdaper = MemoListAdapter(adapterOnClick, memoItemLongClick)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick)
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.initKeepUpdated()
         viewModel.getNextPage(0)
@@ -112,28 +109,69 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
     }
 
     private val onDestroyActionMode: () -> Unit = {
+        for (actionModeSetView in actionModeSetViewList) {
+            Log.i(TAG, "actionModeSetView isSelected: ${actionModeSetView.isSelected}")
+            actionModeSetView.isSelected = false
+            actionModeSetView.background =
+                requireContext().getDrawable(R.drawable.rounder_corner_view)
+        }
         actionMode = null
-        actionModeSetView?.background = requireContext().getDrawable(R.drawable.rounder_corner_view)
-        actionModeSetView = null
+        binding.totalNoteTitle.visibility = View.VISIBLE
     }
 
-    private val adapterOnClick: (Memo) -> Unit  = { memo ->
-        val action = TotalFragmentDirections.actionNavTotalToMemoFragment(memo.memoId)
-        this.findNavController().navigate(action)
+    private val memoItemOnClick: (View, Memo) -> Unit = { view, memo ->
+        when(actionMode) {
+            null -> {
+                val action = TotalFragmentDirections.actionNavTotalToMemoFragment(memo.memoId)
+                this.findNavController().navigate(action)
+            }
+            else -> {
+                view.background =
+                    requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+
+                if (actionModeSetMemoList.contains(memo)) {
+                    actionModeSetMemoList.remove(memo)
+                    actionModeSetViewList.remove(view)
+                    view.isSelected = false
+                    view.background =
+                        requireContext().getDrawable(R.drawable.rounder_corner_view)
+                } else {
+                    actionModeSetMemoList.add(memo)
+                    actionModeSetViewList.add(view)
+                    view.isSelected = true
+                    view.background =
+                        requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                }
+
+                if (actionModeSetMemoList.size > 0) {
+                    actionMode?.setTitle(Html.fromHtml(
+                        "<font color='#f5fffa'>${actionModeSetMemoList.size} </font>",
+                        Html.FROM_HTML_OPTION_USE_CSS_COLORS
+                    ))
+
+                    actionMode?.menu?.findItem(R.id.action_mode_share)?.isVisible = actionModeSetMemoList.size < 2
+                } else {
+                    actionMode?.finish()
+                }
+            }
+        }
     }
 
     private val memoItemLongClick: (View, Memo) -> Boolean = { view, memo ->
         when (actionMode) {
             null -> {
-                actionModeSetMemo = memo
-                actionModeSetView = view
+                binding.totalNoteTitle.visibility = View.GONE
                 view.isSelected = true
                 view.background =
                     requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+
                 actionModeSetMemoList = mutableListOf()
+                actionModeSetViewList = mutableListOf()
                 actionModeSetMemoList.add(memo)
+                actionModeSetViewList.add(view)
+
                 actionMode = activity?.startActionMode(
-                    ActionModeManager(
+                    ActionModeHandler(
                         actionModeSetMemoList,
                         requireActivity(),
                         viewModel,

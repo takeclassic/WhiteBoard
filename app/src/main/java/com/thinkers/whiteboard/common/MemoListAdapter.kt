@@ -1,6 +1,7 @@
 package com.thinkers.whiteboard.common
 
 import android.text.format.DateFormat.getDateFormat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +15,14 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class MemoListAdapter(
-    private val onClick: (Memo) -> Unit,
+    private val onClick: (View, Memo) -> Unit,
     private val onLongClick: (View, Memo) -> Boolean
     ) :
     ListAdapter<Memo, MemoListAdapter.MemoViewHolder>(MemoDiffCallback) {
 
     class MemoViewHolder(
         itemView: View,
-        onClick: (Memo) -> Unit,
+        onClick: (View, Memo) -> Unit,
         onLongClick: (View, Memo) -> Boolean
     ): RecyclerView.ViewHolder(itemView) {
         private val memoText: TextView = itemView.findViewById(R.id.memo_text)
@@ -31,8 +32,8 @@ class MemoListAdapter(
         private var currentMemo: Memo? = null
 
         init {
-            itemView.setOnClickListener {
-                currentMemo?.let(onClick)
+            itemView.setOnClickListener { view ->
+                    onClick(view, currentMemo!!)
             }
             itemView.setOnLongClickListener { view ->
                 onLongClick(view, currentMemo!!)

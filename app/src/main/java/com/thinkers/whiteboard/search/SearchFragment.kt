@@ -7,22 +7,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.SearchView
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
-import com.thinkers.whiteboard.common.MemoPagingAdapter
-import com.thinkers.whiteboard.common.memo.MemoViewModel
-import com.thinkers.whiteboard.common.memo.MemoViewModelFactory
 import com.thinkers.whiteboard.database.entities.Memo
-import com.thinkers.whiteboard.databinding.FragmentMemoBinding
 import com.thinkers.whiteboard.databinding.FragmentSearchBinding
-import com.thinkers.whiteboard.favorites.FavoritesFragmentDirections
-import com.thinkers.whiteboard.total.TotalFragmentDirections
-import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
@@ -64,12 +54,12 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.searchToolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
-        recyclerViewAdaper = MemoListAdapter(adapterOnClick, memoItemLongClick)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick)
         binding.searchRecyclerview.recyclerView.adapter = recyclerViewAdaper
         binding.searchSearchText.setOnQueryTextListener(queryTextListener)
     }
 
-    private val adapterOnClick: (Memo) -> Unit = { memo ->
+    private val memoItemOnClick: (View, Memo) -> Unit = { _, memo ->
         val action = SearchFragmentDirections.actionNavSearchToNavMemo(memo.memoId)
         this.findNavController().navigate(action)
     }

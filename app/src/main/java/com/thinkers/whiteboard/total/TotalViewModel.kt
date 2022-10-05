@@ -3,6 +3,7 @@ package com.thinkers.whiteboard.total
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
+import com.thinkers.whiteboard.common.interfaces.ActionModeDataHelper
 import com.thinkers.whiteboard.common.interfaces.PagingMemoUpdateListener
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
@@ -15,7 +16,7 @@ import kotlinx.coroutines.runBlocking
 class TotalViewModel(
     private val memoRepository: MemoRepository,
     private val memoListUpdateListener: PagingMemoUpdateListener
-) : ViewModel() {
+) : ViewModel(), ActionModeDataHelper {
     val allMemos = memoRepository.allMemos.asLiveData()
 
     val pagingMemos = memoRepository.getAllPagingMemos().cachedIn(viewModelScope).asLiveData().distinctUntilChanged()
@@ -70,6 +71,20 @@ class TotalViewModel(
                 _memoList[memoMap[memoToUpdate.memoId]!!] = memoToUpdate
             }
             memoListUpdateListener.onMemoListUpdated(memoList)
+        }
+    }
+
+    override fun removeItems(memoList: List<Memo>) {
+        viewModelScope.launch(Dispatchers.IO) {
+            for (memo in memoList) {
+                memoRepository.deleteMemo(memo)
+            }
+        }
+    }
+
+    override fun moveItems(memoList: List<Memo>) {
+        viewModelScope.launch(Dispatchers.IO) {
+
         }
     }
 

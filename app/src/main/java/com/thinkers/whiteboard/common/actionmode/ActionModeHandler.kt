@@ -2,6 +2,7 @@ package com.thinkers.whiteboard.common.actionmode
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
 import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,33 +11,54 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.ViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.common.interfaces.ActionModeDataHelper
 import com.thinkers.whiteboard.database.entities.Memo
 
-class ActionModeManager(
+class ActionModeHandler(
     private val actionModeSetMemoList: List<Memo>,
     private val activity: Activity,
-    private val viewModel: ViewModel,
+    private val dataHelper: ActionModeDataHelper,
     private val onDestroyActionMode: () -> Unit
 ): ActionMode.Callback {
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         val inflater: MenuInflater = mode.menuInflater
         inflater.inflate(R.menu.action_mode, menu)
+        Log.i(TAG, "onCreateActionMode")
         return true
     }
 
     override fun onPrepareActionMode(mode: ActionMode, menu: Menu): Boolean {
+        Log.i(TAG, "onPrepareActionMode")
         return false
     }
 
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_mode_share -> {
+                if (actionModeSetMemoList.size != 1) { return false }
+
+                val memoToSend = actionModeSetMemoList[0]
+                val sendIntent: Intent = Intent().apply {
+                    action = Intent.ACTION_SEND
+                    putExtra(Intent.EXTRA_TEXT, memoToSend.text)
+                    type = "text/plain"
+                }
+
+                val shareIntent = Intent.createChooser(sendIntent, null)
+                activity.startActivity(shareIntent)
                 true
             }
             R.id.action_mode_delete -> {
+                //TODO after delete, how to recover the view
+                if (actionModeSetMemoList.isEmpty()) {
+                    Log.i(TAG, "list is empty")
+                    return false
+                }
+                dataHelper.removeItems(actionModeSetMemoList)
                 true
             }
             R.id.action_mode_move -> {
+                //TODO draw a view page to share
                 true
             }
             else -> {
@@ -46,6 +68,11 @@ class ActionModeManager(
     }
 
     override fun onDestroyActionMode(mode: ActionMode) {
+        Log.i(TAG, "onDestroyActionMode")
         onDestroyActionMode()
+    }
+
+    companion object {
+        const val TAG = "ActionModeHandler"
     }
 }

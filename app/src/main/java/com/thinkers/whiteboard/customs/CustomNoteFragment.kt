@@ -97,7 +97,7 @@ class CustomNoteFragment : Fragment(), PagingMemoUpdateListener {
         }
     }
 
-    private val adapterOnClick: (Memo) -> Unit = { memo ->
+    private val adapterOnClick: (View, Memo) -> Unit = { _, memo ->
         val action = CustomNoteFragmentDirections.actionNavCustomNoteToNavMemo(memo.memoId)
         this.findNavController().navigate(action)
     }

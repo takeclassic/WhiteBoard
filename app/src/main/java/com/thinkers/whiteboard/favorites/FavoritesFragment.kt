@@ -84,7 +84,7 @@ class FavoritesFragment : Fragment(), PagingMemoUpdateListener {
         }
     }
 
-    private val adapterOnClick: (Memo) -> Unit = { memo ->
+    private val adapterOnClick: (View, Memo) -> Unit = { _ , memo ->
         val action = FavoritesFragmentDirections.actionNavFavoritesToMemoFragment(memo.memoId)
         this.findNavController().navigate(action)
     }
