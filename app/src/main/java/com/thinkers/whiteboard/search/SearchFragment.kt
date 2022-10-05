@@ -70,7 +70,7 @@ class SearchFragment : Fragment() {
     }
 
     private val adapterOnClick: (Memo) -> Unit = { memo ->
-        val action = FavoritesFragmentDirections.actionNavFavoritesToMemoFragment(memo.memoId)
+        val action = SearchFragmentDirections.actionNavSearchToNavMemo(memo.memoId)
         this.findNavController().navigate(action)
     }
 
