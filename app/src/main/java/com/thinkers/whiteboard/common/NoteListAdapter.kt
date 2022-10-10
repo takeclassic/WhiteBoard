@@ -13,26 +13,41 @@ import com.thinkers.whiteboard.database.entities.Note
 
 class NoteListAdapter(
     private val onDelete: (Note) -> Unit,
-    private val onEdit: (Note) -> Unit
+    private val onEdit: (Note) -> Unit,
+    private val onMove: (Note) -> Unit,
+    private val isActionMode: Boolean
 ) : ListAdapter<Note, NoteListAdapter.NoteViewHolder>(NoteDiffCallback) {
 
     class NoteViewHolder(
         itemView: View,
-        private val onDelete: (Note) -> Unit,
-        private val onEdit: (Note) -> Unit
+        onDelete: (Note) -> Unit,
+        onEdit: (Note) -> Unit,
+        onMove: (Note) -> Unit,
+        isActionMode: Boolean
     ): RecyclerView.ViewHolder(itemView) {
         private val noteName: TextView = itemView.findViewById(R.id.item_note_name)
-        private val editNoteName: ImageView = itemView.findViewById(R.id.item_note_edit)
-        private val deleteNote: ImageView = itemView.findViewById(R.id.item_note_delete)
+        private var editNoteName: ImageView? = null
+        private var deleteNote: ImageView? = null
 
-        private var currentNote: Note? = null
+        var currentNote: Note? = null
 
         init {
-            editNoteName.setOnClickListener {
+            if (!isActionMode) {
+                editNoteName = itemView.findViewById(R.id.item_note_edit)
+                deleteNote = itemView.findViewById(R.id.item_note_delete)
+            }
+
+            editNoteName?.setOnClickListener {
                 currentNote?.let(onEdit)
             }
-            deleteNote.setOnClickListener {
+            deleteNote?.setOnClickListener {
                 currentNote?.let(onDelete)
+            }
+
+            if (isActionMode) {
+                noteName.setOnClickListener {
+                    currentNote?.let(onMove)
+                }
             }
         }
 
@@ -43,10 +58,17 @@ class NoteListAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.item_note, parent, false)
-        return NoteViewHolder(view, onDelete, onEdit)
+        if (isActionMode) {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.item_note_actionmode, parent, false)
+            return NoteViewHolder(view, onDelete, onEdit, onMove, isActionMode)
+        } else {
+            val view = LayoutInflater
+                .from(parent.context)
+                .inflate(R.layout.item_note, parent, false)
+            return NoteViewHolder(view, onDelete, onEdit, onMove, isActionMode)
+        }
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {

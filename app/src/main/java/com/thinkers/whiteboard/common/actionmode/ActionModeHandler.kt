@@ -17,7 +17,8 @@ import com.thinkers.whiteboard.database.entities.Memo
 class ActionModeHandler(
     private val actionModeSetMemoList: List<Memo>,
     private val activity: Activity,
-    private val dataHelper: ActionModeDataHelper,
+    private val onActionModeRemove: () -> Unit,
+    private val onActionModeMove: () -> Boolean,
     private val onDestroyActionMode: () -> Unit
 ): ActionMode.Callback {
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -49,17 +50,11 @@ class ActionModeHandler(
                 true
             }
             R.id.action_mode_delete -> {
-                //TODO after delete, how to recover the view
-                if (actionModeSetMemoList.isEmpty()) {
-                    Log.i(TAG, "list is empty")
-                    return false
-                }
-                dataHelper.removeItems(actionModeSetMemoList)
+                onActionModeRemove()
                 true
             }
             R.id.action_mode_move -> {
-                //TODO draw a view page to share
-                true
+                onActionModeMove()
             }
             else -> {
                 false

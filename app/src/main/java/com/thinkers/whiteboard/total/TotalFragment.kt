@@ -115,8 +115,24 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
             actionModeSetView.background =
                 requireContext().getDrawable(R.drawable.rounder_corner_view)
         }
+        actionMode?.finish()
         actionMode = null
         binding.totalNoteTitle.visibility = View.VISIBLE
+    }
+
+    private val onActionModeMove: () -> Boolean = {
+        onDestroyActionMode()
+        val action = TotalFragmentDirections.actionNavTotalToNavEditNote(
+            true,
+            actionModeSetMemoList.toTypedArray()
+        )
+        findNavController().navigate(action)
+        true
+    }
+
+    private val onActionModeRemove: () -> Unit = {
+        viewModel.removeItems(actionModeSetMemoList)
+        onDestroyActionMode()
     }
 
     private val memoItemOnClick: (View, Memo) -> Unit = { view, memo ->
@@ -174,7 +190,8 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
                     ActionModeHandler(
                         actionModeSetMemoList,
                         requireActivity(),
-                        viewModel,
+                        onActionModeRemove,
+                        onActionModeMove,
                         onDestroyActionMode
                     )
                 )

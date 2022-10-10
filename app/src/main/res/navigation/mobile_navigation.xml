@@ -16,6 +16,11 @@
             app:enterAnim="@anim/bottom_up_appear"
             app:popExitAnim="@anim/bottom_down_disapper"
             />
+        <action
+            android:id="@+id/action_nav_total_to_nav_edit_note"
+            app:destination="@id/nav_edit_note"
+            app:enterAnim="@anim/bottom_up_appear"
+            app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
 
     <fragment
@@ -73,7 +78,17 @@
         android:name="com.thinkers.whiteboard.customs.EditNoteFragment"
         android:label="EditNoteFragment"
         tools:layout="@layout/fragment_edit_note"
-        />
+        >
+        <argument
+            android:name="isActionMode"
+            app:argType="boolean" />
+        <argument
+            android:name="memoList"
+            app:argType="com.thinkers.whiteboard.database.entities.Memo[]"
+            app:nullable="true"
+            android:defaultValue="@null"
+            />
+    </fragment>
     <fragment
         android:id="@+id/nav_search"
         android:name="com.thinkers.whiteboard.search.SearchFragment"

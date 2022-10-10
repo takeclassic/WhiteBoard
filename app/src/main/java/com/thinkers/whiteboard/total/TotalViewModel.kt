@@ -74,11 +74,13 @@ class TotalViewModel(
         }
     }
 
-    override fun removeItems(memoList: List<Memo>) {
+    override fun removeItems(memoListToDelete: List<Memo>) {
         viewModelScope.launch(Dispatchers.IO) {
-            for (memo in memoList) {
+            for (memo in memoListToDelete) {
                 memoRepository.deleteMemo(memo)
+                _memoList.removeIf { it.memoId == memo.memoId }
             }
+            memoListUpdateListener.onMemoListUpdated(memoList)
         }
     }
 

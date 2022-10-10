@@ -81,7 +81,8 @@ class MainActivity : AppCompatActivity() {
                     .setPopExitAnim(R.anim.bottom_down_disapper)
                     .build()
 
-                navController.navigate(R.id.nav_edit_note, null, navOptions)
+                val args = bundleOf("isActionMode" to false)
+                navController.navigate(R.id.nav_edit_note, args, navOptions)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
