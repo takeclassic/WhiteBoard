@@ -26,15 +26,11 @@ class SearchFragment : Fragment() {
         }
 
         override fun onQueryTextChange(p0: String?): Boolean {
-            if (p0 == null) {
+            if (p0.isNullOrEmpty()) {
                 return false
             }
             Log.i(TAG, "onQueryTextChange word: $p0")
-            viewModel.searchMemos(p0).observe(viewLifecycleOwner) { list ->
-                Log.i(TAG, "onQueryTextChange list: $list")
-                recyclerViewAdaper.submitList(list)
-
-            }
+            viewModel.searchMemos(p0)
             return true
         }
     }
@@ -57,6 +53,10 @@ class SearchFragment : Fragment() {
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick)
         binding.searchRecyclerview.recyclerView.adapter = recyclerViewAdaper
         binding.searchSearchText.setOnQueryTextListener(queryTextListener)
+        viewModel.searchResults.observe(viewLifecycleOwner) { list ->
+            Log.i(TAG, "searched list: $list")
+            recyclerViewAdaper.submitList(list)
+        }
     }
 
     private val memoItemOnClick: (View, Memo) -> Unit = { _, memo ->

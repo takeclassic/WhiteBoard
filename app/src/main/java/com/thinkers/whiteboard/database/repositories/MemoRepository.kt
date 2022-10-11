@@ -7,6 +7,8 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.PagingSource
+import com.thinkers.whiteboard.common.DispatcherProvider
+import com.thinkers.whiteboard.common.DispatcherProviderUtil
 import com.thinkers.whiteboard.common.interfaces.MemoItemCache
 import com.thinkers.whiteboard.common.memo.MemoDataChangeInfoSender
 import com.thinkers.whiteboard.database.daos.MemoDao
@@ -18,8 +20,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
+class MemoRepository(
+    private val memoDao: MemoDao,
+    private val dispatchers: DispatcherProvider
+): MemoItemCache {
     var allMemosCount = 0
     var allFavoriteMemosCount = 0
     var customMemosCount = 0
@@ -111,9 +117,10 @@ class MemoRepository(private val memoDao: MemoDao): MemoItemCache {
         }.flow
     }
 
-    fun getSearchingMemos(query: String): Flow<List<Memo>> {
-        Log.i(TAG, "query: $query")
-        return memoDao.getSearchingMemos(query)
+    suspend fun getSearchingMemos(query: String): List<Memo> = withContext(dispatchers.io) {
+        val value = memoDao.getSearchingMemos(query)
+        Log.i(TAG, "query: $query, value: $value")
+        value
     }
 
     fun getPaginatedMemos(pageNum: Int, pageSize: Int): Flow<List<Memo>> {

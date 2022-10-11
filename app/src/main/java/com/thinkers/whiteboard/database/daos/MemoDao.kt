@@ -43,7 +43,7 @@ interface MemoDao {
     @Query("SELECT memo.* FROM " +
             "(SELECT rowid, * FROM memo_fts WHERE memo_fts MATCH :query) AS fts, memo " +
             "WHERE fts.rowid = memo.rowid")
-    fun getSearchingMemos(query: String): Flow<List<Memo>>
+    fun getSearchingMemos(query: String): List<Memo>
 
     @Query("SELECT COUNT(*) FROM memo")
     fun getAllMemosCount(): Flow<Int>
