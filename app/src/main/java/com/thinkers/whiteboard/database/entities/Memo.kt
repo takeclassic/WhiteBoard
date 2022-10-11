@@ -28,6 +28,8 @@ data class Memo(
     var text: String,
     @ColumnInfo(name = "created_time")
     val createdTime: Long,
+    @ColumnInfo(name = "alarm_time")
+    var alarmTime: Long?,
     @ColumnInfo(name = "revised_time")
     var revisedTime: Long?,
     @ColumnInfo(name = "note_name")

@@ -19,15 +19,6 @@
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <ImageButton
-            android:id="@+id/memo_fragment_alarm_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:background="@null"
-            android:src="@drawable/ic_alarm_on_24"
-            android:layout_marginEnd="24dp"/>
-
-        <ImageButton
             android:id="@+id/memo_fragment_favorite_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,6 +26,15 @@
             android:background="@null"
             android:src="@drawable/ic_appbar_favorites"
             android:layout_marginEnd="24dp" />
+
+        <ImageButton
+            android:id="@+id/memo_fragment_alarm_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="@null"
+            android:src="@drawable/ic_add_alarm_24"
+            android:layout_marginEnd="24dp"/>
     </androidx.appcompat.widget.Toolbar>
 
     <EditText

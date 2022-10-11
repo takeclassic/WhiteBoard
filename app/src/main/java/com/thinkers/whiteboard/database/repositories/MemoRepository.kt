@@ -37,7 +37,7 @@ class MemoRepository(
     val favoritesMemoCount: Flow<Int> = memoDao.getFavoriteMemosCount()
 
     private val _newMemoState = MutableStateFlow<Memo>(
-        Memo(-1, "", 0,0, "")
+        Memo(-1, "", 0,0, 0,"")
     ) // private mutable state flow
     val newMemoState = _newMemoState.asStateFlow()
 

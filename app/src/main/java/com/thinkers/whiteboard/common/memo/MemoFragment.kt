@@ -1,25 +1,30 @@
 package com.thinkers.whiteboard.common.memo
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.DialogInterface
 import android.content.res.ColorStateList
-import android.graphics.Color
-import android.media.Image
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
-import androidx.annotation.ColorInt
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.isSrgb
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.database.entities.Memo
+import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MemoFragment : Fragment() {
 
@@ -28,12 +33,16 @@ class MemoFragment : Fragment() {
 
     private lateinit var viewModel: MemoViewModel
     private lateinit var favoriteButton: ImageButton
+    private lateinit var alarmButton: ImageButton
     private lateinit var memoText: EditText
 
     private var memo: Memo? = null
     private var isFavorite: Boolean = false
+    private var alarmTime: Long? = null
     private var beforeTextChangeEditable: Editable? = null
     private var afterTextChangeEditable: Editable? = null
+
+    private val myCalendar: Calendar = Calendar.getInstance()
 
     private val textWatcher = object: TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -52,6 +61,31 @@ class MemoFragment : Fragment() {
                 afterTextChangeEditable = p0
             }
         }
+    }
+
+    private val datePickListener = DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+        Log.i(TAG, "year: $year, month: $month, dayOfMonth: $dayOfMonth")
+        myCalendar.set(Calendar.YEAR, year)
+        myCalendar.set(Calendar.MONTH, month)
+        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+
+        TimePickerDialog(
+            requireContext(),
+            timePickListener,
+            myCalendar.get(Calendar.HOUR_OF_DAY),
+            myCalendar.get(Calendar.MINUTE),
+            false
+        ).show()
+    }
+
+    private val timePickListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
+        myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
+        myCalendar.set(Calendar.MINUTE, minute)
+        alarmTime = myCalendar.timeInMillis
+
+        changeAlarmIcon(true)
+        val formatter = SimpleDateFormat("yyyy//MM//dd hh:mm:ss.SSS")
+        Log.i(TAG, "timePickListener ${formatter.format(alarmTime)}")
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,6 +116,22 @@ class MemoFragment : Fragment() {
             changeFavoriteIcon(favoriteButton.isSelected)
             isFavorite = favoriteButton.isSelected
         }
+
+        alarmButton = binding.memoFragmentAlarmButton
+        alarmButton.setOnClickListener {
+            if (alarmTime == null) {
+                DatePickerDialog(
+                    requireContext(),
+                    datePickListener,
+                    myCalendar.get(Calendar.YEAR),
+                    myCalendar.get(Calendar.MONTH),
+                    myCalendar.get(Calendar.DAY_OF_MONTH)
+                ).show()
+            } else {
+                showAlarmAlertDialog()
+            }
+        }
+
         memoText = binding.fragmentMemoText
         memoText.addTextChangedListener(textWatcher)
 
@@ -118,8 +168,9 @@ class MemoFragment : Fragment() {
             memoId = 0,
             text = memoText.text.toString(),
             createdTime = System.currentTimeMillis(),
+            alarmTime = alarmTime,
             revisedTime = null,
-            viewModel.getMemoBelongNoteName(),
+            noteName = viewModel.getMemoBelongNoteName(),
             isFavorite = isFavorite
         )
         viewModel.saveMemo(memo)
@@ -131,13 +182,14 @@ class MemoFragment : Fragment() {
             memo?.let {
                 it.text = binding.fragmentMemoText.text.toString()
                 it.isFavorite = isFavorite
+                it.alarmTime = alarmTime
                 viewModel.updateMemo(it)
                 viewModel.setHasUpdate(it)
                 Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
             }
             return
         }
-        viewModel.setHasUpdate(Memo(-1, "", 0,0, ""))
+        viewModel.setHasUpdate(Memo(-1, "", 0,0,0, ""))
     }
 
     private fun showExistMemo(memoId: Int) {
@@ -146,7 +198,13 @@ class MemoFragment : Fragment() {
             memoText.text = Editable.Factory.getInstance().newEditable(it.text)
             favoriteButton.isSelected = it.isFavorite
             isFavorite = it.isFavorite
+            alarmTime = it.alarmTime
             changeFavoriteIcon(it.isFavorite)
+            if (it.alarmTime == null) {
+                changeAlarmIcon(false)
+            } else {
+                changeAlarmIcon(true)
+            }
         }
     }
 
@@ -160,6 +218,16 @@ class MemoFragment : Fragment() {
         }
     }
 
+    private fun changeAlarmIcon(flag: Boolean) {
+        if (flag) {
+            binding.memoFragmentAlarmButton.setImageResource(R.drawable.ic_alarm_on_24)
+            binding.memoFragmentAlarmButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.app_main_color))
+        } else {
+            binding.memoFragmentAlarmButton.setImageResource(R.drawable.ic_add_alarm_24)
+            binding.memoFragmentAlarmButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.default_icon))
+        }
+    }
+
     private fun hasChanges(): Boolean {
         if (!beforeTextChangeEditable.isNullOrBlank()
             && beforeTextChangeEditable != afterTextChangeEditable) {
@@ -168,6 +236,25 @@ class MemoFragment : Fragment() {
             return true
         }
         return false
+    }
+
+    private fun showAlarmAlertDialog() {
+        requireActivity().let {
+            val builder = AlertDialog.Builder(it)
+            builder.apply {
+                setTitle("알림 삭제")
+                setMessage("기존 설정된 알림을 삭제하시겠습니까?")
+                setPositiveButton("삭제",
+                    DialogInterface.OnClickListener { dialog, id ->
+                        alarmTime = null
+                        changeAlarmIcon(false)
+                    })
+                setNegativeButton("취소",
+                    DialogInterface.OnClickListener { dialog, id ->
+                    })
+            }
+            builder.create().show()
+        }
     }
 
     companion object {

@@ -27,7 +27,7 @@ class TotalViewModel(
     val memoList: List<Memo> = _memoList
 
     val memoMap = mutableMapOf<Int, Int>()
-    var memoToUpdate: Memo = Memo(-1, "", 0,0, "")
+    var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
 
     fun invalidateData() {
         try {

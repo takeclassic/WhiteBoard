@@ -27,7 +27,7 @@ class CustomNoteViewModel(
     val memoList: List<Memo> = _memoList
 
     val memoMap = mutableMapOf<Int, Int>()
-    var memoToUpdate: Memo = Memo(-1, "", 0,0, "")
+    var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
 
     fun allPagingCustomNotes(noteName: String): LiveData<PagingData<Memo>> {
         return memoRepository.getCustomPagingMemos(noteName).cachedIn(viewModelScope).asLiveData()
