@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.isSrgb
@@ -38,11 +39,12 @@ class MemoFragment : Fragment() {
 
     private var memo: Memo? = null
     private var isFavorite: Boolean = false
+    private var oldAlarmTime: Long? = null
     private var alarmTime: Long? = null
     private var beforeTextChangeEditable: Editable? = null
     private var afterTextChangeEditable: Editable? = null
 
-    private val myCalendar: Calendar = Calendar.getInstance()
+    private var myCalendar: Calendar = Calendar.getInstance()
 
     private val textWatcher = object: TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
@@ -81,10 +83,18 @@ class MemoFragment : Fragment() {
     private val timePickListener = TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
         myCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay)
         myCalendar.set(Calendar.MINUTE, minute)
+
+        if (System.currentTimeMillis() > myCalendar.timeInMillis) {
+            Toast.makeText(requireContext(), "현재 시간 이후만 알람예약이 가능합니다.", Toast.LENGTH_SHORT).show()
+            showAlarmText(false)
+            return@OnTimeSetListener
+        }
+
         alarmTime = myCalendar.timeInMillis
 
         changeAlarmIcon(true)
-        val formatter = SimpleDateFormat("yyyy//MM//dd hh:mm:ss.SSS")
+        showAlarmText(true)
+        val formatter = SimpleDateFormat("yyyy//MM//dd hh:mm")
         Log.i(TAG, "timePickListener ${formatter.format(alarmTime)}")
     }
 
@@ -120,6 +130,8 @@ class MemoFragment : Fragment() {
         alarmButton = binding.memoFragmentAlarmButton
         alarmButton.setOnClickListener {
             if (alarmTime == null) {
+                myCalendar = Calendar.getInstance()
+
                 DatePickerDialog(
                     requireContext(),
                     datePickListener,
@@ -199,12 +211,14 @@ class MemoFragment : Fragment() {
             favoriteButton.isSelected = it.isFavorite
             isFavorite = it.isFavorite
             alarmTime = it.alarmTime
+            oldAlarmTime = alarmTime
             changeFavoriteIcon(it.isFavorite)
             if (it.alarmTime == null) {
                 changeAlarmIcon(false)
             } else {
                 changeAlarmIcon(true)
             }
+            showAlarmText(true)
         }
     }
 
@@ -234,6 +248,8 @@ class MemoFragment : Fragment() {
             return true
         } else if(memo?.isFavorite != isFavorite) {
             return true
+        } else if (oldAlarmTime != alarmTime) {
+            return true
         }
         return false
     }
@@ -248,12 +264,28 @@ class MemoFragment : Fragment() {
                     DialogInterface.OnClickListener { dialog, id ->
                         alarmTime = null
                         changeAlarmIcon(false)
+                        showAlarmText(false)
                     })
                 setNegativeButton("취소",
                     DialogInterface.OnClickListener { dialog, id ->
                     })
             }
             builder.create().show()
+        }
+    }
+
+    private fun showAlarmText(show:Boolean) {
+        if (alarmTime == null) {
+            binding.memoFragmentAlarmText.visibility = View.GONE
+            return
+        }
+
+        if (show) {
+            val formatter = SimpleDateFormat("yyyy/MM/dd HH:mm")
+            binding.memoFragmentAlarmText.text = formatter.format(alarmTime)
+            binding.memoFragmentAlarmText.visibility = View.VISIBLE
+        } else {
+            binding.memoFragmentAlarmText.visibility = View.GONE
         }
     }
 

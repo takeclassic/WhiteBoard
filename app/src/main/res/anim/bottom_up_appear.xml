@@ -6,7 +6,6 @@
     <translate
         android:fromYDelta="100%p"
         android:toYDelta="0%p"
-        android:duration="300"
-        android:repeatCount = "0"
-        android:fillAfter="true"/>
+        android:duration="400"
+        android:repeatCount = "0" />
 </set>
