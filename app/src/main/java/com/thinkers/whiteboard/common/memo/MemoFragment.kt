@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
+import com.thinkers.whiteboard.common.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
@@ -185,6 +186,7 @@ class MemoFragment : Fragment() {
             noteName = viewModel.getMemoBelongNoteName(),
             isFavorite = isFavorite
         )
+        viewModel.setHasUpdate(Memo(-1, "", 0,0,0, ""), MemoUpdateState.INSERT)
         viewModel.saveMemo(memo)
         Log.i(TAG, "try saveNewMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
     }
@@ -196,12 +198,12 @@ class MemoFragment : Fragment() {
                 it.isFavorite = isFavorite
                 it.alarmTime = alarmTime
                 viewModel.updateMemo(it)
-                viewModel.setHasUpdate(it)
+                viewModel.setHasUpdate(it, MemoUpdateState.UPDATE)
                 Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
             }
             return
         }
-        viewModel.setHasUpdate(Memo(-1, "", 0,0,0, ""))
+        viewModel.setHasUpdate(Memo(-1, "", 0,0,0, ""), MemoUpdateState.NONE)
     }
 
     private fun showExistMemo(memoId: Int) {

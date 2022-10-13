@@ -20,7 +20,7 @@ import com.thinkers.whiteboard.total.TotalFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class FavoritesFragment : Fragment(), PagingMemoUpdateListener {
+class FavoritesFragment : Fragment() {
 
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
@@ -56,7 +56,7 @@ class FavoritesFragment : Fragment(), PagingMemoUpdateListener {
     ): View {
         viewModel = ViewModelProvider(
                 this,
-                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.memoRepository, this)
+                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
             ).get(FavoritesViewModel::class.java)
 
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
@@ -71,7 +71,15 @@ class FavoritesFragment : Fragment(), PagingMemoUpdateListener {
         recyclerViewAdaper = MemoListAdapter(adapterOnClick, memoItemLongClick)
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.initKeepUpdated()
-        viewModel.getNextPage(0)
+        if (viewModel.memoList.isNullOrEmpty()) {
+            viewModel.getNextPage(0)
+        }
+        currentPage = 1
+
+        viewModel.memoListLiveData.observe(viewLifecycleOwner) {
+            Log.i(TAG, "list: ${it.size}")
+            recyclerViewAdaper.submitList(it.toList())
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.FavoriteMemoCount(this).collectLatest {
@@ -98,11 +106,6 @@ class FavoritesFragment : Fragment(), PagingMemoUpdateListener {
         binding.favoritesNoteTextView.visibility = View.VISIBLE
         binding.favoritesRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
-    }
-
-    override fun onMemoListUpdated(memoList: List<Memo>) {
-        Log.i(TAG, "data: $memoList")
-        recyclerViewAdaper.submitList(memoList.toList())
     }
 
     companion object {

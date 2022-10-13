@@ -24,7 +24,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-class CustomNoteFragment : Fragment(), PagingMemoUpdateListener {
+class CustomNoteFragment : Fragment() {
 
     private var _binding: FragmentCustomNoteBinding? = null
     private val binding get() = _binding!!
@@ -54,16 +54,20 @@ class CustomNoteFragment : Fragment(), PagingMemoUpdateListener {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        viewModel = ViewModelProvider(
+            this,
+            CustomNoteViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
+        ).get(CustomNoteViewModel::class.java)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(
-            this,
-            CustomNoteViewModelFactory(WhiteBoardApplication.instance!!.memoRepository, this)
-        ).get(CustomNoteViewModel::class.java)
-
         _binding = FragmentCustomNoteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -75,6 +79,7 @@ class CustomNoteFragment : Fragment(), PagingMemoUpdateListener {
             return
         }
         this.noteName = noteName
+        viewModel.noteName = noteName
         Log.i(TAG, "noteName: $noteName")
         recyclerView = binding.customsRecyclerview.recyclerView
         recyclerView.addOnScrollListener(onScrollListener)
@@ -82,9 +87,16 @@ class CustomNoteFragment : Fragment(), PagingMemoUpdateListener {
 
         recyclerViewAdaper = MemoListAdapter(adapterOnClick, memoItemLongClick)
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
-
+        currentPage = 1
         viewModel.initKeepUpdated()
-        viewModel.getNextPage(0, noteName)
+        if(viewModel.memoList.isNullOrEmpty()) {
+            viewModel.getNextPage(0, noteName)
+        }
+
+        viewModel.memoListLiveData.observe(viewLifecycleOwner) {
+            Log.i(TAG, "list: ${it.size}")
+            recyclerViewAdaper.submitList(it.toList())
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.customNoteMemoCount(this, noteName).collectLatest {
@@ -110,11 +122,6 @@ class CustomNoteFragment : Fragment(), PagingMemoUpdateListener {
         binding.customNoteTextView.visibility = View.VISIBLE
         binding.customsRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
-    }
-
-    override fun onMemoListUpdated(memoList: List<Memo>) {
-        Log.i(FavoritesFragment.TAG, "data: $memoList")
-        recyclerViewAdaper.submitList(memoList.toList())
     }
 
     companion object {

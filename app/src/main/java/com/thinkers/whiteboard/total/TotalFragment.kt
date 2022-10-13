@@ -1,5 +1,6 @@
 package com.thinkers.whiteboard.total
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
@@ -7,6 +8,7 @@ import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -23,7 +25,7 @@ import com.thinkers.whiteboard.databinding.FragmentTotalBinding
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-class TotalFragment : Fragment(), PagingMemoUpdateListener {
+class TotalFragment : Fragment() {
 
     private var _binding: FragmentTotalBinding? = null
     private val binding get() = _binding!!
@@ -46,6 +48,7 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
     private val onScrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
+            Log.i(TAG, "recyclerViewAdaper.itemCount: ${recyclerViewAdaper.itemCount}, currentPage: $currentPage, target: ${currentPage * PAGE_SIZE}")
             if (recyclerViewAdaper.itemCount < totalMemoCount
                 && (recyclerViewAdaper.itemCount == currentPage * PAGE_SIZE
                         || recyclerViewAdaper.itemCount - 1 == currentPage * PAGE_SIZE)
@@ -60,7 +63,7 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(
             this,
-            TotalViewModelFactory(WhiteBoardApplication.instance!!.memoRepository, this)
+            TotalViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
         ).get(TotalViewModel::class.java)
     }
 
@@ -83,7 +86,15 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick)
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.initKeepUpdated()
-        viewModel.getNextPage(0)
+        if (viewModel.memoList.isNullOrEmpty()) {
+            viewModel.getNextPage(0)
+        }
+        currentPage = 1
+
+        viewModel.memoListLiveData.observe(viewLifecycleOwner) {
+            Log.i(TAG, "list: ${it.size}")
+            recyclerViewAdaper.submitList(it.toList())
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
              viewModel.totalMemoCount(this).collectLatest {
@@ -101,11 +112,6 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
         binding.totalNoteEmptyText.visibility = View.VISIBLE
         binding.totalRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
-    }
-
-    override fun onMemoListUpdated(memoList: List<Memo>) {
-        Log.i(TAG, "data: $memoList")
-        recyclerViewAdaper.submitList(memoList.toList())
     }
 
     private val onDestroyActionMode: () -> Unit = {
@@ -131,8 +137,7 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
     }
 
     private val onActionModeRemove: () -> Unit = {
-        viewModel.removeItems(actionModeSetMemoList)
-        onDestroyActionMode()
+        showMemoRemoveAlertDialog()
     }
 
     private val memoItemOnClick: (View, Memo) -> Unit = { view, memo ->
@@ -204,6 +209,25 @@ class TotalFragment : Fragment(), PagingMemoUpdateListener {
             else -> {
                 false
             }
+        }
+    }
+
+    private fun showMemoRemoveAlertDialog() {
+        requireActivity().let {
+            val builder = AlertDialog.Builder(it)
+            builder.apply {
+                setTitle("메모 삭제")
+                setMessage("선택하신 메모들을 삭제하시겠습니까?")
+                setPositiveButton("삭제",
+                    DialogInterface.OnClickListener { dialog, id ->
+                        viewModel.removeItems(actionModeSetMemoList)
+                        onDestroyActionMode()
+                    })
+                setNegativeButton("취소",
+                    DialogInterface.OnClickListener { dialog, id ->
+                    })
+            }
+            builder.create().show()
         }
     }
 

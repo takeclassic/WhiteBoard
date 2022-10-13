@@ -9,6 +9,7 @@ import androidx.paging.PagingData
 import androidx.paging.PagingSource
 import com.thinkers.whiteboard.common.DispatcherProvider
 import com.thinkers.whiteboard.common.DispatcherProviderUtil
+import com.thinkers.whiteboard.common.MemoUpdateState
 import com.thinkers.whiteboard.common.interfaces.MemoItemCache
 import com.thinkers.whiteboard.common.memo.MemoDataChangeInfoSender
 import com.thinkers.whiteboard.database.daos.MemoDao
@@ -36,10 +37,9 @@ class MemoRepository(
     val totalMemoCount: Flow<Int> = memoDao.getAllMemosCount()
     val favoritesMemoCount: Flow<Int> = memoDao.getFavoriteMemosCount()
 
-    private val _newMemoState = MutableStateFlow<Memo>(
-        Memo(-1, "", 0,0, 0,"")
-    ) // private mutable state flow
+    private val _newMemoState = MutableStateFlow<MemoUpdateState>(MemoUpdateState.NONE) // private mutable state flow
     val newMemoState = _newMemoState.asStateFlow()
+    var updatedMemo: Memo = Memo(-1, "", 0,0, 0,"")
 
     private var lastCheckedMemo: Memo? = null
     private var position: Int = 0
@@ -52,8 +52,9 @@ class MemoRepository(
         }
     }
 
-    fun getDataUpdated(updatedMemo: Memo) {
-        _newMemoState.value = updatedMemo
+    fun getDataUpdated(updatedMemo: Memo, state: MemoUpdateState) {
+        this.updatedMemo = updatedMemo
+        _newMemoState.value = state
     }
 
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
@@ -69,7 +70,7 @@ class MemoRepository(
     }
 
     @WorkerThread
-    fun deleteMemo(memo: Memo) {
+    suspend fun deleteMemo(memo: Memo) = withContext(dispatchers.io) {
         memoDao.deleteMemo(memo)
     }
 
@@ -123,20 +124,20 @@ class MemoRepository(
         value
     }
 
-    fun getPaginatedMemos(pageNum: Int, pageSize: Int): Flow<List<Memo>> {
+    fun getPaginatedMemoFlow(pageNum: Int, pageSize: Int): Flow<List<Memo>> {
         return memoDao.getPaginatedMemoFlow(pageNum, pageSize)
     }
 
-    fun getPaginatedMemoList(pageNum: Int, pageSize: Int): List<Memo> {
-        return memoDao.getPaginatedMemos(pageNum, pageSize)
+    suspend fun getPaginatedMemoList(pageNum: Int, pageSize: Int): List<Memo> = withContext(dispatchers.io) {
+        memoDao.getPaginatedMemos(pageNum, pageSize)
     }
 
-    fun getPaginatedFavoriteMemoList(pageNum: Int, pageSize: Int): List<Memo> {
-        return memoDao.getPaginatedFavoriteMemos(pageNum, pageSize)
+    suspend fun getPaginatedFavoriteMemoList(pageNum: Int, pageSize: Int): List<Memo> = withContext(dispatchers.io) {
+        memoDao.getPaginatedFavoriteMemos(pageNum, pageSize)
     }
 
-    fun getPaginatedMemosByNoteName(noteName: String, pageNum: Int, pageSize: Int): List<Memo> {
-        return memoDao.getPaginatedMemosByNoteName(noteName, pageNum, pageSize)
+    suspend fun getPaginatedMemosByNoteName(noteName: String, pageNum: Int, pageSize: Int): List<Memo> = withContext(dispatchers.io) {
+        memoDao.getPaginatedMemosByNoteName(noteName, pageNum, pageSize)
     }
 
     override fun setLastCheckedMemo(memo: Memo, position: Int) {
