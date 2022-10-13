@@ -15,7 +15,7 @@ import kotlinx.coroutines.sync.withLock
 
 class TotalViewModel(
     private val memoRepository: MemoRepository,
-) : ViewModel(), ActionModeDataHelper {
+) : ViewModel() {
     val allMemos = memoRepository.allMemos.asLiveData()
 
     val pagingMemos = memoRepository.getAllPagingMemos().cachedIn(viewModelScope).asLiveData().distinctUntilChanged()
@@ -83,7 +83,7 @@ class TotalViewModel(
         }
     }
 
-    override fun removeItems(memoListToDelete: List<Memo>) {
+    fun removeItems(memoListToDelete: List<Memo>) {
         viewModelScope.launch {
             mutex.withLock {
                 Log.i(TAG, "before delete: ${memoList.size}")
@@ -91,16 +91,11 @@ class TotalViewModel(
                     Log.i(TAG, "delete memo: $memo")
                     memoRepository.deleteMemo(memo)
                     _memoList.removeIf { it.memoId == memo.memoId }
+                    memoMap.remove(memo.memoId)
                 }
                 Log.i(TAG, "after delete: ${memoList.size}")
                 _memoListLiveData.value = memoList
             }
-        }
-    }
-
-    override fun moveItems(memoList: List<Memo>) {
-        viewModelScope.launch(Dispatchers.IO) {
-
         }
     }
 

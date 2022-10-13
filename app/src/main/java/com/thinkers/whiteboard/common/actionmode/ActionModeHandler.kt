@@ -7,11 +7,8 @@ import android.view.ActionMode
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.ViewModel
-import com.google.android.material.snackbar.Snackbar
+
 import com.thinkers.whiteboard.R
-import com.thinkers.whiteboard.common.interfaces.ActionModeDataHelper
 import com.thinkers.whiteboard.database.entities.Memo
 
 class ActionModeHandler(

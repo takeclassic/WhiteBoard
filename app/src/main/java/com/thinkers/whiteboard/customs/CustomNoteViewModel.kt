@@ -81,6 +81,22 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
         }
     }
 
+    fun removeItems(memoListToDelete: List<Memo>) {
+        viewModelScope.launch {
+            mutex.withLock {
+                Log.i(TAG, "before delete: ${memoList.size}")
+                for (memo in memoListToDelete) {
+                    Log.i(TAG, "delete memo: $memo")
+                    memoRepository.deleteMemo(memo)
+                    _memoList.removeIf { it.memoId == memo.memoId }
+                    memoMap.remove(memo.memoId)
+                }
+                Log.i(TAG, "after delete: ${memoList.size}")
+                _memoListLiveData.value = memoList
+            }
+        }
+    }
+
     companion object {
         const val TAG = "CustomNoteViewModel"
     }

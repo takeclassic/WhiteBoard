@@ -44,7 +44,7 @@ class TotalFragment : Fragment() {
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
         binding.totalSwipeLayout.isRefreshing = false
     }
-    //TODO: RecyclerView Header
+
     private val onScrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
