@@ -1,13 +1,10 @@
 package com.thinkers.whiteboard
 
-import android.content.Context
-import android.graphics.Canvas
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
-import android.graphics.Rect
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
@@ -18,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
-import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
@@ -26,7 +22,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 import com.thinkers.whiteboard.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
@@ -60,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                 menuItem.setCheckable(true)
                 menuItemCache = menuItem
 
-                val bundle = bundleOf("noteName" to menuItem.title)
+                val bundle = bundleOf("noteName" to menuItem.title.toString())
                 navController.navigate(R.id.nav_custom_note, bundle)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
@@ -184,6 +179,10 @@ class MainActivity : AppCompatActivity() {
                             val wrapDrawable = DrawableCompat.wrap(normalDrawable)
                             DrawableCompat.setTint(wrapDrawable, note.noteColor)
                             this.setIcon(wrapDrawable)
+
+                            val s = SpannableString(note.noteName)
+                            s.setSpan(ForegroundColorSpan(Color.BLACK), 0, s.length, 0)
+                            this.title = s
                         }
                 }
                 navController = findNavController(R.id.nav_host_fragment_content_main)

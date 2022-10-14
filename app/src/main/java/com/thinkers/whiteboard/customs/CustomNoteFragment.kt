@@ -159,7 +159,7 @@ class CustomNoteFragment : Fragment() {
     private val memoItemLongClick: (View, Memo) -> Boolean = { view, memo ->
         when (actionMode) {
             null -> {
-                //binding.totalNoteTitle.visibility = View.GONE
+                binding.customToolBar.noteToolbarCollapsingLayout.visibility = View.GONE
                 view.isSelected = true
                 view.background =
                     requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
@@ -199,7 +199,7 @@ class CustomNoteFragment : Fragment() {
         }
         actionMode?.finish()
         actionMode = null
-        //binding.customNoteTextView.visibility = View.VISIBLE
+        binding.customToolBar.noteToolbarCollapsingLayout.visibility = View.VISIBLE
     }
 
     private val onActionModeMove: () -> Boolean = {
