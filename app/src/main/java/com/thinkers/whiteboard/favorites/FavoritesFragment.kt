@@ -79,7 +79,7 @@ class FavoritesFragment : Fragment() {
         binding.favoritesSwipeLayout.setOnRefreshListener(onSwipeRefresh)
         recyclerView.addOnScrollListener(onScrollListener)
 
-        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.initKeepUpdated()
         if (viewModel.memoList.isNullOrEmpty()) {
@@ -174,6 +174,9 @@ class FavoritesFragment : Fragment() {
                 false
             }
         }
+    }
+
+    private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
     }
 
     private val onDestroyActionMode: () -> Unit = {

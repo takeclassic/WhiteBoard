@@ -16,14 +16,15 @@ import java.util.*
 
 class MemoListAdapter(
     private val onClick: (View, Memo) -> Unit,
-    private val onLongClick: (View, Memo) -> Boolean
+    private val onLongClick: (View, Memo) -> Boolean,
+    private val onBind: (View, Memo) -> Unit
     ) :
     ListAdapter<Memo, MemoListAdapter.MemoViewHolder>(MemoDiffCallback) {
-
-    class MemoViewHolder(
-        itemView: View,
-        onClick: (View, Memo) -> Unit,
-        onLongClick: (View, Memo) -> Boolean
+    inner class MemoViewHolder(
+        private val itemView: View,
+        private val onClick: (View, Memo) -> Unit,
+        private val onLongClick: (View, Memo) -> Boolean,
+        private val onBind: (View, Memo) -> Unit
     ): RecyclerView.ViewHolder(itemView) {
         private val memoText: TextView = itemView.findViewById(R.id.memo_text)
         private val memoNoteName: TextView = itemView.findViewById(R.id.memo_note_name)
@@ -31,20 +32,20 @@ class MemoListAdapter(
 
         private var currentMemo: Memo? = null
 
-        init {
-            itemView.setOnClickListener { view ->
-                    onClick(view, currentMemo!!)
-            }
-            itemView.setOnLongClickListener { view ->
-                onLongClick(view, currentMemo!!)
-            }
-        }
-
         fun bind(memo: Memo) {
             currentMemo = memo
             memoText.text = memo.text
             memoNoteName.text = memo.noteName
             memoDate.text = getDateFormat(memo.createdTime)
+
+            onBind(itemView, memo)
+
+            itemView.setOnClickListener { view ->
+                onClick(view, currentMemo!!)
+            }
+            itemView.setOnLongClickListener { view ->
+                onLongClick(view, currentMemo!!)
+            }
         }
 
         private fun getDateFormat(timeInmillis: Long): String {
@@ -59,7 +60,7 @@ class MemoListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_memo, parent, false)
-        return MemoViewHolder(view, onClick, onLongClick)
+        return MemoViewHolder(view, onClick, onLongClick, onBind)
     }
 
     override fun onBindViewHolder(holder: MemoViewHolder, position: Int) {

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -43,8 +44,8 @@ class CustomNoteFragment : Fragment() {
     private var noteName: String = ""
 
     private var actionMode: ActionMode? = null
-    private lateinit var actionModeSetMemoList: MutableList<Memo>
-    private lateinit var actionModeSetViewList: MutableList<View>
+    private var actionModeSetMemoList = mutableListOf<Memo>()
+    private var actionModeSetViewList = mutableListOf<View>()
 
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
         binding.customSwipeLayout.isRefreshing = false
@@ -94,7 +95,7 @@ class CustomNoteFragment : Fragment() {
         recyclerView.addOnScrollListener(onScrollListener)
         binding.customSwipeLayout.setOnRefreshListener(onSwipeRefresh)
 
-        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
         currentPage = 1
         viewModel.initKeepUpdated()
@@ -186,6 +187,16 @@ class CustomNoteFragment : Fragment() {
             }
             else -> {
                 false
+            }
+        }
+    }
+
+    private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
+        if (!actionModeSetMemoList.isNullOrEmpty()) {
+            if (actionModeSetMemoList.contains(memo)) {
+                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.colored_rounder_corner_view)
+            } else {
+                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.rounder_corner_view)
             }
         }
     }

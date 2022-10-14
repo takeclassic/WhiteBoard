@@ -83,7 +83,7 @@ class TotalFragment : Fragment() {
         //TODO: RecyclerView Header
         recyclerView.addOnScrollListener(onScrollListener)
 
-        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.initKeepUpdated()
         if (viewModel.memoList.isNullOrEmpty()) {
@@ -210,6 +210,9 @@ class TotalFragment : Fragment() {
                 false
             }
         }
+    }
+
+    private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
     }
 
     private fun showMemoRemoveAlertDialog() {

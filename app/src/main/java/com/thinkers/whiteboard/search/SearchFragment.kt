@@ -8,7 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
+import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.database.entities.Memo
@@ -54,7 +56,7 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.searchToolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
-        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
         binding.searchRecyclerview.recyclerView.adapter = recyclerViewAdaper
         binding.searchSearchText.setOnQueryTextListener(queryTextListener)
         viewModel.searchResults.observe(viewLifecycleOwner) { list ->
@@ -70,6 +72,9 @@ class SearchFragment : Fragment() {
 
     private val memoItemLongClick: (View, Memo) -> Boolean = { _, _ ->
         true
+    }
+
+    private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
     }
 
     override fun onDestroy() {
