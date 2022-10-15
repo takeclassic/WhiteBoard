@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -49,8 +50,6 @@ class CustomNoteFragment : Fragment() {
     private var actionMode: ActionMode? = null
     private var actionModeSetMemoList = mutableListOf<Memo>()
     private var actionModeSetViewList = mutableListOf<View>()
-    private var job: Job? = null
-    private val mutex = Mutex()
 
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
         binding.customSwipeLayout.isRefreshing = false
@@ -94,6 +93,8 @@ class CustomNoteFragment : Fragment() {
             return
         }
         this.noteName = noteName
+        binding.customToolBar.noteToolbarCollapsingLayout.setExpandedTitleMargin(50, 0, 0, 60)
+        binding.customToolBar.noteToolbarCollapsingLayout.title = noteName
         viewModel.noteName = noteName
         Log.i(TAG, "noteName: $noteName")
         recyclerView = binding.customsRecyclerview.recyclerView
@@ -115,11 +116,13 @@ class CustomNoteFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.customNoteMemoCount(this, noteName).collectLatest {
+                Log.i(TAG, "customMemoCount: $it")
                 memoCount = it
                 if (memoCount > 0) {
                     binding.customNoteTextView.visibility = View.GONE
+                } else {
+                    binding.customNoteTextView.visibility = View.VISIBLE
                 }
-                Log.i(TAG, "customMemoCount: $memoCount")
             }
         }
     }

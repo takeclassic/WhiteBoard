@@ -40,8 +40,8 @@ class FavoritesFragment : Fragment() {
     private var currentPage: Int = 1
 
     private var actionMode: ActionMode? = null
-    private lateinit var actionModeSetMemoList: MutableList<Memo>
-    private lateinit var actionModeSetViewList: MutableList<View>
+    private var actionModeSetMemoList = mutableListOf<Memo>()
+    private var actionModeSetViewList = mutableListOf<View>()
 
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
         binding.favoritesSwipeLayout.isRefreshing = false
@@ -75,6 +75,9 @@ class FavoritesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.favoritesToolBar.noteToolbarCollapsingLayout.setExpandedTitleMargin(50, 0, 0, 60)
+        binding.favoritesToolBar.noteToolbarCollapsingLayout.title = "즐겨찾기"
+
         recyclerView = binding.favoritesRecyclerview.recyclerView
         binding.favoritesSwipeLayout.setOnRefreshListener(onSwipeRefresh)
         recyclerView.addOnScrollListener(onScrollListener)
@@ -97,6 +100,8 @@ class FavoritesFragment : Fragment() {
                 favoritesMemoCount = it
                 if (favoritesMemoCount > 0) {
                     binding.favoritesNoteTextView.visibility = View.GONE
+                } else {
+                    binding.favoritesNoteTextView.visibility = View.VISIBLE
                 }
                 Log.i(TAG, "favoritesMemoCount: $favoritesMemoCount")
             }
@@ -116,13 +121,11 @@ class FavoritesFragment : Fragment() {
                 if (actionModeSetMemoList.contains(memo)) {
                     actionModeSetMemoList.remove(memo)
                     actionModeSetViewList.remove(view)
-                    view.isSelected = false
                     view.background =
                         requireContext().getDrawable(R.drawable.rounder_corner_view)
                 } else {
                     actionModeSetMemoList.add(memo)
                     actionModeSetViewList.add(view)
-                    view.isSelected = true
                     view.background =
                         requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
                 }
@@ -145,8 +148,7 @@ class FavoritesFragment : Fragment() {
     private val memoItemLongClick: (View, Memo) -> Boolean = { view, memo ->
         when (actionMode) {
             null -> {
-                //binding.totalNoteTitle.visibility = View.GONE
-                view.isSelected = true
+                binding.favoritesToolBar.noteToolbarCollapsingLayout.visibility = View.GONE
                 view.background =
                     requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
 
@@ -177,6 +179,12 @@ class FavoritesFragment : Fragment() {
     }
 
     private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
+        if (actionModeSetMemoList.contains(memo)) {
+            Log.i(TAG, "onMemoItemBind:${memo.text}")
+            view.background = requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+        } else {
+            view.background = requireContext().getDrawable(R.drawable.rounder_corner_view)
+        }
     }
 
     private val onDestroyActionMode: () -> Unit = {
@@ -186,9 +194,11 @@ class FavoritesFragment : Fragment() {
             actionModeSetView.background =
                 requireContext().getDrawable(R.drawable.rounder_corner_view)
         }
+        actionModeSetMemoList = mutableListOf()
+        actionModeSetViewList = mutableListOf()
         actionMode?.finish()
         actionMode = null
-        //binding.customNoteTextView.visibility = View.VISIBLE
+        binding.favoritesToolBar.noteToolbarCollapsingLayout.visibility = View.VISIBLE
     }
 
     private val onActionModeMove: () -> Boolean = {

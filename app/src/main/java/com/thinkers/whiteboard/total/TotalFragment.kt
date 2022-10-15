@@ -20,6 +20,7 @@ import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.common.actionmode.ActionModeHandler
 import com.thinkers.whiteboard.common.interfaces.PagingMemoUpdateListener
+import com.thinkers.whiteboard.customs.CustomNoteFragment
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentTotalBinding
 import kotlinx.coroutines.flow.*
@@ -38,8 +39,8 @@ class TotalFragment : Fragment() {
     private var currentPage: Int = 1
 
     private var actionMode: ActionMode? = null
-    private lateinit var actionModeSetMemoList: MutableList<Memo>
-    private lateinit var actionModeSetViewList: MutableList<View>
+    private var actionModeSetMemoList = mutableListOf<Memo>()
+    private var actionModeSetViewList = mutableListOf<View>()
 
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
         binding.totalSwipeLayout.isRefreshing = false
@@ -77,10 +78,12 @@ class TotalFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        binding.totalToolBar.noteToolbarCollapsingLayout.setExpandedTitleMargin(50, 0, 0, 60)
+        binding.totalToolBar.noteToolbarCollapsingLayout.title = "전체메모"
+
         recyclerView = binding.totalRecyclerview.recyclerView
 
         binding.totalSwipeLayout.setOnRefreshListener(onSwipeRefresh)
-        //TODO: RecyclerView Header
         recyclerView.addOnScrollListener(onScrollListener)
 
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
@@ -101,6 +104,8 @@ class TotalFragment : Fragment() {
                  totalMemoCount = it
                  if (totalMemoCount > 0) {
                      binding.totalNoteEmptyText.visibility = View.GONE
+                 } else {
+                     binding.totalNoteEmptyText.visibility = View.VISIBLE
                  }
                  Log.i(TAG, "totalMemoCount: $totalMemoCount")
             }
@@ -116,14 +121,23 @@ class TotalFragment : Fragment() {
 
     private val onDestroyActionMode: () -> Unit = {
         for (actionModeSetView in actionModeSetViewList) {
-            Log.i(TAG, "actionModeSetView isSelected: ${actionModeSetView.isSelected}")
-            actionModeSetView.isSelected = false
             actionModeSetView.background =
                 requireContext().getDrawable(R.drawable.rounder_corner_view)
         }
+        actionModeSetMemoList = mutableListOf()
+        actionModeSetViewList = mutableListOf()
         actionMode?.finish()
         actionMode = null
-        binding.totalNoteTitle.visibility = View.VISIBLE
+        binding.totalToolBar.noteToolbarCollapsingLayout.visibility = View.VISIBLE
+    }
+
+    private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
+        if (actionModeSetMemoList.contains(memo)) {
+            Log.i(TAG, "onMemoItemBind:${memo.text}")
+            view.background = requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+        } else {
+            view.background = requireContext().getDrawable(R.drawable.rounder_corner_view)
+        }
     }
 
     private val onActionModeMove: () -> Boolean = {
@@ -153,13 +167,11 @@ class TotalFragment : Fragment() {
                 if (actionModeSetMemoList.contains(memo)) {
                     actionModeSetMemoList.remove(memo)
                     actionModeSetViewList.remove(view)
-                    view.isSelected = false
                     view.background =
                         requireContext().getDrawable(R.drawable.rounder_corner_view)
                 } else {
                     actionModeSetMemoList.add(memo)
                     actionModeSetViewList.add(view)
-                    view.isSelected = true
                     view.background =
                         requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
                 }
@@ -181,8 +193,7 @@ class TotalFragment : Fragment() {
     private val memoItemLongClick: (View, Memo) -> Boolean = { view, memo ->
         when (actionMode) {
             null -> {
-                binding.totalNoteTitle.visibility = View.GONE
-                view.isSelected = true
+                binding.totalToolBar.noteToolbarCollapsingLayout.visibility = View.GONE
                 view.background =
                     requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
 
@@ -210,9 +221,6 @@ class TotalFragment : Fragment() {
                 false
             }
         }
-    }
-
-    private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
     }
 
     private fun showMemoRemoveAlertDialog() {
