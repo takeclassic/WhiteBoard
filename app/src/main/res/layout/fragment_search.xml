@@ -11,19 +11,22 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/white"
-        android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:contentInsetStartWithNavigation="0dp"
+        app:contentInsetStart="0dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:navigationIcon="@drawable/ic_appbar_back"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
         <SearchView
+            android:paddingLeft="-16dp"
             android:id="@+id/search_search_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:iconifiedByDefault="false"
             android:inputType="textMultiLine"
+            android:queryBackground="@android:color/transparent"
             android:minHeight="48dp"
             android:queryHint="검색어를 입력하세요"
             android:searchIcon="@null" />
