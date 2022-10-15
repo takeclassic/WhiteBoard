@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -26,8 +27,10 @@ import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentCustomNoteBinding
 import com.thinkers.whiteboard.total.TotalFragment
 import com.thinkers.whiteboard.total.TotalFragmentDirections
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 
 class CustomNoteFragment : Fragment() {
@@ -46,6 +49,8 @@ class CustomNoteFragment : Fragment() {
     private var actionMode: ActionMode? = null
     private var actionModeSetMemoList = mutableListOf<Memo>()
     private var actionModeSetViewList = mutableListOf<View>()
+    private var job: Job? = null
+    private val mutex = Mutex()
 
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
         binding.customSwipeLayout.isRefreshing = false
@@ -132,13 +137,11 @@ class CustomNoteFragment : Fragment() {
                 if (actionModeSetMemoList.contains(memo)) {
                     actionModeSetMemoList.remove(memo)
                     actionModeSetViewList.remove(view)
-                    view.isSelected = false
                     view.background =
                         requireContext().getDrawable(R.drawable.rounder_corner_view)
                 } else {
                     actionModeSetMemoList.add(memo)
                     actionModeSetViewList.add(view)
-                    view.isSelected = true
                     view.background =
                         requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
                 }
@@ -161,7 +164,6 @@ class CustomNoteFragment : Fragment() {
         when (actionMode) {
             null -> {
                 binding.customToolBar.noteToolbarCollapsingLayout.visibility = View.GONE
-                view.isSelected = true
                 view.background =
                     requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
 
@@ -191,23 +193,22 @@ class CustomNoteFragment : Fragment() {
         }
     }
 
-    private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
-        if (!actionModeSetMemoList.isNullOrEmpty()) {
-            if (actionModeSetMemoList.contains(memo)) {
-                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.colored_rounder_corner_view)
-            } else {
-                view.background = ContextCompat.getDrawable(requireContext(), R.drawable.rounder_corner_view)
-            }
+    private val onMemoItemBind: (View, Memo) -> Unit = { view, memo ->
+        if (actionModeSetMemoList.contains(memo)) {
+            Log.i(TAG, "onMemoItemBind:${memo.text}")
+            view.background = requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+        } else {
+            view.background = requireContext().getDrawable(R.drawable.rounder_corner_view)
         }
     }
 
     private val onDestroyActionMode: () -> Unit = {
         for (actionModeSetView in actionModeSetViewList) {
-            Log.i(TAG, "actionModeSetView isSelected: ${actionModeSetView.isSelected}")
-            actionModeSetView.isSelected = false
             actionModeSetView.background =
                 requireContext().getDrawable(R.drawable.rounder_corner_view)
         }
+        actionModeSetMemoList = mutableListOf()
+        actionModeSetViewList = mutableListOf()
         actionMode?.finish()
         actionMode = null
         binding.customToolBar.noteToolbarCollapsingLayout.visibility = View.VISIBLE
