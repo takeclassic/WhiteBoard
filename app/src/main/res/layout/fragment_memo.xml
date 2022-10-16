@@ -12,11 +12,10 @@
         android:layout_height="wrap_content"
         android:minHeight="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
+        android:theme="@style/NoteToolBar"
         app:navigationIcon="@drawable/ic_appbar_back"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+        app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
             android:id="@+id/memo_fragment_favorite_button"

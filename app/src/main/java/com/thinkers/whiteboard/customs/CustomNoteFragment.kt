@@ -218,11 +218,11 @@ class CustomNoteFragment : Fragment() {
     }
 
     private val onActionModeMove: () -> Boolean = {
-        onDestroyActionMode()
         val action = CustomNoteFragmentDirections.actionNavCustomNoteToNavEditNote(
             true,
             actionModeSetMemoList.toTypedArray()
         )
+        onDestroyActionMode()
         findNavController().navigate(action)
         true
     }

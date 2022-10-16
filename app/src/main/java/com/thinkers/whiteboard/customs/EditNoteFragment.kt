@@ -86,6 +86,13 @@ class EditNoteFragment : Fragment() {
     }
 
     private fun onMove(note: Note) {
+        if (memoList.isNullOrEmpty() == false) {
+            for (memo in memoList!!) {
+                Log.i(TAG, "memo: ${memo.text}")
+            }
+        } else {
+            Log.i(TAG, "memo list is null")
+        }
         viewModel.moveMemos(note.noteName, memoList!!)
         requireActivity().onBackPressed()
     }

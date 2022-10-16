@@ -75,5 +75,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         android:visibility="visible"
+        android:theme="@style/Theme.WhiteBoard.NavigationView"
         app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

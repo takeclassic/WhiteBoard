@@ -74,6 +74,7 @@ class MemoFragment : Fragment() {
 
         TimePickerDialog(
             requireContext(),
+            R.style.DialogTheme,
             timePickListener,
             myCalendar.get(Calendar.HOUR_OF_DAY),
             myCalendar.get(Calendar.MINUTE),
@@ -135,6 +136,7 @@ class MemoFragment : Fragment() {
 
                 DatePickerDialog(
                     requireContext(),
+                    R.style.DialogTheme,
                     datePickListener,
                     myCalendar.get(Calendar.YEAR),
                     myCalendar.get(Calendar.MONTH),

@@ -39,20 +39,27 @@ class MainActivity : AppCompatActivity() {
 
         when(menuItem.itemId) {
             R.id.nav_total -> {
+                restoreCustomMenuItemColor()
                 viewModel.setMemoBelongNote("내 메모")
                 navController.navigate(R.id.nav_total)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
             R.id.nav_favorites -> {
+                restoreCustomMenuItemColor()
                 navController.navigate(R.id.nav_favorites)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
             R.id.nav_custom_note -> {
+                restoreCustomMenuItemColor()
                 viewModel.setMemoBelongNote(menuItem.title.toString())
                 menuItemCache?.setCheckable(false)
                 menuItem.setCheckable(true)
+                val title = menuItem.title
+                val s = SpannableString(title)
+                s.setSpan(ForegroundColorSpan(resources.getColor(R.color.app_main_color, null)), 0, s.length, 0)
+                menuItem.title = s
                 menuItemCache = menuItem
 
                 val bundle = bundleOf("noteName" to menuItem.title.toString())
@@ -104,6 +111,7 @@ class MainActivity : AppCompatActivity() {
         if (binding.navView.menu.findItem(R.id.nav_favorites).isChecked) {
             return@OnClickListener
         }
+        restoreCustomMenuItemColor()
 
         binding.navView.menu.findItem(R.id.nav_favorites).let {
             menuItemCache?.setCheckable(false)
@@ -181,7 +189,7 @@ class MainActivity : AppCompatActivity() {
                             this.setIcon(wrapDrawable)
 
                             val s = SpannableString(note.noteName)
-                            s.setSpan(ForegroundColorSpan(Color.BLACK), 0, s.length, 0)
+                            s.setSpan(ForegroundColorSpan(resources.getColor(R.color.black, null)), 0, s.length, 0)
                             this.title = s
                         }
                 }
@@ -231,6 +239,15 @@ class MainActivity : AppCompatActivity() {
                     finish()
                 }
             }
+        }
+    }
+
+    private fun restoreCustomMenuItemColor() {
+        menuItemCache?.let {
+            val title = it.title
+            val s = SpannableString(title)
+            s.setSpan(ForegroundColorSpan(resources.getColor(R.color.black, null)), 0, s.length, 0)
+            it.title = s
         }
     }
 

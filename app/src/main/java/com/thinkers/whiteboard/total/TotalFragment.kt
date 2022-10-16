@@ -141,11 +141,11 @@ class TotalFragment : Fragment() {
     }
 
     private val onActionModeMove: () -> Boolean = {
-        onDestroyActionMode()
         val action = TotalFragmentDirections.actionNavTotalToNavEditNote(
             true,
             actionModeSetMemoList.toTypedArray()
         )
+        onDestroyActionMode()
         findNavController().navigate(action)
         true
     }

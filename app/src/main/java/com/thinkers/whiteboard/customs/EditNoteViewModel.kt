@@ -1,5 +1,6 @@
 package com.thinkers.whiteboard.customs
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.entities.Note
@@ -36,10 +37,15 @@ class EditNoteViewModel(
     fun moveMemos(noteName: String, memoList: List<Memo>) {
         viewModelScope.launch(Dispatchers.IO) {
             for (memo in memoList) {
+                Log.i(TAG, "memo to move: ${memo.text}, before: ${memo.noteName}, after: $noteName")
                 memo.noteName = noteName
                 memoRepository.updateMemo(memo)
             }
         }
+    }
+
+    companion object {
+        const val TAG = "EditNoteViewModel"
     }
 }
 

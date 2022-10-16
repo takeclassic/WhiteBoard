@@ -1,25 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.WhiteBoard" parent="Theme.MaterialComponents.DayNight.DarkActionBar">
+    <style name="Theme.WhiteBoard" parent="Theme.MaterialComponents.DayNight">
         <item name="colorPrimary">@color/white</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@color/black</item>
         <item name="android:statusBarColor">@color/default_icon</item>
         <item name="android:windowLightNavigationBar">true</item>
         <item name="android:navigationBarColor">@color/light_grey</item>
-        <item name="colorOnPrimary">@color/black</item>
+        <item name="android:textColorPrimary">@color/black</item>
+        <item name="alertDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:datePickerDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:timePickerDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
-    <style name="NoteToolBar">
+    <style name="NoteToolBar" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <item name="actionModeStyle">@style/ActionMode</item>
         <item name="colorPrimary">@color/transparent</item>
         <item name="colorOnPrimary">@color/black</item>
+        <item name="colorPrimaryDark">@color/black</item>
+        <item name="colorAccent">@color/black</item>
+        <item name="android:datePickerDialogTheme">@style/AlertDialogTheme</item>
+        <item name="android:timePickerDialogTheme">@style/AlertDialogTheme</item>
     </style>
 
     <style name="Theme.WhiteBoard.NoActionBar">
+        <item name="actionModeStyle">@style/ActionMode</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="Theme.WhiteBoard.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.WhiteBoard.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="actionModeStyle">@style/ActionMode</item>
+    </style>
 
-    <style name="Theme.WhiteBoard.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.WhiteBoard.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="actionModeStyle">@style/ActionMode</item>
+    </style>
+
+    <style name="AlertDialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog.Alert">
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="DialogTheme" parent="ThemeOverlay.MaterialComponents.Dialog">
+        <item name="colorPrimary">@color/black</item>
+        <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
+    </style>
+
+    <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="Theme.WhiteBoard.NavigationView" parent="ThemeOverlay.MaterialComponents">
+        <!-- This is the menu item text color. -->
+        <item name="android:textColorPrimary">@color/black</item>
+        <!-- This is the menu header text color. -->
+        <item name="android:textColorSecondary">@color/black</item>
+        <!-- This is the selected color. -->
+        <item name="colorPrimary">@color/app_main_color</item>
+    </style>
 </resources>
