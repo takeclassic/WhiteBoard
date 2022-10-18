@@ -122,7 +122,7 @@ class MemoFragment : Fragment() {
         val toolbar = binding.memoToolbar
         toolbar.setNavigationOnClickListener {
             val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0);
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
             requireActivity().onBackPressed()
         }
         favoriteButton = binding.memoFragmentFavoriteButton

@@ -1,5 +1,6 @@
 package com.thinkers.whiteboard.customs
 
+import android.content.Context
 import android.content.DialogInterface
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -108,6 +110,8 @@ class NewNoteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.newNoteClose.setOnClickListener {
             Log.i(TAG, "clicked close button")
+            val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
             requireActivity().onBackPressed()
         }
 
