@@ -1,22 +1,17 @@
 package com.thinkers.whiteboard.database.repositories
 
-import android.text.Editable
 import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import androidx.paging.PagingSource
 import com.thinkers.whiteboard.common.DispatcherProvider
-import com.thinkers.whiteboard.common.DispatcherProviderUtil
-import com.thinkers.whiteboard.common.MemoUpdateState
+import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.common.interfaces.MemoItemCache
-import com.thinkers.whiteboard.common.memo.MemoDataChangeInfoSender
 import com.thinkers.whiteboard.database.daos.MemoDao
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.pagingsource.DataSourceHolder
 import com.thinkers.whiteboard.database.pagingsource.MemoDataSource
-import com.thinkers.whiteboard.database.pagingsource.NoteAndMemosDataSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -65,7 +60,7 @@ class MemoRepository(
     }
 
     @WorkerThread
-    fun updateMemo(memo: Memo) {
+    suspend fun updateMemo(memo: Memo) = withContext(dispatchers.io) {
         memoDao.updateMemo(memo)
     }
 

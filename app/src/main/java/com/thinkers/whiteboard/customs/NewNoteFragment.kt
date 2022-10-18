@@ -19,9 +19,11 @@ import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.lifecycleScope
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
+import com.thinkers.whiteboard.common.enums.NoteUpdateState
 import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentNewNoteBinding
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class NewNoteFragment : Fragment() {
@@ -87,15 +89,18 @@ class NewNoteFragment : Fragment() {
     private var noteColor: Int = -769226
     private var isNew = true
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(
             this,
             NewNoteViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
         ).get(NewNoteViewModel::class.java)
+    }
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         _binding = FragmentNewNoteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -122,6 +127,33 @@ class NewNoteFragment : Fragment() {
             noteNumber = it.noteNumber
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.saveNoteState.collectLatest { state ->
+                Log.i(TAG, "saveNoteState: $state")
+                when (state) {
+                    NoteUpdateState.SAVE_SUCCESS,
+                    NoteUpdateState.UPDATE_SUCCESS -> {
+                        requireActivity().onBackPressed()
+                    }
+                    NoteUpdateState.SAVE_FAIL -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "이미 같은 이름의 노트가 존재합니다",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    NoteUpdateState.UPDATE_FAIL -> {
+                        Toast.makeText(
+                            requireContext(),
+                            "수정을 원하시면 노트 이름을 변경하세요",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                    else -> {}
+                }
+            }
+        }
+
         binding.newNoteSaveButton.setOnClickListener {
             if (binding.newNoteNoteName.text.isNullOrBlank()) {
                 Toast.makeText(
@@ -137,29 +169,9 @@ class NewNoteFragment : Fragment() {
             Log.i(TAG, "saving note info: $note")
 
             if (isNew) {
-                val res = viewModel.saveNote(note)
-                Log.i(TAG, "save result: $res")
-                if (res == -1L) {
-                    Toast.makeText(
-                        requireContext(),
-                        "이미 같은 이름의 노트가 존재합니다",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    requireActivity().onBackPressed()
-                }
+                viewModel.saveNote(note)
             } else {
-                val res = viewModel.updateNote(note)
-                Log.i(TAG, "update result: $res")
-                if (res == 0) {
-                    Toast.makeText(
-                        requireContext(),
-                        "수정을 원하시면 노트 이름을 변경하세요",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                } else {
-                    requireActivity().onBackPressed()
-                }
+                viewModel.updateNote(note)
             }
         }
     }

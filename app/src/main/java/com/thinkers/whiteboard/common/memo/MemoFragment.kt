@@ -16,14 +16,12 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.isSrgb
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
-import com.thinkers.whiteboard.common.MemoUpdateState
+import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
-import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
 import java.text.SimpleDateFormat
 import java.util.*

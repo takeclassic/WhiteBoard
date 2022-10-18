@@ -29,13 +29,13 @@ class EditNoteViewModel(
     val allMoveableNotes: LiveData<List<Note>> = noteRepository.allNotes.asLiveData()
 
     fun deleteNote(note: Note) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             noteRepository.deleteNote(note)
         }
     }
 
     fun moveMemos(noteName: String, memoList: List<Memo>) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             for (memo in memoList) {
                 Log.i(TAG, "memo to move: ${memo.text}, before: ${memo.noteName}, after: $noteName")
                 memo.noteName = noteName

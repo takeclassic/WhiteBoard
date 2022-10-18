@@ -23,7 +23,12 @@ class WhiteBoardApplication: Application() {
             DispatcherProviderUtil()
         )
     }
-    val noteRepository by lazy { NoteRepository(database.noteDao()) }
+    val noteRepository by lazy {
+        NoteRepository(
+            database.noteDao(),
+            DispatcherProviderUtil()
+        )
+    }
 
     companion object {
         var instance: WhiteBoardApplication? = null

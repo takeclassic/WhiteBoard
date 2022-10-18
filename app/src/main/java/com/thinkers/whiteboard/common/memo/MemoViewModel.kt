@@ -1,12 +1,10 @@
 package com.thinkers.whiteboard.common.memo
 
 import androidx.lifecycle.*
-import com.thinkers.whiteboard.common.MemoUpdateState
+import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {

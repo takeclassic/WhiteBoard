@@ -4,15 +4,10 @@ import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.thinkers.whiteboard.common.MemoUpdateState
-import com.thinkers.whiteboard.common.interfaces.PagingMemoUpdateListener
-import com.thinkers.whiteboard.customs.CustomNoteViewModel
+import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
-import com.thinkers.whiteboard.total.TotalFragment
-import com.thinkers.whiteboard.total.TotalViewModel
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest

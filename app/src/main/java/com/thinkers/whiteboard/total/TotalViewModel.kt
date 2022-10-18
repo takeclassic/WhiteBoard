@@ -3,9 +3,7 @@ package com.thinkers.whiteboard.total
 import android.util.Log
 import androidx.lifecycle.*
 import androidx.paging.cachedIn
-import com.thinkers.whiteboard.common.MemoUpdateState
-import com.thinkers.whiteboard.common.interfaces.ActionModeDataHelper
-import com.thinkers.whiteboard.common.interfaces.PagingMemoUpdateListener
+import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.*
