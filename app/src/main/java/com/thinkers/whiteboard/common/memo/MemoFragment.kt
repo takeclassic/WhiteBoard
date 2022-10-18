@@ -2,6 +2,7 @@ package com.thinkers.whiteboard.common.memo
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.DialogInterface
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -11,6 +12,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
@@ -118,6 +121,8 @@ class MemoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val toolbar = binding.memoToolbar
         toolbar.setNavigationOnClickListener {
+            val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0);
             requireActivity().onBackPressed()
         }
         favoriteButton = binding.memoFragmentFavoriteButton
