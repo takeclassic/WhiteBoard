@@ -151,12 +151,12 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-    fun tintMenuIcon(item: MenuItem, @ColorRes color: Int) {
-        val normalDrawable: Drawable = item.getIcon()
-        val wrapDrawable = DrawableCompat.wrap(normalDrawable)
-        DrawableCompat.setTint(wrapDrawable, color)
-        item.setIcon(wrapDrawable)
-    }
+//    fun tintMenuIcon(item: MenuItem, @ColorRes color: Int) {
+//        val normalDrawable: Drawable = item.getIcon()!!
+//        val wrapDrawable = DrawableCompat.wrap(normalDrawable)
+//        DrawableCompat.setTint(wrapDrawable, color)
+//        item.setIcon(wrapDrawable)
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

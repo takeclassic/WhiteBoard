@@ -18,6 +18,7 @@
         android:text="빈 노트입니다" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/favorites_note_scroll_view"
         android:clipToPadding="false"
         android:fillViewport="true"
         android:layout_height="match_parent"

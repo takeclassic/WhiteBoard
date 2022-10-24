@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".common.memo.MemoFragment">
+    <item android:id="@+id/memo_action_overflow"
+        android:title=""
+        android:icon="@drawable/ic_more_vert_24"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/memo_action_share"
+                android:title="메모 공유"
+                android:icon="@drawable/ic_share"
+                app:showAsAction="withText"/>
+
+            <item
+                android:id="@+id/memo_action_delete"
+                android:title="메모 삭제"
+                android:icon="@drawable/ic_delete_24"
+                app:showAsAction="withText"/>
+
+            <item android:id="@+id/memo_action_move"
+                android:title="노트 변경"
+                android:icon="@drawable/ic_move"
+                app:showAsAction="withText"/>
+        </menu>
+    </item>
+
+
+</menu>

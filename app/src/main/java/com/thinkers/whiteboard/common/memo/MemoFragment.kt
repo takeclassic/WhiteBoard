@@ -9,17 +9,17 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.view.WindowManager
+import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
@@ -125,6 +125,8 @@ class MemoFragment : Fragment() {
             inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
             requireActivity().onBackPressed()
         }
+        toolbar.inflateMenu(R.menu.fragment_memo_options)
+        toolbar.setOnMenuItemClickListener{ onOptionsItemSelected(it) }
         favoriteButton = binding.memoFragmentFavoriteButton
         favoriteButton.setOnClickListener {
             favoriteButton.isSelected = !favoriteButton.isSelected
@@ -178,6 +180,24 @@ class MemoFragment : Fragment() {
         when (memo) {
             null -> saveNewMemo()
             else -> updateExistMemo()
+        }
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId) {
+            R.id.memo_action_share -> {
+                Log.i(TAG, "memo_action_share")
+                return true
+            }
+            R.id.memo_action_delete -> {
+                Log.i(TAG, "memo_action_delete")
+                return true
+            }
+            R.id.memo_action_move -> {
+                Log.i(TAG, "memo_action_move")
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

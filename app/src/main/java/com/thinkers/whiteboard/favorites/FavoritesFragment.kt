@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.ActionMode
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
@@ -20,12 +21,12 @@ import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.common.actionmode.ActionModeHandler
 import com.thinkers.whiteboard.customs.CustomNoteFragment
-import com.thinkers.whiteboard.customs.CustomNoteFragmentDirections
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentFavoritesBinding
 import com.thinkers.whiteboard.total.TotalFragment
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
 
 class FavoritesFragment : Fragment() {
 
@@ -60,16 +61,19 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(
+            this,
+            FavoritesViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
+        ).get(FavoritesViewModel::class.java)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(
-                this,
-                FavoritesViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
-            ).get(FavoritesViewModel::class.java)
-
         _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -100,8 +104,10 @@ class FavoritesFragment : Fragment() {
                 favoritesMemoCount = it
                 if (favoritesMemoCount > 0) {
                     binding.favoritesNoteTextView.visibility = View.GONE
+                    binding.favoritesSwipeLayout.isEnabled = true
                 } else {
                     binding.favoritesNoteTextView.visibility = View.VISIBLE
+                    binding.favoritesSwipeLayout.isEnabled = false
                 }
                 Log.i(TAG, "favoritesMemoCount: $favoritesMemoCount")
             }
