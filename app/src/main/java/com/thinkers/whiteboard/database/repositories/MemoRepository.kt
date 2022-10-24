@@ -32,8 +32,8 @@ class MemoRepository(
     val totalMemoCount: Flow<Int> = memoDao.getAllMemosCount()
     val favoritesMemoCount: Flow<Int> = memoDao.getFavoriteMemosCount()
 
-    private val _newMemoState = MutableStateFlow<MemoUpdateState>(MemoUpdateState.NONE) // private mutable state flow
-    val newMemoState = _newMemoState.asStateFlow()
+    private val _newMemoState = MutableSharedFlow<MemoUpdateState>() // private mutable state flow
+    val newMemoState: SharedFlow<MemoUpdateState> = _newMemoState
     var updatedMemo: Memo = Memo(-1, "", 0,0, 0,"")
 
     private var lastCheckedMemo: Memo? = null
@@ -47,15 +47,15 @@ class MemoRepository(
         }
     }
 
-    fun getDataUpdated(updatedMemo: Memo, state: MemoUpdateState) {
-        this.updatedMemo = updatedMemo
-        _newMemoState.value = state
+    suspend fun getDataUpdated(memo: Memo, state: MemoUpdateState) = withContext(dispatchers.default) {
+        updatedMemo = memo
+        _newMemoState.emit(state)
     }
 
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
 
     @WorkerThread
-    fun saveMemo(memo: Memo) {
+    suspend fun saveMemo(memo: Memo) = withContext(dispatchers.io) {
         memoDao.insertMemo(memo)
     }
 

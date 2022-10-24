@@ -71,6 +71,11 @@
             android:name="memoId"
             app:argType="integer"
             android:defaultValue="-1" />
+        <action
+            android:id="@+id/action_nav_memo_to_nav_edit_note"
+            app:destination="@id/nav_edit_note"
+            app:enterAnim="@anim/bottom_up_appear"
+            app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
     <fragment
         android:id="@+id/nav_add_note"

@@ -9,7 +9,9 @@ import kotlinx.coroutines.launch
 
 class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
     fun setHasUpdate(updatedMemo: Memo, state: MemoUpdateState) {
-        memoRepository.getDataUpdated(updatedMemo, state)
+        viewModelScope.launch {
+            memoRepository.getDataUpdated(updatedMemo, state)
+        }
     }
 
     fun getMemo(id: Int): LiveData<Memo> {
@@ -17,20 +19,21 @@ class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
     }
 
     fun saveMemo(memo: Memo) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             memoRepository.saveMemo(memo)
         }
     }
 
     fun updateMemo(memo: Memo) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             memoRepository.updateMemo(memo)
         }
     }
 
     fun deleteMemo(memo: Memo) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             memoRepository.deleteMemo(memo)
+            memoRepository.getDataUpdated(memo, MemoUpdateState.DELETE)
         }
     }
 

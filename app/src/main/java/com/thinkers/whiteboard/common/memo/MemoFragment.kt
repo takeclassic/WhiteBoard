@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
@@ -21,6 +22,7 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
@@ -187,18 +189,44 @@ class MemoFragment : Fragment() {
         return when(item.itemId) {
             R.id.memo_action_share -> {
                 Log.i(TAG, "memo_action_share")
+                shareMemo()
                 return true
             }
             R.id.memo_action_delete -> {
                 Log.i(TAG, "memo_action_delete")
+                memo?.let {
+                    viewModel.deleteMemo(it)
+                    requireActivity().onBackPressed()
+                }
                 return true
             }
             R.id.memo_action_move -> {
                 Log.i(TAG, "memo_action_move")
+                moveMemo()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun shareMemo() {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, memoText.text.toString())
+            type = "text/plain"
+        }
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        requireContext().startActivity(shareIntent)
+    }
+
+    private fun moveMemo() {
+        if (memo == null) {
+            return
+        }
+        val list = mutableListOf<Memo>()
+        list.add(memo!!)
+        val action = MemoFragmentDirections.actionNavMemoToNavEditNote(false, list.toTypedArray())
+        findNavController().navigate(action)
     }
 
     private fun saveNewMemo() {

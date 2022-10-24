@@ -27,6 +27,39 @@ class TotalViewModel(
     val memoMap = mutableMapOf<Int, Int>()
     var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
 
+    private val initJob: Job = viewModelScope.launch {
+        memoRepository.newMemoState.collectLatest { state ->
+            Log.i(TAG, "memo update state: $state, context: ${this.coroutineContext}")
+            memoToUpdate = memoRepository.updatedMemo
+
+            when(state) {
+                MemoUpdateState.INSERT -> {
+                    getNextPage(0)
+                }
+                MemoUpdateState.UPDATE -> {
+                    if (memoMap.containsKey(memoToUpdate.memoId)) {
+                        mutex.withLock {
+                            _memoList[memoMap[memoToUpdate.memoId]!!] = memoToUpdate
+                            _memoListLiveData.value = memoList
+                        }
+                    }
+                }
+                MemoUpdateState.DELETE -> {
+                    if (memoMap.containsKey(memoToUpdate.memoId)) {
+                        mutex.withLock {
+                            Log.i(TAG, "size: ${_memoList.size}")
+                            _memoList.removeAt(memoMap[memoToUpdate.memoId]!!)
+                            memoMap.remove(memoToUpdate.memoId)
+                            _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
+                            _memoListLiveData.value = memoList
+                        }
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
+
     fun invalidateData() {
         try {
             memoRepository.dataSourceHolder.getDataSource().invalidate()
@@ -36,21 +69,7 @@ class TotalViewModel(
     }
 
     fun initKeepUpdated() {
-        viewModelScope.launch {
-            memoRepository.newMemoState.collectLatest { state ->
-                Log.i(TAG, "memo update state: $state")
-                memoToUpdate = memoRepository.updatedMemo
-
-                if (state == MemoUpdateState.INSERT) {
-                    getNextPage(0)
-                } else if (state == MemoUpdateState.UPDATE) {
-                    if (memoMap.containsKey(memoToUpdate.memoId)) {
-                        _memoList[memoMap[memoToUpdate.memoId]!!] = memoToUpdate
-                        _memoListLiveData.value = memoList
-                    }
-                }
-            }
-        }
+        initJob.start()
     }
 
     fun getMemoById(memoId: Int): LiveData<Memo> {
