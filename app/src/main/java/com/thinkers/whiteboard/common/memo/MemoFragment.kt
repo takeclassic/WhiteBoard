@@ -7,6 +7,8 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -22,12 +24,15 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -47,6 +52,7 @@ class MemoFragment : Fragment() {
     private var alarmTime: Long? = null
     private var beforeTextChangeEditable: Editable? = null
     private var afterTextChangeEditable: Editable? = null
+    private var isDeletion: Boolean = false
 
     private var myCalendar: Calendar = Calendar.getInstance()
 
@@ -195,7 +201,9 @@ class MemoFragment : Fragment() {
             R.id.memo_action_delete -> {
                 Log.i(TAG, "memo_action_delete")
                 memo?.let {
+                    viewModel.setHasUpdate(it, MemoUpdateState.DELETE)
                     viewModel.deleteMemo(it)
+                    isDeletion = true
                     requireActivity().onBackPressed()
                 }
                 return true
@@ -255,8 +263,14 @@ class MemoFragment : Fragment() {
                 Log.i(TAG, "try updateExistMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
             }
             return
+        } else {
+            if (!isDeletion) {
+                viewModel.setHasUpdate(
+                    Memo(-1, "", 0,0,0, ""),
+                    MemoUpdateState.NONE
+                )
+            }
         }
-        viewModel.setHasUpdate(Memo(-1, "", 0,0,0, ""), MemoUpdateState.NONE)
     }
 
     private fun showExistMemo(memoId: Int) {
@@ -298,8 +312,7 @@ class MemoFragment : Fragment() {
     }
 
     private fun hasChanges(): Boolean {
-        if (!beforeTextChangeEditable.isNullOrBlank()
-            && beforeTextChangeEditable != afterTextChangeEditable) {
+        if (beforeTextChangeEditable != afterTextChangeEditable) {
             return true
         } else if(memo?.isFavorite != isFavorite) {
             return true

@@ -88,7 +88,7 @@ class FavoritesFragment : Fragment() {
 
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
-        viewModel.initKeepUpdated()
+        viewModel.init()
         if (viewModel.memoList.isNullOrEmpty()) {
             viewModel.getNextPage(0)
         }

@@ -7,7 +7,9 @@ import androidx.paging.cachedIn
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
+import com.thinkers.whiteboard.total.TotalViewModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -28,6 +30,38 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
     val memoMap = mutableMapOf<Int, Int>()
     var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
 
+    fun init() {
+        Log.i(TAG, "state: ${memoRepository.memoState}")
+        if (memoRepository.memoState == MemoUpdateState.NONE) {
+            return
+        }
+        memoToUpdate = memoRepository.updatedMemo
+        viewModelScope.launch {
+            when(memoRepository.memoState) {
+                MemoUpdateState.INSERT -> {
+                    getNextPage(0, noteName)
+                }
+                MemoUpdateState.UPDATE -> {
+                    if (memoMap.containsKey(memoToUpdate.memoId)) {
+                        _memoList[memoMap[memoToUpdate.memoId]!!] = memoToUpdate
+                        _memoListLiveData.value = memoList
+                    }
+                }
+                MemoUpdateState.DELETE -> {
+                    if (memoMap.containsKey(memoToUpdate.memoId)) {
+                        mutex.withLock {
+                            _memoList.removeAt(memoMap[memoToUpdate.memoId]!!)
+                            memoMap.remove(memoToUpdate.memoId)
+                            _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
+                            _memoListLiveData.value = memoList
+                        }
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
+
     fun allPagingCustomNotes(noteName: String): LiveData<PagingData<Memo>> {
         return memoRepository.getCustomPagingMemos(noteName).cachedIn(viewModelScope).asLiveData()
     }
@@ -38,24 +72,6 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
             started = SharingStarted.Lazily,
             initialValue = 0
         )
-    }
-
-    fun initKeepUpdated() {
-        viewModelScope.launch {
-            memoRepository.newMemoState.collectLatest { state ->
-                Log.i(TAG, "memo update state: $state, noteName: $noteName")
-                memoToUpdate = memoRepository.updatedMemo
-
-                if (state == MemoUpdateState.INSERT) {
-                    getNextPage(0, noteName)
-                } else if (state == MemoUpdateState.UPDATE) {
-                    if (memoMap.containsKey(memoToUpdate.memoId)) {
-                        _memoList[memoMap[memoToUpdate.memoId]!!] = memoToUpdate
-                        _memoListLiveData.value = memoList
-                    }
-                }
-            }
-        }
     }
 
     fun getNextPage(pageNumber: Int, noteName: String) {

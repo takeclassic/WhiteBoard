@@ -104,7 +104,7 @@ class CustomNoteFragment : Fragment() {
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
         currentPage = 1
-        viewModel.initKeepUpdated()
+        viewModel.init()
         if(viewModel.memoList.isNullOrEmpty()) {
             viewModel.getNextPage(0, noteName)
         }

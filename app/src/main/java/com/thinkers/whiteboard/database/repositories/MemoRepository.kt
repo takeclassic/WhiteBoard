@@ -7,7 +7,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.thinkers.whiteboard.common.DispatcherProvider
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
-import com.thinkers.whiteboard.common.interfaces.MemoItemCache
 import com.thinkers.whiteboard.database.daos.MemoDao
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.pagingsource.DataSourceHolder
@@ -17,11 +16,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.concurrent.ConcurrentHashMap
 
 class MemoRepository(
     private val memoDao: MemoDao,
     private val dispatchers: DispatcherProvider
-): MemoItemCache {
+) {
     var allMemosCount = 0
     var allFavoriteMemosCount = 0
     var customMemosCount = 0
@@ -32,8 +32,7 @@ class MemoRepository(
     val totalMemoCount: Flow<Int> = memoDao.getAllMemosCount()
     val favoritesMemoCount: Flow<Int> = memoDao.getFavoriteMemosCount()
 
-    private val _newMemoState = MutableSharedFlow<MemoUpdateState>() // private mutable state flow
-    val newMemoState: SharedFlow<MemoUpdateState> = _newMemoState
+    var memoState = MemoUpdateState.NONE
     var updatedMemo: Memo = Memo(-1, "", 0,0, 0,"")
 
     private var lastCheckedMemo: Memo? = null
@@ -47,9 +46,9 @@ class MemoRepository(
         }
     }
 
-    suspend fun getDataUpdated(memo: Memo, state: MemoUpdateState) = withContext(dispatchers.default) {
+    fun getDataUpdated(memo: Memo, state: MemoUpdateState) {
         updatedMemo = memo
-        _newMemoState.emit(state)
+        memoState = state
     }
 
     fun getMemoById(id: Int): Flow<Memo> = memoDao.getMemo(id)
@@ -133,11 +132,6 @@ class MemoRepository(
 
     suspend fun getPaginatedMemosByNoteName(noteName: String, pageNum: Int, pageSize: Int): List<Memo> = withContext(dispatchers.io) {
         memoDao.getPaginatedMemosByNoteName(noteName, pageNum, pageSize)
-    }
-
-    override fun setLastCheckedMemo(memo: Memo, position: Int) {
-        lastCheckedMemo = memo
-        this.position = position
     }
 
     fun getLastCheckedMemoId(): Int {

@@ -5,9 +5,11 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
+import com.thinkers.whiteboard.customs.CustomNoteViewModel
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -30,6 +32,46 @@ class FavoritesViewModel(
     val memoMap = mutableMapOf<Int, Int>()
     var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
 
+    fun init() {
+        Log.i(TAG, "state: ${memoRepository.memoState}")
+        if (memoRepository.memoState == MemoUpdateState.NONE) {
+            return
+        }
+        memoToUpdate = memoRepository.updatedMemo
+        viewModelScope.launch {
+            when(memoRepository.memoState) {
+                MemoUpdateState.INSERT -> {
+                    getNextPage(0)
+                }
+                MemoUpdateState.UPDATE -> {
+                    mutex.withLock {
+                        if (memoMap.containsKey(memoToUpdate.memoId)) {
+                            if (memoToUpdate.isFavorite) {
+                                _memoList[memoMap[memoToUpdate.memoId]!!] = memoToUpdate
+                            } else {
+                                _memoList.removeAt(memoMap[memoToUpdate.memoId]!!)
+                                memoMap.remove(memoToUpdate.memoId)
+                            }
+                        }
+                        _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
+                        _memoListLiveData.value = memoList
+                    }
+                }
+                MemoUpdateState.DELETE -> {
+                    if (memoMap.containsKey(memoToUpdate.memoId)) {
+                        mutex.withLock {
+                            _memoList.removeAt(memoMap[memoToUpdate.memoId]!!)
+                            memoMap.remove(memoToUpdate.memoId)
+                            _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
+                            _memoListLiveData.value = memoList
+                        }
+                    }
+                }
+                else -> {}
+            }
+        }
+    }
+
     fun allPagingFavoriteNotes(): LiveData<PagingData<Memo>> {
         return memoRepository.getFavoritePagingMemos().cachedIn(viewModelScope).asLiveData()
     }
@@ -40,30 +82,6 @@ class FavoritesViewModel(
             started = SharingStarted.Lazily,
             initialValue = 0
         )
-    }
-
-    fun initKeepUpdated() {
-        viewModelScope.launch {
-            memoRepository.newMemoState.collectLatest { state ->
-                Log.i(TAG, "memo update state: $state")
-                memoToUpdate = memoRepository.updatedMemo
-
-                if (state == MemoUpdateState.INSERT) {
-                    getNextPage(0)
-                } else if (state == MemoUpdateState.UPDATE) {
-                    if (memoMap.containsKey(memoToUpdate.memoId)) {
-                        if (memoToUpdate.isFavorite) {
-                            _memoList[memoMap[memoToUpdate.memoId]!!] = memoToUpdate
-                        } else {
-                            _memoList.removeAt(memoMap[memoToUpdate.memoId]!!)
-                            memoMap.remove(memoToUpdate.memoId)
-                        }
-                    }
-                    _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
-                    _memoListLiveData.value = memoList
-                }
-            }
-        }
     }
 
     fun getNextPage(pageNumber: Int) {

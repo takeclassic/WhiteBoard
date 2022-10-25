@@ -27,12 +27,14 @@ class TotalViewModel(
     val memoMap = mutableMapOf<Int, Int>()
     var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
 
-    private val initJob: Job = viewModelScope.launch {
-        memoRepository.newMemoState.collectLatest { state ->
-            Log.i(TAG, "memo update state: $state, context: ${this.coroutineContext}")
-            memoToUpdate = memoRepository.updatedMemo
-
-            when(state) {
+    fun init () {
+        Log.i(TAG, "state: ${memoRepository.memoState}")
+        if (memoRepository.memoState == MemoUpdateState.NONE) {
+            return
+        }
+        memoToUpdate = memoRepository.updatedMemo
+        viewModelScope.launch {
+            when(memoRepository.memoState) {
                 MemoUpdateState.INSERT -> {
                     getNextPage(0)
                 }
@@ -47,7 +49,6 @@ class TotalViewModel(
                 MemoUpdateState.DELETE -> {
                     if (memoMap.containsKey(memoToUpdate.memoId)) {
                         mutex.withLock {
-                            Log.i(TAG, "size: ${_memoList.size}")
                             _memoList.removeAt(memoMap[memoToUpdate.memoId]!!)
                             memoMap.remove(memoToUpdate.memoId)
                             _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
@@ -66,10 +67,6 @@ class TotalViewModel(
         } catch (e: NullPointerException) {
             Log.w(TAG, "${e.stackTrace}")
         }
-    }
-
-    fun initKeepUpdated() {
-        initJob.start()
     }
 
     fun getMemoById(memoId: Int): LiveData<Memo> {
@@ -117,7 +114,7 @@ class TotalViewModel(
     }
 
     companion object {
-        val TAG = "TotalViewModel"
+        const val TAG = "TotalViewModel"
     }
 }
 
