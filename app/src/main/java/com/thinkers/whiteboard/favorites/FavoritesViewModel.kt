@@ -112,14 +112,14 @@ class FavoritesViewModel(
     fun removeItems(memoListToDelete: List<Memo>) {
         viewModelScope.launch {
             mutex.withLock {
-                Log.i(TAG, "before delete: ${memoList.size}")
                 for (memo in memoListToDelete) {
                     Log.i(TAG, "delete memo: $memo")
                     memoRepository.deleteMemo(memo)
                     _memoList.removeIf { it.memoId == memo.memoId }
                     memoMap.remove(memo.memoId)
                 }
-                Log.i(TAG, "after delete: ${memoList.size}")
+                _memoList.sortByDescending { it.memoId }
+                _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
                 _memoListLiveData.value = memoList
             }
         }

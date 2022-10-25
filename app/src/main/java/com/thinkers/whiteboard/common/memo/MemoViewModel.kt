@@ -1,5 +1,6 @@
 package com.thinkers.whiteboard.common.memo
 
+import android.util.Log
 import androidx.lifecycle.*
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
@@ -9,6 +10,7 @@ import kotlinx.coroutines.launch
 
 class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
     fun setHasUpdate(updatedMemo: Memo, state: MemoUpdateState) {
+        Log.i("KKKKK", "memo fragment, state: $state")
         memoRepository.getDataUpdated(updatedMemo, state)
     }
 

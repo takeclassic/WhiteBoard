@@ -312,6 +312,10 @@ class MemoFragment : Fragment() {
     }
 
     private fun hasChanges(): Boolean {
+        if (isDeletion) {
+            return false
+        }
+
         if (beforeTextChangeEditable != afterTextChangeEditable) {
             return true
         } else if(memo?.isFavorite != isFavorite) {
