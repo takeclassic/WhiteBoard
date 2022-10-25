@@ -28,7 +28,7 @@ class TotalViewModel(
     var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
 
     fun init () {
-        Log.i("KKKKK", "viewmodel, state: ${memoRepository.memoState}")
+        Log.i(TAG, "viewmodel, state: ${memoRepository.memoState}")
         Log.i(TAG, "state: ${memoRepository.memoState}")
         if (memoRepository.memoState == MemoUpdateState.NONE) {
             return

@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 
 class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
     fun setHasUpdate(updatedMemo: Memo, state: MemoUpdateState) {
-        Log.i("KKKKK", "memo fragment, state: $state")
+        Log.i(TAG, "memo fragment, state: $state")
         memoRepository.getDataUpdated(updatedMemo, state)
     }
 
@@ -38,6 +38,10 @@ class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
 
     fun getMemoBelongNoteName(): String {
         return memoRepository.noteName
+    }
+
+    companion object {
+        const val TAG = "MemoViewModel"
     }
 }
 

@@ -206,7 +206,7 @@ class MemoFragment : Fragment() {
                     isDeletion = true
                     requireActivity().onBackPressed()
                 }
-                return true
+                return false
             }
             R.id.memo_action_move -> {
                 Log.i(TAG, "memo_action_move")

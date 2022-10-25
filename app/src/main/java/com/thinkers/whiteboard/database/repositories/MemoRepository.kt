@@ -47,7 +47,7 @@ class MemoRepository(
     }
 
     fun getDataUpdated(memo: Memo, state: MemoUpdateState) {
-        Log.i("KKKKK", "repo, state: $state")
+        Log.i(TAG, "repo, state: $state")
         updatedMemo = memo
         memoState = state
     }
