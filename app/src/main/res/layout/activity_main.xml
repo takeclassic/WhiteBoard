@@ -56,6 +56,19 @@
             app:iconGravity="textEnd" />
 
         <Button
+            android:id="@+id/appbar_total_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:textSize="0sp"
+            app:cornerRadius="0dp"
+            android:visibility="gone"
+            app:icon="@drawable/ic_note_24"
+            app:iconGravity="textEnd" />
+
+        <Button
             android:id="@+id/appbar_write_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -74,7 +87,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
-        android:visibility="visible"
+        android:visibility="gone"
         android:theme="@style/Theme.WhiteBoard.NavigationView"
         app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>

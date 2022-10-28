@@ -5,6 +5,11 @@
         <item name="colorPrimary">@color/white</item>
         <item name="colorPrimaryVariant">@color/black</item>
         <item name="colorOnPrimary">@color/black</item>
+
+        <item name="colorSecondary">@color/app_main_color</item>
+        <item name="colorSecondaryVariant">@color/app_main_color</item>
+        <item name="colorOnSecondary">@color/black</item>
+
         <item name="android:statusBarColor">@color/default_icon</item>
         <item name="android:windowLightNavigationBar">true</item>
         <item name="android:navigationBarColor">@color/light_grey</item>

@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var viewModel: MainActivityViewModel
     private var time: Long = 0
+    private var isFavorite: Boolean = false
 
     private var menuItemCache: MenuItem? = null
     private val navigationViewListener = NavigationView.OnNavigationItemSelectedListener { menuItem ->
@@ -40,6 +41,8 @@ class MainActivity : AppCompatActivity() {
         when(menuItem.itemId) {
             R.id.nav_total -> {
                 restoreCustomMenuItemColor()
+                binding.appbarFavoritesButton.visibility = View.VISIBLE
+                binding.appbarTotalButton.visibility = View.GONE
                 viewModel.setMemoBelongNote("내 메모")
                 navController.navigate(R.id.nav_total)
                 binding.drawerLayout.closeDrawer(Gravity.START)
@@ -47,12 +50,16 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.nav_favorites -> {
                 restoreCustomMenuItemColor()
+                binding.appbarFavoritesButton.visibility = View.GONE
+                binding.appbarTotalButton.visibility = View.VISIBLE
                 navController.navigate(R.id.nav_favorites)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
             R.id.nav_custom_note -> {
                 restoreCustomMenuItemColor()
+                binding.appbarFavoritesButton.visibility = View.VISIBLE
+                binding.appbarTotalButton.visibility = View.GONE
                 viewModel.setMemoBelongNote(menuItem.title.toString())
                 menuItemCache?.setCheckable(false)
                 menuItem.setCheckable(true)
@@ -108,11 +115,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val appBarFavoriteButtonClickListener = View.OnClickListener {
-        if (binding.navView.menu.findItem(R.id.nav_favorites).isChecked) {
-            return@OnClickListener
-        }
         restoreCustomMenuItemColor()
 
+        binding.appbarFavoritesButton.visibility = View.GONE
+        binding.appbarTotalButton.visibility = View.VISIBLE
         binding.navView.menu.findItem(R.id.nav_favorites).let {
             menuItemCache?.setCheckable(false)
             it.setCheckable(true)
@@ -123,6 +129,23 @@ class MainActivity : AppCompatActivity() {
             .setEnterAnim(R.anim.bottom_up_appear)
             .build()
         navController.navigate(R.id.nav_favorites, null, navOptions)
+    }
+
+    private val appBarTotalButtonClickListener = View.OnClickListener {
+        restoreCustomMenuItemColor()
+
+        binding.appbarFavoritesButton.visibility = View.VISIBLE
+        binding.appbarTotalButton.visibility = View.GONE
+        binding.navView.menu.findItem(R.id.nav_total).let {
+            menuItemCache?.setCheckable(false)
+            it.setCheckable(true)
+        }
+
+        val navOptions = NavOptions
+            .Builder()
+            .setEnterAnim(R.anim.bottom_up_appear)
+            .build()
+        navController.navigate(R.id.nav_total, null, navOptions)
     }
 
     private val appBarWriteButtonClickListener = View.OnClickListener {
@@ -204,6 +227,7 @@ class MainActivity : AppCompatActivity() {
         binding.appbarMenuButton.setOnClickListener(appBarMenuButtonClickListener)
         binding.appbarSearchButton.setOnClickListener(appBarSearchButtonClickListener)
         binding.appbarFavoritesButton.setOnClickListener(appBarFavoriteButtonClickListener)
+        binding.appbarTotalButton.setOnClickListener(appBarTotalButtonClickListener)
         binding.appbarWriteButton.setOnClickListener(appBarWriteButtonClickListener)
     }
 
