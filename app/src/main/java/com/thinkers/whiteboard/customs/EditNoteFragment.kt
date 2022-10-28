@@ -148,7 +148,7 @@ class EditNoteFragment : Fragment() {
     }
 
     private fun handleEditNote() {
-        binding.editNoteTitle.text = "메모 수정"
+        binding.editNoteTitle.text = "노트편집"
 
         recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit, this::onMove, isActionMode)
         binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper

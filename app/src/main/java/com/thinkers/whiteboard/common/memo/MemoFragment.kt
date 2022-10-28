@@ -16,6 +16,7 @@ import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageButton
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
@@ -45,6 +46,7 @@ class MemoFragment : Fragment() {
     private lateinit var favoriteButton: ImageButton
     private lateinit var alarmButton: ImageButton
     private lateinit var memoText: EditText
+    private lateinit var memoDate: TextView
 
     private var memo: Memo? = null
     private var isFavorite: Boolean = false
@@ -162,6 +164,8 @@ class MemoFragment : Fragment() {
 
         memoText = binding.fragmentMemoText
         memoText.addTextChangedListener(textWatcher)
+
+        memoDate = binding.fragmentMemoDate
 
         val bundle = requireArguments()
         val args = MemoFragmentArgs.fromBundle(bundle)
@@ -288,6 +292,7 @@ class MemoFragment : Fragment() {
                 changeAlarmIcon(true)
             }
             showAlarmText(true)
+            showMemoDate(it.createdTime)
         }
     }
 
@@ -359,6 +364,16 @@ class MemoFragment : Fragment() {
         } else {
             binding.memoFragmentAlarmText.visibility = View.GONE
         }
+    }
+
+    private fun showMemoDate(dateTimeInMillis: Long) {
+        val dateFormat = "yyyy/MM/dd HH:mm:ss"
+        val formatter = SimpleDateFormat(dateFormat)
+        val calendar: Calendar = Calendar.getInstance()
+        calendar.timeInMillis = dateTimeInMillis
+
+        memoDate.text = formatter.format(calendar.time)
+        memoDate.visibility = View.VISIBLE
     }
 
     companion object {
