@@ -57,7 +57,7 @@ class TotalViewModel(
                         }
                     }
                 }
-                else -> {}
+                MemoUpdateState.NONE -> {}
             }
         }
     }

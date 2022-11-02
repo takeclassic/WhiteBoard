@@ -57,7 +57,7 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
                         }
                     }
                 }
-                else -> {}
+                MemoUpdateState.NONE -> {}
             }
         }
     }

@@ -32,7 +32,7 @@ class MemoRepository(
     val totalMemoCount: Flow<Int> = memoDao.getAllMemosCount()
     val favoritesMemoCount: Flow<Int> = memoDao.getFavoriteMemosCount()
 
-    var memoState = MemoUpdateState.NONE
+    var memoState: MemoUpdateState = MemoUpdateState.NONE
     var updatedMemo: Memo = Memo(-1, "", 0,0, 0,"")
 
     private var lastCheckedMemo: Memo? = null

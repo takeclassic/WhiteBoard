@@ -67,7 +67,7 @@ class FavoritesViewModel(
                         }
                     }
                 }
-                else -> {}
+                MemoUpdateState.NONE -> {}
             }
         }
     }

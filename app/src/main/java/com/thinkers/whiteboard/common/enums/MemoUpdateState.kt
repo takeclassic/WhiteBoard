@@ -1,5 +1,8 @@
 package com.thinkers.whiteboard.common.enums
 
-enum class MemoUpdateState {
-    NONE,UPDATE,INSERT,DELETE
+sealed class MemoUpdateState {
+    object NONE: MemoUpdateState()
+    object INSERT: MemoUpdateState()
+    object UPDATE: MemoUpdateState()
+    object DELETE: MemoUpdateState()
 }
