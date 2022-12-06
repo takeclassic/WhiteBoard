@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -36,6 +37,7 @@ class EditNoteFragment : Fragment() {
 
     private var memoList: List<Memo>? = null
     private var isActionMode = false
+    private var noteName: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,6 +64,7 @@ class EditNoteFragment : Fragment() {
         val args = EditNoteFragmentArgs.fromBundle(bundle)
         isActionMode = args.isActionMode
         memoList = args.memoList?.toList()
+        noteName = args.noteName
 
         if (isActionMode) {
             handleActionMode()
@@ -94,6 +97,12 @@ class EditNoteFragment : Fragment() {
         } else {
             Log.i(TAG, "memo list is null")
         }
+        if (!noteName.isNullOrBlank()
+            && noteName == note.noteName) {
+            Toast.makeText(requireContext(), "이미 사용중인 노트입니다", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         viewModel.moveMemos(note.noteName, memoList!!)
         (requireActivity() as MainActivity).isMoved = true
         requireActivity().onBackPressed()
@@ -133,9 +142,7 @@ class EditNoteFragment : Fragment() {
     private fun handleActionMode() {
         binding.editNoteTitle.text = "메모이동"
 
-        recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit, this::onMove, isActionMode)
-        binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper
-
+        setRecyclerViewAdapters()
         viewModel.allMoveableNotes.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 binding.editNoteTextView.visibility = View.GONE
@@ -152,8 +159,7 @@ class EditNoteFragment : Fragment() {
     private fun handleEditNote() {
         binding.editNoteTitle.text = "노트편집"
 
-        recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit, this::onMove, isActionMode)
-        binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper
+        setRecyclerViewAdapters()
         viewModel.allEditableNotes.observe(viewLifecycleOwner) {
             if (it.isNotEmpty()) {
                 binding.editNoteTextView.visibility = View.GONE
@@ -165,6 +171,11 @@ class EditNoteFragment : Fragment() {
             recyclerViewAdaper.submitList(it)
             drawDivider()
         }
+    }
+
+    private fun setRecyclerViewAdapters() {
+        recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit, this::onMove, isActionMode, noteName)
+        binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper
     }
 
     companion object {

@@ -218,7 +218,8 @@ class FavoritesFragment : Fragment() {
     private val onActionModeMove: () -> Boolean = {
         val action = FavoritesFragmentDirections.actionNavFavoritesToNavEditNote(
             true,
-            actionModeSetMemoList.toTypedArray()
+            actionModeSetMemoList.toTypedArray(),
+            null
         )
         onDestroyActionMode()
         findNavController().navigate(action)
