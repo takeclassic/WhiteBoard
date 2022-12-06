@@ -34,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: MainActivityViewModel
     private var time: Long = 0
     var isFavorite: Boolean = false
+    var isMoved = false
 
     private var menuItemCache: MenuItem? = null
     private val navigationViewListener = NavigationView.OnNavigationItemSelectedListener { menuItem ->
@@ -277,6 +278,7 @@ class MainActivity : AppCompatActivity() {
 
     fun init() {
         isFavorite = false
+        isMoved = false
     }
 
     companion object {

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
+import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.NoteListAdapter
@@ -94,6 +95,7 @@ class EditNoteFragment : Fragment() {
             Log.i(TAG, "memo list is null")
         }
         viewModel.moveMemos(note.noteName, memoList!!)
+        (requireActivity() as MainActivity).isMoved = true
         requireActivity().onBackPressed()
     }
 

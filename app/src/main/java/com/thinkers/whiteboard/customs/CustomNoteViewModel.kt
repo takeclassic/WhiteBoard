@@ -1,6 +1,7 @@
 package com.thinkers.whiteboard.customs
 
 import android.util.Log
+import android.view.View
 import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
@@ -30,6 +31,10 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
 
     val memoMap = mutableMapOf<Int, Int>()
     var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
+
+    private var _actionModeSetMemoList = mutableListOf<Memo>()
+    var actionModeSetMemoList = mutableListOf<Memo>()
+    var actionModeSetViewList = mutableListOf<View>()
 
     fun init() {
         Log.i(TAG, "state: ${memoRepository.memoState}")
@@ -109,6 +114,31 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
                 _memoListLiveData.value = memoList
             }
         }
+    }
+
+    fun removeMovedItems() {
+        viewModelScope.launch {
+            mutex.withLock {
+                for (memo in _actionModeSetMemoList) {
+                    Log.i(TAG, "moved memo: $memo")
+                    _memoList.removeIf { it.memoId == memo.memoId }
+                    memoMap.remove(memo.memoId)
+                }
+                _memoList.sortByDescending { it.memoId }
+                _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
+                _actionModeSetMemoList = mutableListOf()
+                _memoListLiveData.value = memoList
+            }
+        }
+    }
+
+    fun clearActionModeList() {
+        _actionModeSetMemoList.clear()
+        for (item in actionModeSetMemoList) {
+            _actionModeSetMemoList.add(item)
+        }
+        actionModeSetMemoList = mutableListOf()
+        actionModeSetViewList = mutableListOf()
     }
 
     companion object {

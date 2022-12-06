@@ -50,8 +50,6 @@ class CustomNoteFragment : Fragment() {
     private var noteName: String = ""
 
     private var actionMode: ActionMode? = null
-    private var actionModeSetMemoList = mutableListOf<Memo>()
-    private var actionModeSetViewList = mutableListOf<View>()
 
     private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
         binding.customSwipeLayout.isRefreshing = false
@@ -89,6 +87,10 @@ class CustomNoteFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        val isMoved = (requireActivity() as MainActivity).isMoved
+        if (isMoved) {
+            viewModel.removeMovedItems()
+        }
         (requireActivity() as MainActivity).init()
         val noteName = requireArguments().get("noteName") as String
         if (noteName.isNullOrBlank()) {
@@ -143,26 +145,26 @@ class CustomNoteFragment : Fragment() {
                 view.background =
                     requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
 
-                if (actionModeSetMemoList.contains(memo)) {
-                    actionModeSetMemoList.remove(memo)
-                    actionModeSetViewList.remove(view)
+                if (viewModel.actionModeSetMemoList.contains(memo)) {
+                    viewModel.actionModeSetMemoList.remove(memo)
+                    viewModel.actionModeSetViewList.remove(view)
                     view.background =
                         requireContext().getDrawable(R.drawable.rounder_corner_view)
                 } else {
-                    actionModeSetMemoList.add(memo)
-                    actionModeSetViewList.add(view)
+                    viewModel.actionModeSetMemoList.add(memo)
+                    viewModel.actionModeSetViewList.add(view)
                     view.background =
                         requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
                 }
 
-                if (actionModeSetMemoList.size > 0) {
+                if (viewModel.actionModeSetMemoList.size > 0) {
                     actionMode?.setTitle(
                         Html.fromHtml(
-                        "<font color='#f5fffa'>${actionModeSetMemoList.size} </font>",
+                        "<font color='#f5fffa'>${viewModel.actionModeSetMemoList.size} </font>",
                         Html.FROM_HTML_OPTION_USE_CSS_COLORS
                     ))
 
-                    actionMode?.menu?.findItem(R.id.action_mode_share)?.isVisible = actionModeSetMemoList.size < 2
+                    actionMode?.menu?.findItem(R.id.action_mode_share)?.isVisible = viewModel.actionModeSetMemoList.size < 2
                 } else {
                     actionMode?.finish()
                 }
@@ -176,14 +178,14 @@ class CustomNoteFragment : Fragment() {
                 view.background =
                     requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
 
-                actionModeSetMemoList = mutableListOf()
-                actionModeSetViewList = mutableListOf()
-                actionModeSetMemoList.add(memo)
-                actionModeSetViewList.add(view)
+                viewModel.actionModeSetMemoList = mutableListOf()
+                viewModel.actionModeSetViewList = mutableListOf()
+                viewModel.actionModeSetMemoList.add(memo)
+                viewModel.actionModeSetViewList.add(view)
 
                 actionMode = activity?.startActionMode(
                     ActionModeHandler(
-                        actionModeSetMemoList,
+                        viewModel.actionModeSetMemoList,
                         requireActivity(),
                         onActionModeRemove,
                         onActionModeMove,
@@ -191,7 +193,7 @@ class CustomNoteFragment : Fragment() {
                     )
                 )
                 actionMode?.title = Html.fromHtml(
-                    "<font color='#f5fffa'>${actionModeSetMemoList.size} </font>",
+                    "<font color='#f5fffa'>${viewModel.actionModeSetMemoList.size} </font>",
                     Html.FROM_HTML_OPTION_USE_CSS_COLORS
                 )
                 true
@@ -203,7 +205,7 @@ class CustomNoteFragment : Fragment() {
     }
 
     private val onMemoItemBind: (View, Memo) -> Unit = { view, memo ->
-        if (actionModeSetMemoList.contains(memo)) {
+        if (viewModel.actionModeSetMemoList.contains(memo)) {
             Log.i(TAG, "onMemoItemBind:${memo.text}")
             view.background = requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
         } else {
@@ -212,12 +214,11 @@ class CustomNoteFragment : Fragment() {
     }
 
     private val onDestroyActionMode: () -> Unit = {
-        for (actionModeSetView in actionModeSetViewList) {
+        for (actionModeSetView in viewModel.actionModeSetViewList) {
             actionModeSetView.background =
                 requireContext().getDrawable(R.drawable.rounder_corner_view)
         }
-        actionModeSetMemoList = mutableListOf()
-        actionModeSetViewList = mutableListOf()
+        viewModel.clearActionModeList()
         actionMode?.finish()
         actionMode = null
         binding.customToolBar.noteToolbarCollapsingLayout.visibility = View.VISIBLE
@@ -226,7 +227,7 @@ class CustomNoteFragment : Fragment() {
     private val onActionModeMove: () -> Boolean = {
         val action = CustomNoteFragmentDirections.actionNavCustomNoteToNavEditNote(
             true,
-            actionModeSetMemoList.toTypedArray()
+            viewModel.actionModeSetMemoList.toTypedArray()
         )
         onDestroyActionMode()
         findNavController().navigate(action)
@@ -245,7 +246,7 @@ class CustomNoteFragment : Fragment() {
                 setMessage("선택하신 메모들을 삭제하시겠습니까?")
                 setPositiveButton("삭제",
                     DialogInterface.OnClickListener { dialog, id ->
-                        viewModel.removeItems(actionModeSetMemoList)
+                        viewModel.removeItems(viewModel.actionModeSetMemoList)
                         onDestroyActionMode()
                     })
                 setNegativeButton("취소",
