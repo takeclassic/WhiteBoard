@@ -27,6 +27,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
@@ -137,7 +138,12 @@ class MemoFragment : Fragment() {
         }
         toolbar.inflateMenu(R.menu.fragment_memo_options)
         toolbar.setOnMenuItemClickListener{ onOptionsItemSelected(it) }
+        isFavorite = (requireActivity() as MainActivity).isFavorite
         favoriteButton = binding.memoFragmentFavoriteButton
+        if (isFavorite) {
+            favoriteButton.isSelected = true
+            changeFavoriteIcon(favoriteButton.isSelected)
+        }
         favoriteButton.setOnClickListener {
             favoriteButton.isSelected = !favoriteButton.isSelected
             changeFavoriteIcon(favoriteButton.isSelected)
@@ -183,6 +189,7 @@ class MemoFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
+        (requireActivity() as MainActivity).isFavorite = false
 
         if (memoText.text.isNullOrBlank()) {
             Log.i(TAG, "text is empty")

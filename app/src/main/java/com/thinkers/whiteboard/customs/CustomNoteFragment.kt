@@ -19,6 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 
@@ -88,6 +89,7 @@ class CustomNoteFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        (requireActivity() as MainActivity).init()
         val noteName = requireArguments().get("noteName") as String
         if (noteName.isNullOrBlank()) {
             Toast.makeText(requireContext(), "노트 이름이 명확하지 않습니다", Toast.LENGTH_SHORT).show()

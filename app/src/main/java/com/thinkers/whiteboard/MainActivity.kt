@@ -33,7 +33,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var viewModel: MainActivityViewModel
     private var time: Long = 0
-    private var isFavorite: Boolean = false
+    var isFavorite: Boolean = false
 
     private var menuItemCache: MenuItem? = null
     private val navigationViewListener = NavigationView.OnNavigationItemSelectedListener { menuItem ->
@@ -273,6 +273,10 @@ class MainActivity : AppCompatActivity() {
             s.setSpan(ForegroundColorSpan(resources.getColor(R.color.black, null)), 0, s.length, 0)
             it.title = s
         }
+    }
+
+    fun init() {
+        isFavorite = false
     }
 
     companion object {

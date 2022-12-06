@@ -16,6 +16,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
@@ -80,6 +81,9 @@ class FavoritesFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        (requireActivity() as MainActivity).init()
+        (requireActivity() as MainActivity).isFavorite = true
+
         binding.favoritesToolBar.noteToolbarCollapsingLayout.setExpandedTitleMargin(50, 0, 0, 60)
         binding.favoritesToolBar.noteToolbarCollapsingLayout.title = "즐겨찾기"
 
