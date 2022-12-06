@@ -51,10 +51,6 @@ class CustomNoteFragment : Fragment() {
 
     private var actionMode: ActionMode? = null
 
-    private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
-        binding.customSwipeLayout.isRefreshing = false
-    }
-
     private val onScrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -104,13 +100,12 @@ class CustomNoteFragment : Fragment() {
         Log.i(TAG, "noteName: $noteName")
         recyclerView = binding.customsRecyclerview.recyclerView
         recyclerView.addOnScrollListener(onScrollListener)
-        binding.customSwipeLayout.setOnRefreshListener(onSwipeRefresh)
 
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
         currentPage = 1
         viewModel.init()
-        if(viewModel.memoList.isNullOrEmpty()) {
+        if(viewModel.memoList.isNullOrEmpty() && !isMoved) {
             viewModel.getNextPage(0, noteName)
         }
 
@@ -128,8 +123,10 @@ class CustomNoteFragment : Fragment() {
                 memoCount = it
                 if (memoCount > 0) {
                     binding.customNoteTextView.visibility = View.GONE
+                    binding.customNestedScrollView.isNestedScrollingEnabled = true
                 } else {
                     binding.customNoteTextView.visibility = View.VISIBLE
+                    binding.customNestedScrollView.isNestedScrollingEnabled = false
                 }
             }
         }

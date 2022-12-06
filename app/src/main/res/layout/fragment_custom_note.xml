@@ -1,49 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
+    android:id="@+id/custom_note_main_layout"
     android:layout_width="match_parent"
-    android:id="@+id/custom_note_main_layout">
-
-    <include
-        android:id="@+id/custom_tool_bar"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent"
-        layout="@layout/toolbar_note" />
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/custom_note_text_view"
-        android:layout_gravity="center"
-        android:layout_height="wrap_content"
         android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:text="빈 노트입니다" />
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/custom_nested_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:clipToPadding="false"
         android:fillViewport="true"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-            android:id="@+id/custom_swipe_layout"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <include
+                android:id="@+id/customs_recyclerview"
+                layout="@layout/recyclerview_memolist"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <include
-                    android:id="@+id/customs_recyclerview"
-                    layout="@layout/recyclerview_memolist"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="60dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="parent" />
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+                android:layout_height="match_parent"
+                android:layout_marginBottom="60dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <include
+        android:id="@+id/custom_tool_bar"
+        layout="@layout/toolbar_note"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

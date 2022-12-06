@@ -133,7 +133,6 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
     }
 
     fun clearActionModeList() {
-        _actionModeSetMemoList.clear()
         for (item in actionModeSetMemoList) {
             _actionModeSetMemoList.add(item)
         }
