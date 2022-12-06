@@ -22,6 +22,7 @@ class TotalViewModel(
     val memoList: List<Memo> = _memoList
     private val _memoListLiveData = MutableLiveData<List<Memo>>()
     val memoListLiveData: LiveData<List<Memo>> = _memoListLiveData
+    var memoState: MemoUpdateState = MemoUpdateState.NONE
     val mutex = Mutex()
 
     val memoMap = mutableMapOf<Int, Int>()
@@ -84,6 +85,8 @@ class TotalViewModel(
 
     fun getNextPage(pageNumber: Int) {
         viewModelScope.launch {
+            memoState = MemoUpdateState.NONE
+
             val list = memoRepository
                 .getPaginatedMemoList(pageNumber + 1, TotalFragment.PAGE_SIZE)
                 .filter { !memoMap.containsKey(it.memoId) }
@@ -93,6 +96,9 @@ class TotalViewModel(
                 _memoList.addAll(list)
                 _memoList.sortByDescending { it.memoId }
                 _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
+                if (pageNumber == 0) {
+                    memoState = MemoUpdateState.INSERT
+                }
                 _memoListLiveData.value = memoList
             }
         }

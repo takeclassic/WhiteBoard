@@ -20,6 +20,7 @@ import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.common.actionmode.ActionModeHandler
+import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.common.interfaces.PagingMemoUpdateListener
 import com.thinkers.whiteboard.customs.CustomNoteFragment
 import com.thinkers.whiteboard.database.entities.Memo
@@ -50,7 +51,6 @@ class TotalFragment : Fragment() {
     private val onScrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
-            recyclerView.smoothScrollToPosition(0)
             Log.i(TAG, "recyclerViewAdaper.itemCount: ${recyclerViewAdaper.itemCount}, currentPage: $currentPage, target: ${currentPage * PAGE_SIZE}")
             if (recyclerViewAdaper.itemCount < totalMemoCount
                 && (recyclerViewAdaper.itemCount == currentPage * PAGE_SIZE
@@ -97,8 +97,11 @@ class TotalFragment : Fragment() {
         currentPage = 1
 
         viewModel.memoListLiveData.observe(viewLifecycleOwner) {
-            Log.i(TAG, "list: ${it.size}")
+            Log.i(TAG, "list: ${it.size}, ${viewModel.memoState}")
             recyclerViewAdaper.submitList(it.toList())
+            if (viewModel.memoState == MemoUpdateState.INSERT) {
+                recyclerView.post{ recyclerView.scrollToPosition(0) }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
