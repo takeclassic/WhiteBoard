@@ -27,6 +27,7 @@ class FavoritesViewModel(
     val memoList: List<Memo> = _memoList
     private val _memoListLiveData = MutableLiveData<List<Memo>>()
     val memoListLiveData: LiveData<List<Memo>> = _memoListLiveData
+    var memoState: MemoUpdateState = MemoUpdateState.NONE
     val mutex = Mutex()
 
     val memoMap = mutableMapOf<Int, Int>()
@@ -86,6 +87,7 @@ class FavoritesViewModel(
 
     fun getNextPage(pageNumber: Int) {
         viewModelScope.launch {
+            memoState = MemoUpdateState.NONE
             val list = memoRepository
                 .getPaginatedFavoriteMemoList(pageNumber + 1, FavoritesFragment.PAGE_SIZE)
                 .filter { !memoMap.containsKey(it.memoId) }
@@ -103,6 +105,9 @@ class FavoritesViewModel(
                         _memoList.removeAt(memoMap[memoToUpdate.memoId]!!)
                         memoMap.remove(memoToUpdate.memoId)
                     }
+                }
+                if (pageNumber == 0) {
+                    memoState = MemoUpdateState.INSERT
                 }
                 _memoListLiveData.value = memoList
             }

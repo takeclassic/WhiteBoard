@@ -20,6 +20,7 @@ import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.common.actionmode.ActionModeHandler
+import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.customs.CustomNoteFragment
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentFavoritesBinding
@@ -97,6 +98,9 @@ class FavoritesFragment : Fragment() {
         viewModel.memoListLiveData.observe(viewLifecycleOwner) {
             Log.i(TAG, "list: ${it.size}")
             recyclerViewAdaper.submitList(it.toList())
+            if (viewModel.memoState == MemoUpdateState.INSERT) {
+                recyclerView.post{ recyclerView.scrollToPosition(0) }
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {

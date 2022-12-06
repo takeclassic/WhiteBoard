@@ -23,6 +23,7 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
     val memoList: List<Memo> = _memoList
     private val _memoListLiveData = MutableLiveData<List<Memo>>()
     val memoListLiveData: LiveData<List<Memo>> = _memoListLiveData
+    var memoState: MemoUpdateState = MemoUpdateState.NONE
     val mutex = Mutex()
 
     var noteName: String = ""
@@ -76,6 +77,7 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
 
     fun getNextPage(pageNumber: Int, noteName: String) {
         viewModelScope.launch {
+            memoState = MemoUpdateState.NONE
             val list = memoRepository
                 .getPaginatedMemosByNoteName(noteName, pageNumber + 1, CustomNoteFragment.PAGE_SIZE)
                 .filter { !memoMap.containsKey(it.memoId) }
@@ -85,6 +87,9 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
                 _memoList.addAll(list)
                 _memoList.sortByDescending { it.memoId }
                 _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
+                if (pageNumber == 0) {
+                    memoState = MemoUpdateState.INSERT
+                }
                 _memoListLiveData.value = memoList
             }
         }
