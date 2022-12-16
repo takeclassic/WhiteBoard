@@ -30,9 +30,9 @@ class NotificationHelper {
             memoId: Int,
             alarmTime: Long
         ) {
-            Log.i("NotificationWorker", "alarmTime: $alarmTime memoId: $memoId")
+            Log.i(TAG, "startNotificationWorker alarmTime: $alarmTime memoId: $memoId")
             val myData = Data.Builder().putInt("KEY_MEMO_ID", memoId).build()
-            Log.i("NotificationWorker", "set memoId: ${myData.getInt("KEY_MEMO_ID", -1)}")
+            Log.i(TAG, "set memoId: ${myData.getInt("KEY_MEMO_ID", -1)}")
 
             val notificationWorkRequest =
                 OneTimeWorkRequestBuilder<NotificationWorker>()
@@ -50,6 +50,8 @@ class NotificationHelper {
         }
 
         fun cancelNotificationWorker(memoId: Int) {
+            Log.i(TAG, "cancelNotificationWorker memoId: $memoId")
+
             WorkManager
                 .getInstance(WhiteBoardApplication.context())
                 .cancelUniqueWork(memoId.toString())
