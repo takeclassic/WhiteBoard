@@ -368,9 +368,22 @@ class MemoFragment : Fragment() {
             val formatter = SimpleDateFormat("yyyy/MM/dd HH:mm")
             binding.memoFragmentAlarmText.text = formatter.format(alarmTime)
             binding.memoFragmentAlarmText.visibility = View.VISIBLE
+
+            if (alarmTime!! < System.currentTimeMillis()) {
+                binding.memoFragmentAlarmText.setTextColor(ContextCompat.getColor(requireContext(), R.color.black))
+                binding.memoFragmentAlarmButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black))
+            } else {
+                binding.memoFragmentAlarmText.setTextColor(ContextCompat.getColor(requireContext(), R.color.app_main_color))
+                binding.memoFragmentAlarmButton.imageTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.app_main_color))
+            }
+
         } else {
             binding.memoFragmentAlarmText.visibility = View.GONE
         }
+    }
+
+    private fun registerNotification() {
+
     }
 
     private fun showMemoDate(dateTimeInMillis: Long) {

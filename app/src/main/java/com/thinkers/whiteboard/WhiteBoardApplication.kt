@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.room.Room
 import com.thinkers.whiteboard.common.DispatcherProviderUtil
+import com.thinkers.whiteboard.common.notifications.NotificationHelper
 import com.thinkers.whiteboard.database.AppDatabase
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import com.thinkers.whiteboard.database.repositories.NoteRepository
@@ -28,6 +29,11 @@ class WhiteBoardApplication: Application() {
             database.noteDao(),
             DispatcherProviderUtil()
         )
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        NotificationHelper.createNotificationChannel(this)
     }
 
     companion object {
