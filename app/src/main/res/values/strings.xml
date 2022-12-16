@@ -16,4 +16,6 @@
     <string name="share">공유</string>
     <string name="channel_name">메모알림</string>
     <string name="channel_description">메모에 설정한 타이머 시각에 맞춰 오는 푸쉬알림</string>
+    <string name="notification_title">메모 알림</string>
+    <string name="notification_text">메모 내용을 확인하세요!</string>
 </resources>

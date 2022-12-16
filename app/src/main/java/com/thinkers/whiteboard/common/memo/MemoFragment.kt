@@ -27,16 +27,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.work.*
 import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
+import com.thinkers.whiteboard.common.notifications.NotificationHelper
+import com.thinkers.whiteboard.common.notifications.NotificationWorker
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class MemoFragment : Fragment() {
 
@@ -56,6 +61,7 @@ class MemoFragment : Fragment() {
     private var beforeTextChangeEditable: Editable? = null
     private var afterTextChangeEditable: Editable? = null
     private var isDeletion: Boolean = false
+    private var memoId: Int = -1
 
     private var myCalendar: Calendar = Calendar.getInstance()
 
@@ -105,6 +111,7 @@ class MemoFragment : Fragment() {
         }
 
         alarmTime = myCalendar.timeInMillis
+        registerNotification(alarmTime!!)
 
         changeAlarmIcon(true)
         showAlarmText(true)
@@ -175,9 +182,12 @@ class MemoFragment : Fragment() {
 
         val bundle = requireArguments()
         val args = MemoFragmentArgs.fromBundle(bundle)
-
-        when(val memoId = args.memoId) {
-            -1 -> return
+        memoId = args.memoId
+        when(memoId) {
+            -1 ->  {
+                binding.memoFragmentAlarmButton.visibility = View.GONE
+                return
+            }
             else -> showExistMemo(memoId)
         }
     }
@@ -349,6 +359,7 @@ class MemoFragment : Fragment() {
                         alarmTime = null
                         changeAlarmIcon(false)
                         showAlarmText(false)
+                        unRegisterNotification()
                     })
                 setNegativeButton("취소",
                     DialogInterface.OnClickListener { dialog, id ->
@@ -382,8 +393,16 @@ class MemoFragment : Fragment() {
         }
     }
 
-    private fun registerNotification() {
+    private fun registerNotification(savedTime: Long) {
+        NotificationHelper.startNotificationWorker(memoId, getAlarmTime(savedTime))
+    }
 
+    private fun unRegisterNotification() {
+        NotificationHelper.cancelNotificationWorker(memoId)
+    }
+
+    private fun getAlarmTime(savedTime: Long): Long {
+        return savedTime - System.currentTimeMillis()
     }
 
     private fun showMemoDate(dateTimeInMillis: Long) {
