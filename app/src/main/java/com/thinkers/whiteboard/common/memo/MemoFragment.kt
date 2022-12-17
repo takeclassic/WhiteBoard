@@ -296,7 +296,7 @@ class MemoFragment : Fragment() {
         }
         val list = mutableListOf<Memo>()
         list.add(memo!!)
-        val action = MemoFragmentDirections.actionNavMemoToNavEditNote(true, noteName = null, memoList = list.toTypedArray())
+        val action = MemoFragmentDirections.actionNavMemoToNavEditNote(true, noteName = memo?.noteName, memoList = list.toTypedArray())
         findNavController().navigate(action)
     }
 

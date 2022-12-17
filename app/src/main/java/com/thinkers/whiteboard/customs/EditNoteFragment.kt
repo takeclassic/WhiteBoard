@@ -90,13 +90,6 @@ class EditNoteFragment : Fragment() {
     }
 
     private fun onMove(note: Note) {
-        if (memoList.isNullOrEmpty() == false) {
-            for (memo in memoList!!) {
-                Log.i(TAG, "memo: ${memo.text}")
-            }
-        } else {
-            Log.i(TAG, "memo list is null")
-        }
         if (!noteName.isNullOrBlank()
             && noteName == note.noteName) {
             Toast.makeText(requireContext(), "이미 사용중인 노트입니다", Toast.LENGTH_SHORT).show()
