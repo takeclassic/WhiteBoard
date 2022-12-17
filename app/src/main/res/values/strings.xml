@@ -18,4 +18,10 @@
     <string name="channel_description">메모에 설정한 타이머 시각에 맞춰 오는 푸쉬알림</string>
     <string name="notification_title">메모 알림</string>
     <string name="notification_text">메모 내용을 확인하세요!</string>
+    <string name="alert_dialog_alarm_title">알림 삭제</string>
+    <string name="alert_dialog_alarm_text">기존 설정된 알림을 삭제하시겠습니까?</string>
+    <string name="alert_dialog_memo_delete_title">메모 삭제</string>
+    <string name="alert_dialog_memo_delete_text">메모를 삭제하시겠습니까?</string>
+    <string name="alert_dialog_delete">삭제</string>
+    <string name="alert_dialog_cancel">취소</string>
 </resources>

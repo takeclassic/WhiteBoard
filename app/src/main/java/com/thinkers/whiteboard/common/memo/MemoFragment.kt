@@ -35,6 +35,8 @@ import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.common.notifications.NotificationHelper
 import com.thinkers.whiteboard.common.notifications.NotificationWorker
+import com.thinkers.whiteboard.common.utils.AlertDialogArguments
+import com.thinkers.whiteboard.common.utils.Utils
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
 import kotlinx.coroutines.delay
@@ -119,6 +121,23 @@ class MemoFragment : Fragment() {
         Log.i(TAG, "timePickListener ${formatter.format(alarmTime)}")
     }
 
+    private val onAlarmDelete: () -> Unit = {
+        alarmTime = null
+        changeAlarmIcon(false)
+        showAlarmText(false)
+        unRegisterNotification()
+    }
+
+    private val onMemoDelete: (AlertDialogArguments) -> Unit = {
+        it.memo?.let {
+            unRegisterNotification()
+            viewModel.setHasUpdate(it, MemoUpdateState.DELETE)
+            viewModel.deleteMemo(it)
+            isDeletion = true
+            requireActivity().onBackPressed()
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(
@@ -171,7 +190,19 @@ class MemoFragment : Fragment() {
                     myCalendar.get(Calendar.DAY_OF_MONTH)
                 ).show()
             } else {
-                showAlarmAlertDialog()
+                val alertTitle = requireContext().getString(R.string.alert_dialog_alarm_title)
+                val alertText = requireContext().getString(R.string.alert_dialog_alarm_text)
+                val alertPositiveText = requireContext().getString(R.string.alert_dialog_delete)
+                val alertNegativeText = requireContext().getString(R.string.alert_dialog_cancel)
+                Utils.showAlertDialog(
+                    requireContext(),
+                    alertTitle,
+                    alertText,
+                    alertPositiveText,
+                    alertNegativeText,
+                    onAlarmDelete,
+                    null
+                )
             }
         }
 
@@ -222,10 +253,21 @@ class MemoFragment : Fragment() {
             R.id.memo_action_delete -> {
                 Log.i(TAG, "memo_action_delete")
                 memo?.let {
-                    viewModel.setHasUpdate(it, MemoUpdateState.DELETE)
-                    viewModel.deleteMemo(it)
-                    isDeletion = true
-                    requireActivity().onBackPressed()
+                    val title = requireContext().getString(R.string.alert_dialog_memo_delete_title)
+                    val text = requireContext().getString(R.string.alert_dialog_memo_delete_text)
+                    val positiveText = requireContext().getString(R.string.alert_dialog_delete)
+                    val negativeText = requireContext().getString(R.string.alert_dialog_cancel)
+
+                    Utils.showAlertDialogWithArguments(
+                        requireContext(),
+                        title,
+                        text,
+                        positiveText,
+                        negativeText,
+                        onMemoDelete,
+                        null,
+                        AlertDialogArguments(it)
+                    )
                 }
                 return false
             }
@@ -346,27 +388,6 @@ class MemoFragment : Fragment() {
             return true
         }
         return false
-    }
-
-    private fun showAlarmAlertDialog() {
-        requireActivity().let {
-            val builder = AlertDialog.Builder(it)
-            builder.apply {
-                setTitle("알림 삭제")
-                setMessage("기존 설정된 알림을 삭제하시겠습니까?")
-                setPositiveButton("삭제",
-                    DialogInterface.OnClickListener { dialog, id ->
-                        alarmTime = null
-                        changeAlarmIcon(false)
-                        showAlarmText(false)
-                        unRegisterNotification()
-                    })
-                setNegativeButton("취소",
-                    DialogInterface.OnClickListener { dialog, id ->
-                    })
-            }
-            builder.create().show()
-        }
     }
 
     private fun showAlarmText(show:Boolean) {
