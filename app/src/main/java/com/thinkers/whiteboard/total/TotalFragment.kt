@@ -90,7 +90,7 @@ class TotalFragment : Fragment() {
         binding.totalSwipeLayout.setOnRefreshListener(onSwipeRefresh)
         recyclerView.addOnScrollListener(onScrollListener)
 
-        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind, false)
         binding.totalRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.init()
         if (viewModel.memoList.isNullOrEmpty()) {

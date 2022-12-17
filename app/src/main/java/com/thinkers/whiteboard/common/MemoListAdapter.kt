@@ -17,14 +17,16 @@ import java.util.*
 class MemoListAdapter(
     private val onClick: (View, Memo) -> Unit,
     private val onLongClick: (View, Memo) -> Boolean,
-    private val onBind: (View, Memo) -> Unit
+    private val onBind: (View, Memo) -> Unit,
+    private val isCustomNote: Boolean
     ) :
     ListAdapter<Memo, MemoListAdapter.MemoViewHolder>(MemoDiffCallback) {
     inner class MemoViewHolder(
         private val itemView: View,
         private val onClick: (View, Memo) -> Unit,
         private val onLongClick: (View, Memo) -> Boolean,
-        private val onBind: (View, Memo) -> Unit
+        private val onBind: (View, Memo) -> Unit,
+        private val isCustomNote: Boolean
     ): RecyclerView.ViewHolder(itemView) {
         private val memoText: TextView = itemView.findViewById(R.id.memo_text)
         private val memoNoteName: TextView = itemView.findViewById(R.id.memo_note_name)
@@ -39,6 +41,10 @@ class MemoListAdapter(
             memoDate.text = getDateFormat(memo.createdTime)
 
             onBind(itemView, memo)
+
+            if (isCustomNote) {
+                memoNoteName.visibility = View.GONE
+            }
 
             itemView.setOnClickListener { view ->
                 onClick(view, currentMemo!!)
@@ -60,7 +66,7 @@ class MemoListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_memo, parent, false)
-        return MemoViewHolder(view, onClick, onLongClick, onBind)
+        return MemoViewHolder(view, onClick, onLongClick, onBind, isCustomNote)
     }
 
     override fun onBindViewHolder(holder: MemoViewHolder, position: Int) {

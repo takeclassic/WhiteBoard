@@ -91,7 +91,7 @@ class FavoritesFragment : Fragment() {
         binding.favoritesSwipeLayout.setOnRefreshListener(onSwipeRefresh)
         recyclerView.addOnScrollListener(onScrollListener)
 
-        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind, false)
         binding.favoritesRecyclerview.recyclerView.adapter = recyclerViewAdaper
         viewModel.init()
         if (viewModel.memoList.isNullOrEmpty()) {

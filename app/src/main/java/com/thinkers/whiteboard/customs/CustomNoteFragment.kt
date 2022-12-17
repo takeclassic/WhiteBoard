@@ -101,7 +101,7 @@ class CustomNoteFragment : Fragment() {
         recyclerView = binding.customsRecyclerview.recyclerView
         recyclerView.addOnScrollListener(onScrollListener)
 
-        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind, true)
         binding.customsRecyclerview.recyclerView.adapter = recyclerViewAdaper
         currentPage = 1
         viewModel.init()

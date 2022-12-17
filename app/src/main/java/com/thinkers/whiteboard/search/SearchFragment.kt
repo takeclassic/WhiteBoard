@@ -56,7 +56,7 @@ class SearchFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         binding.searchToolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
-        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind)
+        recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind, false)
         binding.searchRecyclerview.recyclerView.adapter = recyclerViewAdaper
         binding.searchSearchText.setOnQueryTextListener(queryTextListener)
         viewModel.searchResults.observe(viewLifecycleOwner) { list ->

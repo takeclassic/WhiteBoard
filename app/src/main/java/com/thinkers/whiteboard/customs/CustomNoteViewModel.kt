@@ -124,6 +124,8 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
                     _memoList.removeIf { it.memoId == memo.memoId }
                     memoMap.remove(memo.memoId)
                 }
+                _memoList.removeIf { it.memoId == memoRepository.updatedMemo.memoId }
+                memoMap.remove(memoRepository.updatedMemo.memoId)
                 _memoList.sortByDescending { it.memoId }
                 _memoList.withIndex().forEach { memoMap[it.value.memoId] = it.index }
                 _actionModeSetMemoList = mutableListOf()
