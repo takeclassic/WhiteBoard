@@ -16,6 +16,7 @@ class NoteRepository(
     private val dispatchers: DispatcherProvider
     ) {
     var customNoteName: String = ""
+    var isDeletion: Boolean = false
 
     val allNotes: Flow<List<Note>> = noteDao.getAllNotes()
 

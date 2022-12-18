@@ -109,6 +109,7 @@ class EditNoteFragment : Fragment() {
                 setMessage("삭제하실 경우 노트안의 모든 메모가 함께 삭제됩니다")
                 setPositiveButton("삭제",
                     DialogInterface.OnClickListener { dialog, id ->
+                        viewModel.setDeletion(true)
                         viewModel.deleteNote(note)
                     })
                 setNegativeButton("취소",

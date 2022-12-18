@@ -95,8 +95,12 @@ class CustomNoteFragment : Fragment() {
         }
         (requireActivity() as MainActivity).init()
         val noteName = viewModel.getNoteName()
-        if (noteName.isNullOrBlank()) {
-            Toast.makeText(requireContext(), "노트 이름이 명확하지 않습니다", Toast.LENGTH_SHORT).show()
+
+        Log.i(TAG, "noteNameBefore: ${this.noteName}, noteName: $noteName, isDelete: ${viewModel.checkDeletion()}")
+        if (noteName.isNullOrBlank() ||
+            (noteName == this.noteName && viewModel.checkDeletion())) {
+            viewModel.setDeletion(false)
+            this.findNavController().navigate(R.id.nav_total)
             return
         }
         this.noteName = noteName

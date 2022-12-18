@@ -34,6 +34,10 @@ class EditNoteViewModel(
         }
     }
 
+    fun setDeletion(delete: Boolean) {
+        noteRepository.isDeletion = delete
+    }
+
     fun moveMemos(noteName: String, memoList: List<Memo>) {
         viewModelScope.launch {
             for (memo in memoList) {

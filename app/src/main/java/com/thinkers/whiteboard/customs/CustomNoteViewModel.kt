@@ -29,17 +29,24 @@ class CustomNoteViewModel(
     val memoListLiveData: LiveData<List<Memo>> = _memoListLiveData
     var memoState: MemoUpdateState = MemoUpdateState.NONE
     val mutex = Mutex()
-
-    fun getNoteName(): String {
-        return noteRepository.customNoteName
-    }
-
     val memoMap = mutableMapOf<Int, Int>()
     var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
 
     private var _actionModeSetMemoList = mutableListOf<Memo>()
     var actionModeSetMemoList = mutableListOf<Memo>()
     var actionModeSetViewList = mutableListOf<View>()
+
+    fun getNoteName(): String {
+        return noteRepository.customNoteName
+    }
+
+    fun checkDeletion(): Boolean {
+        return noteRepository.isDeletion
+    }
+
+    fun setDeletion(flag: Boolean) {
+        noteRepository.isDeletion = flag
+    }
 
     fun init() {
         Log.i(TAG, "state: ${memoRepository.memoState}")
