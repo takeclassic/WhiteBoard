@@ -89,5 +89,6 @@
         android:fitsSystemWindows="true"
         android:visibility="visible"
         android:theme="@style/Theme.WhiteBoard.NavigationView"
+        app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
 </androidx.drawerlayout.widget.DrawerLayout>
