@@ -14,12 +14,16 @@
             android:id="@+id/action_nav_total_to_memoFragment"
             app:destination="@id/nav_memo"
             app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
             app:popExitAnim="@anim/bottom_down_disapper"
             />
         <action
             android:id="@+id/action_nav_total_to_nav_edit_note"
             app:destination="@id/nav_edit_note"
             app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
             app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
 
@@ -32,12 +36,16 @@
             android:id="@+id/action_nav_favorites_to_memoFragment"
             app:destination="@id/nav_memo"
             app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
             app:popExitAnim="@anim/bottom_down_disapper"
             />
         <action
             android:id="@+id/action_nav_favorites_to_nav_edit_note"
             app:destination="@id/nav_edit_note"
             app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
             app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
 
@@ -53,12 +61,16 @@
             android:id="@+id/action_nav_custom_note_to_nav_memo"
             app:destination="@id/nav_memo"
             app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
             app:popExitAnim="@anim/bottom_down_disapper"
             />
         <action
             android:id="@+id/action_nav_custom_note_to_nav_edit_note"
             app:destination="@id/nav_edit_note"
             app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
             app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
 
@@ -75,6 +87,8 @@
             android:id="@+id/action_nav_memo_to_nav_edit_note"
             app:destination="@id/nav_edit_note"
             app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
             app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
     <fragment
@@ -118,7 +132,8 @@
             android:id="@+id/action_nav_search_to_nav_memo"
             app:destination="@id/nav_memo"
             app:enterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
+            app:popEnterAnim="@anim/bottom_up_appear"
             app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
-
 </navigation>

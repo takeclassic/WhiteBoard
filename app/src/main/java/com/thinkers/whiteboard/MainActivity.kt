@@ -107,10 +107,12 @@ class MainActivity : AppCompatActivity() {
 
     private val appBarSearchButtonClickListener = View.OnClickListener {
         val navOptions = NavOptions
-                                .Builder()
-                                .setEnterAnim(R.anim.bottom_up_appear)
-                                .setPopExitAnim(R.anim.bottom_down_disapper)
-                                .build()
+            .Builder()
+            .setEnterAnim(R.anim.bottom_up_appear)
+            .setExitAnim(R.anim.bottom_down_disapper)
+            .setPopExitAnim(R.anim.bottom_down_disapper)
+            .setPopEnterAnim(R.anim.bottom_up_appear)
+            .build()
 
         navController.navigate(R.id.nav_search, null, navOptions)
     }
@@ -128,6 +130,9 @@ class MainActivity : AppCompatActivity() {
         val navOptions = NavOptions
             .Builder()
             .setEnterAnim(R.anim.bottom_up_appear)
+            .setExitAnim(R.anim.bottom_down_disapper)
+            .setPopExitAnim(R.anim.bottom_down_disapper)
+            .setPopEnterAnim(R.anim.bottom_up_appear)
             .build()
         navController.navigate(R.id.nav_favorites, null, navOptions)
     }
@@ -145,6 +150,9 @@ class MainActivity : AppCompatActivity() {
         val navOptions = NavOptions
             .Builder()
             .setEnterAnim(R.anim.bottom_up_appear)
+            .setExitAnim(R.anim.bottom_down_disapper)
+            .setPopExitAnim(R.anim.bottom_down_disapper)
+            .setPopEnterAnim(R.anim.bottom_up_appear)
             .build()
         navController.navigate(R.id.nav_total, null, navOptions)
     }
@@ -153,7 +161,9 @@ class MainActivity : AppCompatActivity() {
         val navOptions = NavOptions
             .Builder()
             .setEnterAnim(R.anim.bottom_up_appear)
+            .setExitAnim(R.anim.bottom_down_disapper)
             .setPopExitAnim(R.anim.bottom_down_disapper)
+            .setPopEnterAnim(R.anim.bottom_up_appear)
             .build()
         navController.navigate(R.id.nav_memo, null, navOptions)
     }
