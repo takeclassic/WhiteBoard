@@ -30,7 +30,9 @@ class CustomNoteViewModel(
     var memoState: MemoUpdateState = MemoUpdateState.NONE
     val mutex = Mutex()
 
-    var noteName: String = ""
+    fun getNoteName(): String {
+        return noteRepository.customNoteName
+    }
 
     val memoMap = mutableMapOf<Int, Int>()
     var memoToUpdate: Memo = Memo(-1, "", 0,0, 0,"")
@@ -48,7 +50,7 @@ class CustomNoteViewModel(
         viewModelScope.launch {
             when(memoRepository.memoState) {
                 MemoUpdateState.INSERT -> {
-                    getNextPage(0, noteName)
+                    getNextPage(0, getNoteName())
                 }
                 MemoUpdateState.UPDATE -> {
                     if (memoMap.containsKey(memoToUpdate.memoId)) {

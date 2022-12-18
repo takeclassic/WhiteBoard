@@ -70,6 +70,7 @@ class MainActivity : AppCompatActivity() {
                 menuItem.title = s
                 menuItemCache = menuItem
 
+                viewModel.setCustomNoteName(menuItem.title.toString())
                 val bundle = bundleOf("noteName" to menuItem.title.toString())
                 navController.navigate(R.id.nav_custom_note, bundle)
                 binding.drawerLayout.closeDrawer(Gravity.START)

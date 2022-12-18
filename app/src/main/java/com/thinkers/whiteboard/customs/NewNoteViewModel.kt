@@ -39,6 +39,7 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
             if (res == 0) {
                 _saveNoteState.emit(NoteUpdateState.UPDATE_FAIL)
             } else {
+                noteRepository.customNoteName = note.noteName
                 _saveNoteState.emit(NoteUpdateState.UPDATE_SUCCESS)
             }
         }

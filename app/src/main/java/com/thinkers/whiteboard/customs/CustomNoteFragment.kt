@@ -94,7 +94,7 @@ class CustomNoteFragment : Fragment() {
             viewModel.removeMovedItems()
         }
         (requireActivity() as MainActivity).init()
-        val noteName = requireArguments().get("noteName") as String
+        val noteName = viewModel.getNoteName()
         if (noteName.isNullOrBlank()) {
             Toast.makeText(requireContext(), "노트 이름이 명확하지 않습니다", Toast.LENGTH_SHORT).show()
             return
@@ -102,7 +102,6 @@ class CustomNoteFragment : Fragment() {
         this.noteName = noteName
         binding.customToolBar.noteToolbarCollapsingLayout.setExpandedTitleMargin(50, 0, 0, 60)
         binding.customToolBar.noteToolbarCollapsingLayout.title = noteName
-        viewModel.noteName = noteName
         Log.i(TAG, "noteName: $noteName")
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getNote(noteName).collect {

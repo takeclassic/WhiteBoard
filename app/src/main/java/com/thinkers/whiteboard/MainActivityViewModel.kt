@@ -1,5 +1,6 @@
 package com.thinkers.whiteboard
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.database.entities.Note
@@ -17,6 +18,10 @@ class MainActivityViewModel(
 
     fun setMemoBelongNote(noteName: String) {
        memoRepository.noteName = noteName
+    }
+
+    fun setCustomNoteName(noteName: String) {
+        noteRepository.customNoteName = noteName
     }
 }
 

@@ -15,6 +15,8 @@ class NoteRepository(
     private val noteDao: NoteDao,
     private val dispatchers: DispatcherProvider
     ) {
+    var customNoteName: String = ""
+
     val allNotes: Flow<List<Note>> = noteDao.getAllNotes()
 
     fun getNote(noteName: String): Flow<Note> {
