@@ -7,19 +7,22 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
+import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.database.repositories.MemoRepository
+import com.thinkers.whiteboard.database.repositories.NoteRepository
 import com.thinkers.whiteboard.total.TotalViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 
-class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewModel() {
+class CustomNoteViewModel(
+    private val noteRepository: NoteRepository,
+    private val memoRepository: MemoRepository
+    ) : ViewModel() {
     private var _memoList = mutableListOf<Memo>()
     val memoList: List<Memo> = _memoList
     private val _memoListLiveData = MutableLiveData<List<Memo>>()
@@ -70,6 +73,10 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
 
     fun allPagingCustomNotes(noteName: String): LiveData<PagingData<Memo>> {
         return memoRepository.getCustomPagingMemos(noteName).cachedIn(viewModelScope).asLiveData()
+    }
+
+    fun getNote(noteName: String): Flow<Note> {
+        return noteRepository.getNote(noteName)
     }
 
     fun customNoteMemoCount(scope: CoroutineScope, noteName: String): StateFlow<Int> {
@@ -148,13 +155,14 @@ class CustomNoteViewModel(private val memoRepository: MemoRepository) : ViewMode
 }
 
 class CustomNoteViewModelFactory(
+    private val noteRepository: NoteRepository,
     private val memoRepository: MemoRepository
 )
     : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(CustomNoteViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return CustomNoteViewModel(memoRepository) as T
+            return CustomNoteViewModel(noteRepository, memoRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

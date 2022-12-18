@@ -5,14 +5,11 @@ import androidx.lifecycle.*
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
-import com.thinkers.whiteboard.customs.CustomNoteViewModel
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex

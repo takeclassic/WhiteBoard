@@ -17,6 +17,10 @@ class NoteRepository(
     ) {
     val allNotes: Flow<List<Note>> = noteDao.getAllNotes()
 
+    fun getNote(noteName: String): Flow<Note> {
+        return noteDao.getNote(noteName)
+    }
+
     @WorkerThread
     fun getNoteWithMemos(noteName: String): Flow<NoteAndMemos?> {
         return noteDao.getNoteWithMemos(noteName)

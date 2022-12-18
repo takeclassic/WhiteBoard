@@ -27,6 +27,7 @@ import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.common.actionmode.ActionModeHandler
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.entities.Memo
+import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentCustomNoteBinding
 import com.thinkers.whiteboard.total.TotalFragment
 import com.thinkers.whiteboard.total.TotalFragmentDirections
@@ -51,6 +52,8 @@ class CustomNoteFragment : Fragment() {
 
     private var actionMode: ActionMode? = null
 
+    private lateinit var note: Note
+
     private val onScrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -69,7 +72,10 @@ class CustomNoteFragment : Fragment() {
 
         viewModel = ViewModelProvider(
             this,
-            CustomNoteViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
+            CustomNoteViewModelFactory(
+                WhiteBoardApplication.instance!!.noteRepository,
+                WhiteBoardApplication.instance!!.memoRepository
+            )
         ).get(CustomNoteViewModel::class.java)
     }
 
@@ -98,6 +104,13 @@ class CustomNoteFragment : Fragment() {
         binding.customToolBar.noteToolbarCollapsingLayout.title = noteName
         viewModel.noteName = noteName
         Log.i(TAG, "noteName: $noteName")
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getNote(noteName).collect {
+                note = it
+                binding.customNoteMainLayout.setBackgroundColor(note.noteColor)
+                Log.i(TAG, "note: $note")
+            }
+        }
         recyclerView = binding.customsRecyclerview.recyclerView
         recyclerView.addOnScrollListener(onScrollListener)
 
@@ -146,7 +159,7 @@ class CustomNoteFragment : Fragment() {
                     viewModel.actionModeSetMemoList.remove(memo)
                     viewModel.actionModeSetViewList.remove(view)
                     view.background =
-                        requireContext().getDrawable(R.drawable.rounder_corner_view)
+                        requireContext().getDrawable(R.drawable.white_rounder_corner_view)
                 } else {
                     viewModel.actionModeSetMemoList.add(memo)
                     viewModel.actionModeSetViewList.add(view)
@@ -206,14 +219,14 @@ class CustomNoteFragment : Fragment() {
             Log.i(TAG, "onMemoItemBind:${memo.text}")
             view.background = requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
         } else {
-            view.background = requireContext().getDrawable(R.drawable.rounder_corner_view)
+            view.background = requireContext().getDrawable(R.drawable.white_rounder_corner_view)
         }
     }
 
     private val onDestroyActionMode: () -> Unit = {
         for (actionModeSetView in viewModel.actionModeSetViewList) {
             actionModeSetView.background =
-                requireContext().getDrawable(R.drawable.rounder_corner_view)
+                requireContext().getDrawable(R.drawable.white_rounder_corner_view)
         }
         viewModel.clearActionModeList()
         actionMode?.finish()
