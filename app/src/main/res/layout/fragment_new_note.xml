@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#F44336"
+            android:buttonTint="#FFA07A"
             android:checked="true" />
 
         <RadioButton
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#E91E63" />
+            android:buttonTint="#FFB6C1" />
 
         <RadioButton
             android:id="@+id/new_note_radio_button_3"
@@ -71,7 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#9C27B0" />
+            android:buttonTint="#f1cbff" />
 
         <RadioButton
             android:id="@+id/new_note_radio_button_4"
@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#673AB7" />
+            android:buttonTint="#c9c9ff" />
 
         <RadioButton
             android:id="@+id/new_note_radio_button_5"
@@ -87,7 +87,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#3F51B5" />
+            android:buttonTint="#107dac" />
 
         <RadioButton
             android:id="@+id/new_note_radio_button_6"
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#2196F3" />
+            android:buttonTint="#7fcdff" />
 
     </RadioGroup>
 
@@ -115,7 +115,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#03A9F4" />
+            android:buttonTint="#76b6c4" />
 
         <RadioButton
             android:id="@+id/new_note_radio_button_8"
@@ -123,7 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#00BCD4" />
+            android:buttonTint="#def3f6" />
 
         <RadioButton
             android:id="@+id/new_note_radio_button_9"
@@ -175,7 +175,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#FFEB3B" />
+            android:buttonTint="#feffa3" />
 
         <RadioButton
             android:id="@+id/new_note_radio_button_14"
@@ -215,7 +215,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:button="@drawable/new_memo_radio_button"
-            android:buttonTint="#000000" />
+            android:buttonTint="#e3e4e6" />
 
     </RadioGroup>
 

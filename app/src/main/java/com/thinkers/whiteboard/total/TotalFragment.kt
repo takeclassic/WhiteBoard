@@ -186,7 +186,7 @@ class TotalFragment : Fragment() {
 
                 if (actionModeSetMemoList.size > 0) {
                     actionMode?.setTitle(Html.fromHtml(
-                        "<font color='#f5fffa'>${actionModeSetMemoList.size} </font>",
+                        "<font color='#66A8FF'>${actionModeSetMemoList.size} </font>",
                         Html.FROM_HTML_OPTION_USE_CSS_COLORS
                     ))
 
@@ -220,7 +220,7 @@ class TotalFragment : Fragment() {
                     )
                 )
                 actionMode?.title = Html.fromHtml(
-                    "<font color='#f5fffa'>${actionModeSetMemoList.size} </font>",
+                    "<font color='#66A8FF'>${actionModeSetMemoList.size} </font>",
                     Html.FROM_HTML_OPTION_USE_CSS_COLORS
                 )
                 true
