@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_add_note -> {
                 val navOptions = NavOptions
                     .Builder()
-                    .setPopExitAnim(R.anim.bottom_down_disapper)
                     .build()
 
                 navController.navigate(R.id.nav_add_note, null, navOptions)
@@ -89,7 +88,6 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_edit_note -> {
                 val navOptions = NavOptions
                     .Builder()
-                    .setPopExitAnim(R.anim.bottom_down_disapper)
                     .build()
 
                 val args = bundleOf("isActionMode" to false)
