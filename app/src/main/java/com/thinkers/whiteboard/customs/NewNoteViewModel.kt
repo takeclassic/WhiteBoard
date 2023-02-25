@@ -45,8 +45,8 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
         }
     }
 
-    fun setEdition(flag: Boolean) {
-        noteRepository.isEdition = flag
+    fun setChangedNoteNumber(num: Int) {
+        noteRepository.changedNoteNumber = num
     }
 
     companion object {

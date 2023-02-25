@@ -48,12 +48,12 @@ class CustomNoteViewModel(
         noteRepository.isDeletion = flag
     }
 
-    fun checkEdition(): Boolean {
-        return noteRepository.isEdition
+    fun getChangedNoteNumber(): Int {
+        return noteRepository.changedNoteNumber
     }
 
-    fun setEdition(flag: Boolean) {
-        noteRepository.isEdition = flag
+    fun setChangedNoteNumber(noteNumber: Int) {
+        noteRepository.changedNoteNumber = noteNumber
     }
 
     fun init() {

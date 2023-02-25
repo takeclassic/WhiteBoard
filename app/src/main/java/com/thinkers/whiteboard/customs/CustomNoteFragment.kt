@@ -49,6 +49,7 @@ class CustomNoteFragment : Fragment() {
     private var memoCount: Int = 0
     private var currentPage: Int = 1
     private var noteName: String = ""
+    private var noteNumber: Int = -1
 
     private var actionMode: ActionMode? = null
 
@@ -94,26 +95,35 @@ class CustomNoteFragment : Fragment() {
             viewModel.removeMovedItems()
         }
         (requireActivity() as MainActivity).init()
-        var noteName = viewModel.getNoteName()
+        var receivedNoteName = viewModel.getNoteName()
 
-        Log.i(TAG, "noteNameBefore: ${this.noteName}, noteName: $noteName, isDelete: ${viewModel.checkDeletion()}, isEdition: ${viewModel.checkEdition()}")
-        if (noteName.isNullOrBlank() ||
-            (noteName == this.noteName && viewModel.checkDeletion())) {
+        Log.i(TAG, "noteNameBefore: ${noteName}, noteName: $receivedNoteName, isDelete: ${viewModel.checkDeletion()}")
+        if (receivedNoteName.isNullOrBlank() ||
+            (receivedNoteName == noteName && viewModel.checkDeletion())) {
             viewModel.setDeletion(false)
             this.findNavController().navigate(R.id.nav_total)
             return
         }
 
-        if (!this.noteName.isNullOrBlank() &&
-            noteName != this.noteName &&
-            viewModel.checkEdition()
-        ) {
-            viewModel.setEdition(false)
-            noteName = this.noteName
-            Log.i(TAG, " up viewModel.checkEdition(): ${viewModel.checkEdition()}")
-        } else {
-            this.noteName = noteName
+        Log.i(TAG, "noteNumberBefore: $noteNumber, noteNumberAfter: ${viewModel.getChangedNoteNumber()}")
+        if (noteNumber == -1 || viewModel.getChangedNoteNumber() == noteNumber) {
+            noteName = receivedNoteName
+            viewModel.setChangedNoteNumber(-1)
         }
+
+
+//        if (!this.noteName.isNullOrBlank() &&
+//            noteName != this.noteName &&
+//            (viewModel.checkNameChanged()
+//                    || viewModel.checkColorChanged())
+//        ) {
+//            viewModel.setColorChangedFlag(false)
+//            viewModel.setNameChangedFlag(false)
+//            if ()
+//            noteName = this.noteName
+//        } else {
+//            this.noteName = noteName
+//        }
 
         binding.customToolBar.noteToolbarCollapsingLayout.setExpandedTitleMargin(50, 0, 0, 60)
         binding.customToolBar.noteToolbarCollapsingLayout.title = noteName
@@ -121,6 +131,7 @@ class CustomNoteFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getNote(noteName).collect {
                 note = it
+                noteNumber = note.noteNumber
                 binding.customNoteMainLayout.setBackgroundColor(note.noteColor)
                 Log.i(TAG, "note: $note")
             }

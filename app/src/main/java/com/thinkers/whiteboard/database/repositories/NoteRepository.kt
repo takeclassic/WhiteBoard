@@ -17,7 +17,7 @@ class NoteRepository(
     ) {
     var customNoteName: String = ""
     var isDeletion: Boolean = false
-    var isEdition: Boolean = false
+    var changedNoteNumber: Int = -1
 
     val allNotes: Flow<List<Note>> = noteDao.getAllNotes()
 

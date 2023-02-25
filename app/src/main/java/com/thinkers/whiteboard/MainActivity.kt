@@ -96,6 +96,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.nav_waste_bin -> {
+                restoreCustomMenuItemColor()
                 menuItemCache?.setCheckable(false)
                 menuItem.setCheckable(true)
                 menuItem.title = "휴지통"
