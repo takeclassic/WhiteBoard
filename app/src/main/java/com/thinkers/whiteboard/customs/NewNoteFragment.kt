@@ -88,7 +88,7 @@ class NewNoteFragment : Fragment() {
 
     private lateinit var viewModel: NewNoteViewModel
     private var noteNumber: Int = 0
-    private var noteColor: Int = -769226
+    private var noteColor: Int = -24454
     private var isNew = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
