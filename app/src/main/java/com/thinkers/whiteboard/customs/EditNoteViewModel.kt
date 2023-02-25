@@ -22,11 +22,19 @@ class EditNoteViewModel(
             list.filter {
                 it.noteName != "favorites"
             }.filter {
-                it.noteName != "내 메모"
+                it.noteName != "my_memo"
+            }.filter {
+                it.noteName != "waste_bin"
             }
         }.asLiveData()
 
-    val allMoveableNotes: LiveData<List<Note>> = noteRepository.allNotes.asLiveData()
+    val allMoveableNotes: LiveData<List<Note>> = noteRepository
+        .allNotes
+        .map{ list ->
+            list.filter {
+                it.noteName != "waste_bin"
+            }
+        }.asLiveData()
 
     fun deleteNote(note: Note) {
         viewModelScope.launch {

@@ -116,7 +116,8 @@ class FavoritesViewModel(
             mutex.withLock {
                 for (memo in memoListToDelete) {
                     Log.i(TAG, "delete memo: $memo")
-                    memoRepository.deleteMemo(memo)
+                    //memoRepository.deleteMemo(memo)
+                    memoRepository.removeMemoToBin(memo)
                     _memoList.removeIf { it.memoId == memo.memoId }
                     memoMap.remove(memo.memoId)
                 }

@@ -16,11 +16,17 @@ class ActionModeHandler(
     private val activity: Activity,
     private val onActionModeRemove: () -> Unit,
     private val onActionModeMove: () -> Boolean,
-    private val onDestroyActionMode: () -> Unit
+    private val onDestroyActionMode: () -> Unit,
+    private val isWasteBin: Boolean = false,
+    private val onActionModeRemoveAll: (() -> Unit)? = null,
 ): ActionMode.Callback {
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
         val inflater: MenuInflater = mode.menuInflater
-        inflater.inflate(R.menu.action_mode, menu)
+        if (isWasteBin) {
+            inflater.inflate(R.menu.action_mode_waste_bin, menu)
+        } else {
+            inflater.inflate(R.menu.action_mode, menu)
+        }
         Log.i(TAG, "onCreateActionMode")
         return true
     }
@@ -52,6 +58,10 @@ class ActionModeHandler(
             }
             R.id.action_mode_move -> {
                 onActionModeMove()
+            }
+            R.id.action_mode_delete_all -> {
+                onActionModeRemoveAll?.let { it() }
+                true
             }
             else -> {
                 false

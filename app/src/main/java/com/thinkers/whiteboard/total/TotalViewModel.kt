@@ -90,6 +90,7 @@ class TotalViewModel(
             val list = memoRepository
                 .getPaginatedMemoList(pageNumber + 1, TotalFragment.PAGE_SIZE)
                 .filter { !memoMap.containsKey(it.memoId) }
+                .filter { it.noteName != "waste_bin" }
 
             Log.i(TAG, "retrieved list: $list")
             mutex.withLock {
@@ -109,7 +110,8 @@ class TotalViewModel(
             mutex.withLock {
                 for (memo in memoListToDelete) {
                     Log.i(TAG, "delete memo: $memo")
-                    memoRepository.deleteMemo(memo)
+                    //memoRepository.deleteMemo(memo)
+                    memoRepository.removeMemoToBin(memo)
                     _memoList.removeIf { it.memoId == memo.memoId }
                     memoMap.remove(memo.memoId)
                 }

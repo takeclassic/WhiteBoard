@@ -14,7 +14,13 @@ class MainActivityViewModel(
     private val memoRepository: MemoRepository
 ): ViewModel() {
     val getAllCustomNotes: Flow<List<Note>> =
-        noteRepository.allNotes.map { list -> list.filter { it.noteName != "favorites" } }
+        noteRepository.allNotes.map {
+                list -> list.filter {
+                    it.noteName != "favorites"
+                }.filter {
+                    it.noteName != "waste_bin"
+                }
+        }
 
     fun setMemoBelongNote(noteName: String) {
        memoRepository.noteName = noteName

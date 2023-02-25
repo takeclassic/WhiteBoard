@@ -25,7 +25,7 @@ class MemoRepository(
     var allMemosCount = 0
     var allFavoriteMemosCount = 0
     var customMemosCount = 0
-    var noteName: String = "내 메모"
+    var noteName: String = "my_memo"
     val allMemos: Flow<List<Memo>> = memoDao.getAllMemos()
     val allFavoriteMemos: Flow<List<Memo>> = memoDao.getAllFavoriteMemos()
     val dataSourceHolder: DataSourceHolder<MemoDataSource> = DataSourceHolder()
@@ -67,6 +67,17 @@ class MemoRepository(
     @WorkerThread
     suspend fun deleteMemo(memo: Memo) = withContext(dispatchers.io) {
         memoDao.deleteMemo(memo)
+    }
+
+    @WorkerThread
+    suspend fun deleteAllMemos() = withContext(dispatchers.io) {
+        memoDao.deleteAllMemos()
+    }
+
+    @WorkerThread
+    suspend fun removeMemoToBin(memo: Memo) = withContext(dispatchers.io) {
+        memo.noteName = "waste_bin"
+        memoDao.updateMemo(memo)
     }
 
     fun getAllPagingMemos(): Flow<PagingData<Memo>> {

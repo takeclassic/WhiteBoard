@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity() {
                 restoreCustomMenuItemColor()
                 binding.appbarFavoritesButton.visibility = View.VISIBLE
                 binding.appbarTotalButton.visibility = View.GONE
-                viewModel.setMemoBelongNote("내 메모")
+                viewModel.setMemoBelongNote("my_memo")
                 navController.navigate(R.id.nav_total)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
@@ -92,6 +92,15 @@ class MainActivity : AppCompatActivity() {
 
                 val args = bundleOf("isActionMode" to false)
                 navController.navigate(R.id.nav_edit_note, args, navOptions)
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                true
+            }
+            R.id.nav_waste_bin -> {
+                menuItemCache?.setCheckable(false)
+                menuItem.setCheckable(true)
+                menuItem.title = "휴지통"
+                menuItemCache = menuItem
+                navController.navigate(R.id.nav_waste_bin)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }

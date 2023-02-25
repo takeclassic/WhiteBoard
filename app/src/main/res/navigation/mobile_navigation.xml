@@ -136,4 +136,26 @@
             app:popEnterAnim="@anim/bottom_up_appear"
             app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
+
+    <fragment
+        android:id="@+id/nav_waste_bin"
+        android:name="com.thinkers.whiteboard.wastebin.WasteBinFragment"
+        android:label="@string/menu_total"
+        tools:layout="@layout/fragment_waste_bin" >
+        <action
+            android:id="@+id/action_nav_waste_bin_to_memoFragment"
+            app:destination="@id/nav_memo"
+            app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
+            app:popExitAnim="@anim/bottom_down_disapper"
+            />
+        <action
+            android:id="@+id/action_nav_waste_bin_to_nav_edit_note"
+            app:destination="@id/nav_edit_note"
+            app:enterAnim="@anim/bottom_up_appear"
+            app:popEnterAnim="@anim/bottom_up_appear"
+            app:exitAnim="@anim/bottom_down_disapper"
+            app:popExitAnim="@anim/bottom_down_disapper" />
+    </fragment>
 </navigation>

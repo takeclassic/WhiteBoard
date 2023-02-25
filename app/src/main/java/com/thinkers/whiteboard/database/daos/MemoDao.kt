@@ -65,4 +65,7 @@ interface MemoDao {
 
     @Delete
     fun deleteMemo(memo: Memo)
+
+    @Query("DELETE FROM memo WHERE memo.note_name = 'waste_bin'")
+    fun deleteAllMemos()
 }
