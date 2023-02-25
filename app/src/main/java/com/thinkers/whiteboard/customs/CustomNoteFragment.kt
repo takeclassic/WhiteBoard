@@ -94,16 +94,27 @@ class CustomNoteFragment : Fragment() {
             viewModel.removeMovedItems()
         }
         (requireActivity() as MainActivity).init()
-        val noteName = viewModel.getNoteName()
+        var noteName = viewModel.getNoteName()
 
-        Log.i(TAG, "noteNameBefore: ${this.noteName}, noteName: $noteName, isDelete: ${viewModel.checkDeletion()}")
+        Log.i(TAG, "noteNameBefore: ${this.noteName}, noteName: $noteName, isDelete: ${viewModel.checkDeletion()}, isEdition: ${viewModel.checkEdition()}")
         if (noteName.isNullOrBlank() ||
             (noteName == this.noteName && viewModel.checkDeletion())) {
             viewModel.setDeletion(false)
             this.findNavController().navigate(R.id.nav_total)
             return
         }
-        this.noteName = noteName
+
+        if (!this.noteName.isNullOrBlank() &&
+            noteName != this.noteName &&
+            viewModel.checkEdition()
+        ) {
+            viewModel.setEdition(false)
+            noteName = this.noteName
+            Log.i(TAG, " up viewModel.checkEdition(): ${viewModel.checkEdition()}")
+        } else {
+            this.noteName = noteName
+        }
+
         binding.customToolBar.noteToolbarCollapsingLayout.setExpandedTitleMargin(50, 0, 0, 60)
         binding.customToolBar.noteToolbarCollapsingLayout.title = noteName
         Log.i(TAG, "noteName: $noteName")

@@ -45,6 +45,10 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
         }
     }
 
+    fun setEdition(flag: Boolean) {
+        noteRepository.isEdition = flag
+    }
+
     companion object {
         const val TAG = "NewNoteViewModel"
     }

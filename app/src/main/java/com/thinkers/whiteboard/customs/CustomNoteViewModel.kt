@@ -48,6 +48,14 @@ class CustomNoteViewModel(
         noteRepository.isDeletion = flag
     }
 
+    fun checkEdition(): Boolean {
+        return noteRepository.isEdition
+    }
+
+    fun setEdition(flag: Boolean) {
+        noteRepository.isEdition = flag
+    }
+
     fun init() {
         Log.i(TAG, "state: ${memoRepository.memoState}")
         if (memoRepository.memoState == MemoUpdateState.NONE) {

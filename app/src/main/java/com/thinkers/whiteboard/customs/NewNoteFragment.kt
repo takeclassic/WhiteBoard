@@ -175,6 +175,7 @@ class NewNoteFragment : Fragment() {
             if (isNew) {
                 viewModel.saveNote(note)
             } else {
+                viewModel.setEdition(true)
                 viewModel.updateNote(note)
             }
         }
