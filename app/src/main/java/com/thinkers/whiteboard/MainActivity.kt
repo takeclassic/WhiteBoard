@@ -79,6 +79,10 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_add_note -> {
                 val navOptions = NavOptions
                     .Builder()
+                    .setEnterAnim(R.anim.fade_in)
+                    .setExitAnim(R.anim.fade_out)
+                    .setPopExitAnim(R.anim.fade_out)
+                    .setPopEnterAnim(R.anim.fade_in)
                     .build()
 
                 navController.navigate(R.id.nav_add_note, null, navOptions)
@@ -88,6 +92,10 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_edit_note -> {
                 val navOptions = NavOptions
                     .Builder()
+                    .setEnterAnim(R.anim.fade_in)
+                    .setExitAnim(R.anim.fade_out)
+                    .setPopExitAnim(R.anim.fade_out)
+                    .setPopEnterAnim(R.anim.fade_in)
                     .build()
 
                 val args = bundleOf("isActionMode" to false)
@@ -214,7 +222,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val navView: NavigationView = binding.navView
-        navView.itemIconTintList = null;
+        navView.itemIconTintList = null
         lifecycle.coroutineScope.launch {
             viewModel.getAllCustomNotes.collect { list ->
                 navView.menu.removeGroup(R.id.nav_view_note_group)
