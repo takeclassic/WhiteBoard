@@ -15,7 +15,7 @@
         android:layout_gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="빈 노트입니다" />
+        android:text="저장된 메모가 없습니다" />
 
     <androidx.core.widget.NestedScrollView
         android:clipToPadding="false"

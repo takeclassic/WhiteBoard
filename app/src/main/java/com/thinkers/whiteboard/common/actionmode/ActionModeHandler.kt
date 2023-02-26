@@ -59,10 +59,10 @@ class ActionModeHandler(
             R.id.action_mode_move -> {
                 onActionModeMove()
             }
-            R.id.action_mode_delete_all -> {
-                onActionModeRemoveAll?.let { it() }
-                true
-            }
+//            R.id.action_mode_delete_all -> {
+//                onActionModeRemoveAll?.let { it() }
+//                true
+//            }
             else -> {
                 false
             }

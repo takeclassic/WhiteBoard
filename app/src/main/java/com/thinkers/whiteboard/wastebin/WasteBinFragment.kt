@@ -88,9 +88,6 @@ class WasteBinFragment : Fragment() {
         }
         (requireActivity() as MainActivity).init()
 
-        binding.wasteBinToolBar.noteToolbarCollapsingLayout.setExpandedTitleMargin(50, 0, 0, 60)
-        binding.wasteBinToolBar.noteToolbarCollapsingLayout.title = "휴지통"
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getNote(noteName).collect {
                 note = it
@@ -122,12 +119,16 @@ class WasteBinFragment : Fragment() {
                 memoCount = it
                 if (memoCount > 0) {
                     binding.wasteBinNoteEmptyText.visibility = View.GONE
-                    binding.wasteBinNestedScrollView.isNestedScrollingEnabled = true
+                    binding.wasteBinClearAllImageview.visibility = View.VISIBLE
                 } else {
                     binding.wasteBinNoteEmptyText.visibility = View.VISIBLE
-                    binding.wasteBinNestedScrollView.isNestedScrollingEnabled = false
+                    binding.wasteBinClearAllImageview.visibility = View.GONE
                 }
             }
+        }
+
+        binding.wasteBinClearAllImageview.setOnClickListener {
+            onActionModeRemoveAll()
         }
     }
 
@@ -170,7 +171,8 @@ class WasteBinFragment : Fragment() {
     private val memoItemLongClick: (View, Memo) -> Boolean = { view, memo ->
         when (actionMode) {
             null -> {
-                binding.wasteBinToolBar.noteToolbarCollapsingLayout.visibility = View.GONE
+                toggleTileAndDeleteAllButton(false)
+
                 view.background =
                     requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
 
@@ -219,7 +221,7 @@ class WasteBinFragment : Fragment() {
         viewModel.clearActionModeList()
         actionMode?.finish()
         actionMode = null
-        binding.wasteBinToolBar.noteToolbarCollapsingLayout.visibility = View.VISIBLE
+        toggleTileAndDeleteAllButton(true)
     }
 
     private val onActionModeMove: () -> Boolean = {
@@ -279,9 +281,20 @@ class WasteBinFragment : Fragment() {
         }
     }
 
+    private fun toggleTileAndDeleteAllButton(flag: Boolean) {
+        if (flag) {
+            binding.wasteBinTitle.visibility = View.VISIBLE
+            binding.wasteBinClearAllImageview.visibility = View.VISIBLE
+        } else {
+            binding.wasteBinTitle.visibility = View.GONE
+            binding.wasteBinClearAllImageview.visibility = View.GONE
+        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         binding.wasteBinNoteEmptyText.visibility = View.VISIBLE
+        binding.wasteBinClearAllImageview.visibility = View.GONE
         binding.wasteBinRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
     }
