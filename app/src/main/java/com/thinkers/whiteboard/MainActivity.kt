@@ -113,6 +113,16 @@ class MainActivity : AppCompatActivity() {
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
+            R.id.nav_settings -> {
+                restoreCustomMenuItemColor()
+                menuItemCache?.setCheckable(false)
+                menuItem.setCheckable(true)
+                menuItem.title = "설정"
+                menuItemCache = menuItem
+                navController.navigate(R.id.nav_settings)
+                binding.drawerLayout.closeDrawer(Gravity.START)
+                true
+            }
         }
         false
     }

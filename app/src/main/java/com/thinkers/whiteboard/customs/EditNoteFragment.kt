@@ -21,8 +21,8 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
-import com.thinkers.whiteboard.common.NoteListAdapter
 import com.thinkers.whiteboard.common.memo.MemoFragmentArgs
+import com.thinkers.whiteboard.common.recyclerview.NoteListAdapter
 import com.thinkers.whiteboard.common.view.CustomDecoration
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.entities.Note
@@ -124,17 +124,6 @@ class EditNoteFragment : Fragment() {
     }
 
     private fun drawDivider() {
-//        val attrs = intArrayOf(android.R.attr.listDivider)
-//        val a = requireContext().obtainStyledAttributes(attrs)
-//        val divider = a.getDrawable(0)
-//        divider?.colorFilter = BlendModeColorFilter(R.color.default_icon, BlendMode.DST)
-//        val insetDivider = InsetDrawable(divider, 0, 30, 0, 0)
-//        a.recycle()
-//
-//        val decor = DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL)
-//        decor.setDrawable(insetDivider)
-//        binding.editNoteRecyclerview.recyclerView.addItemDecoration(decor)
-
         val customDecoration = CustomDecoration(1f, 30f, resources.getColor(R.color.default_icon, null))
         binding.editNoteRecyclerview.recyclerView.addItemDecoration(customDecoration)
     }

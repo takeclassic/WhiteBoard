@@ -1,4 +1,4 @@
-package com.thinkers.whiteboard.common
+package com.thinkers.whiteboard.common.utils
 
 import kotlinx.coroutines.Dispatchers
 

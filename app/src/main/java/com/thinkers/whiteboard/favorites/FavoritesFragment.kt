@@ -19,9 +19,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
-import com.thinkers.whiteboard.common.MemoListAdapter
 import com.thinkers.whiteboard.common.actionmode.ActionModeHandler
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
+import com.thinkers.whiteboard.common.recyclerview.MemoListAdapter
 import com.thinkers.whiteboard.customs.CustomNoteFragment
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentFavoritesBinding

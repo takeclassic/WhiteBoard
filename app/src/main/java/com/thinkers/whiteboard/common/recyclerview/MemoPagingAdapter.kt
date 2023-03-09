@@ -1,4 +1,4 @@
-package com.thinkers.whiteboard.common
+package com.thinkers.whiteboard.common.recyclerview
 
 import android.view.LayoutInflater
 import android.view.View

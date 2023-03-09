@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
-import com.thinkers.whiteboard.common.MemoListAdapter
+import com.thinkers.whiteboard.common.recyclerview.MemoListAdapter
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentSearchBinding
 

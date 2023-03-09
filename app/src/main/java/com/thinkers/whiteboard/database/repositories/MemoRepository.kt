@@ -5,7 +5,7 @@ import androidx.annotation.WorkerThread
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.thinkers.whiteboard.common.DispatcherProvider
+import com.thinkers.whiteboard.common.utils.DispatcherProvider
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.daos.MemoDao
 import com.thinkers.whiteboard.database.entities.Memo

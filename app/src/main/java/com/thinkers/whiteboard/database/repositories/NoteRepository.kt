@@ -2,7 +2,7 @@ package com.thinkers.whiteboard.database.repositories
 
 import androidx.annotation.WorkerThread
 import androidx.paging.*
-import com.thinkers.whiteboard.common.DispatcherProvider
+import com.thinkers.whiteboard.common.utils.DispatcherProvider
 import com.thinkers.whiteboard.database.daos.NoteDao
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.entities.Note
