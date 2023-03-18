@@ -25,4 +25,6 @@
     <string name="alert_dialog_memo_delete_text">메모를 삭제하시겠습니까?</string>
     <string name="alert_dialog_delete">삭제</string>
     <string name="alert_dialog_cancel">취소</string>
+
+    <string name="key_auto_remove">auto-remove</string>
 </resources>

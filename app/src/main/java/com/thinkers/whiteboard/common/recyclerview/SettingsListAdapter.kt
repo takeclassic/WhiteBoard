@@ -3,7 +3,9 @@ package com.thinkers.whiteboard.common.recyclerview
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -13,12 +15,14 @@ class SettingsListAdapter(
    val onBackupButtonClicked: () -> Unit,
    val onLockButtonClicked:() -> Unit,
    val onAutoRemoveToggleClicked: () -> Unit,
+   val autoRemoveStatus: Boolean
 ): ListAdapter<String, SettingsListAdapter.SettingsViewHolder>(SettingsAdapterDiffCallback) {
     class SettingsViewHolder(
         itemView: View,
         val onBackupButtonClicked: () -> Unit,
         val onLockButtonClicked:() -> Unit,
         val onAutoRemoveToggleClicked: () -> Unit,
+        val autoRemoveStatus: Boolean
     ): RecyclerView.ViewHolder(itemView) {
         private val settingName: TextView = itemView.findViewById(R.id.item_settings_name)
 
@@ -33,7 +37,11 @@ class SettingsListAdapter(
                     this.settingName.setOnClickListener{ onLockButtonClicked() }
                 }
                 "자동삭제" -> {
-                    this.settingName.setOnClickListener{ onAutoRemoveToggleClicked() }
+                    itemView.findViewById<ImageView>(R.id.item_settings_arrow).visibility = View.GONE
+                    itemView.findViewById<SwitchCompat>(R.id.item_settings_switch).visibility = View.VISIBLE
+                    itemView.findViewById<SwitchCompat>(R.id.item_settings_switch).isChecked = autoRemoveStatus
+                    itemView.findViewById<SwitchCompat>(R.id.item_settings_switch)
+                        .setOnClickListener{ onAutoRemoveToggleClicked() }
                 }
             }
         }
@@ -51,7 +59,8 @@ class SettingsListAdapter(
             view,
             onBackupButtonClicked,
             onLockButtonClicked,
-            onAutoRemoveToggleClicked
+            onAutoRemoveToggleClicked,
+            autoRemoveStatus
         )
     }
 
