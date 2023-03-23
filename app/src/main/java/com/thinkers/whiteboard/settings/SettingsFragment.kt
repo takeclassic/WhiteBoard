@@ -44,7 +44,7 @@ class SettingsFragment : Fragment() {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(
             this,
-            SettingsViewModelFactory()
+            SettingsViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
         ).get(SettingsViewModel::class.java)
 
         lifecycleScope.launchWhenCreated {
@@ -71,6 +71,8 @@ class SettingsFragment : Fragment() {
             onAutoRemoveToggleClicked,
             autoRemoveSwitch
         )
+
+        binding.settingsClose.setOnClickListener { requireActivity().onBackPressed() }
 
         binding.settingsRecyclerview.recyclerView.adapter = settingsListAdapter
         settingsListAdapter.submitList(settingsArray.toList())

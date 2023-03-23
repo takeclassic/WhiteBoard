@@ -12,6 +12,9 @@ interface MemoDao {
     @Query("SELECT * FROM memo")
     fun getAllMemos(): Flow<List<Memo>>
 
+    @Query("SELECT * FROM memo WHERE is_favorite LIKE 0")
+    fun getAllMemosWithoutFavorites(): List<Memo>
+
     @Query("SELECT * FROM memo ORDER BY created_time DESC")
     fun getPagingAllMemos(): PagingSource<Int, Memo>
 

@@ -79,10 +79,10 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_add_note -> {
                 val navOptions = NavOptions
                     .Builder()
-                    .setEnterAnim(R.anim.fade_in)
-                    .setExitAnim(R.anim.fade_out)
+                    //.setEnterAnim(R.anim.fade_in)
+                    //.setExitAnim(R.anim.fade_out)
                     .setPopExitAnim(R.anim.fade_out)
-                    .setPopEnterAnim(R.anim.fade_in)
+                    //.setPopEnterAnim(R.anim.fade_in)
                     .build()
 
                 navController.navigate(R.id.nav_add_note, null, navOptions)
@@ -92,10 +92,10 @@ class MainActivity : AppCompatActivity() {
             R.id.nav_edit_note -> {
                 val navOptions = NavOptions
                     .Builder()
-                    .setEnterAnim(R.anim.fade_in)
-                    .setExitAnim(R.anim.fade_out)
+                    //.setEnterAnim(R.anim.fade_in)
+                    //.setExitAnim(R.anim.fade_out)
                     .setPopExitAnim(R.anim.fade_out)
-                    .setPopEnterAnim(R.anim.fade_in)
+                    //.setPopEnterAnim(R.anim.fade_in)
                     .build()
 
                 val args = bundleOf("isActionMode" to false)
@@ -114,12 +114,18 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.nav_settings -> {
+                val navOptions = NavOptions
+                    .Builder()
+                    //.setExitAnim(R.anim.fade_out)
+                    .setPopExitAnim(R.anim.fade_out)
+                    .build()
+
                 restoreCustomMenuItemColor()
                 menuItemCache?.setCheckable(false)
                 menuItem.setCheckable(true)
                 menuItem.title = "설정"
                 menuItemCache = menuItem
-                navController.navigate(R.id.nav_settings)
+                navController.navigate(R.id.nav_settings, null, navOptions)
                 binding.drawerLayout.closeDrawer(Gravity.START)
                 true
             }
@@ -201,7 +207,8 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_search,
                 R.id.nav_edit_note,
                 R.id.nav_add_note,
-                R.id.nav_memo -> {
+                R.id.nav_memo,
+                R.id.nav_settings -> {
                     binding.appBar.visibility = View.GONE
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
@@ -285,7 +292,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             when(navController.currentDestination?.id) {
-                R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo, R.id.nav_search -> {
+                R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo, R.id.nav_search, R.id.nav_settings -> {
                     super.onBackPressed()
                 }
                 else -> {

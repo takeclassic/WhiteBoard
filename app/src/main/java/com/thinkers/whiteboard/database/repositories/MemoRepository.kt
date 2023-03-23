@@ -1,22 +1,26 @@
 package com.thinkers.whiteboard.database.repositories
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.utils.DispatcherProvider
 import com.thinkers.whiteboard.common.enums.MemoUpdateState
 import com.thinkers.whiteboard.database.daos.MemoDao
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.pagingsource.DataSourceHolder
 import com.thinkers.whiteboard.database.pagingsource.MemoDataSource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.thinkers.whiteboard.settings.SettingsViewModel
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.concurrent.ConcurrentHashMap
+import kotlin.coroutines.EmptyCoroutineContext
 
 class MemoRepository(
     private val memoDao: MemoDao,
@@ -75,7 +79,7 @@ class MemoRepository(
     }
 
     @WorkerThread
-    suspend fun removeMemoToBin(memo: Memo) = withContext(dispatchers.io) {
+    fun removeMemoToBin(memo: Memo) = CoroutineScope(dispatchers.io).launch {
         memo.noteName = "waste_bin"
         memoDao.updateMemo(memo)
     }
@@ -152,6 +156,24 @@ class MemoRepository(
 
     fun getCustomNoteMemoCount(noteName: String): Flow<Int> {
         return memoDao.getCustomMemosCountByNoteName(noteName)
+    }
+
+    fun getAllMemosWithoutFavorites(): List<Memo>  = memoDao.getAllMemosWithoutFavorites()
+
+    fun writeBooleanPreference(fileName: String, key: String, value: Boolean) {
+        val context = WhiteBoardApplication.context()
+        val sharedPref = context.getSharedPreferences(fileName, Context.MODE_PRIVATE) ?: return
+        with(sharedPref.edit()) {
+            Log.i(TAG, "saving value: $value")
+            putBoolean(key, value)
+            apply()
+        }
+    }
+
+    fun readBooleanPreference(fileName: String, key: String, defaultValue: Boolean): Boolean {
+        val context = WhiteBoardApplication.context()
+        val sharedPref = context.getSharedPreferences(fileName, Context.MODE_PRIVATE) ?: return defaultValue
+        return sharedPref.getBoolean(key, defaultValue)
     }
 
     companion object {

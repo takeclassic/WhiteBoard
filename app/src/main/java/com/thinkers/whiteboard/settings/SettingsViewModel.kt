@@ -8,42 +8,41 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class SettingsViewModel : ViewModel() {
+class SettingsViewModel(private val memoRepository: MemoRepository) : ViewModel() {
     fun putAutoRemoveSwitchStatus(activity: Activity, value: Boolean) {
-        val sharedPref = activity.getPreferences(Context.MODE_PRIVATE) ?: return
-        with(sharedPref.edit()) {
-            viewModelScope.launch {
-                Log.i(TAG, "saving value: $value")
-                putBoolean(activity.getString(R.string.key_auto_remove), value)
-                apply()
-            }
+        viewModelScope.launch {
+            memoRepository.writeBooleanPreference(
+                activity.getString(R.string.file_shared_preference_auto_remove),
+                activity.getString(R.string.key_auto_remove),
+                value
+            )
         }
     }
 
     suspend fun getAutoRemoveSwtichStatus(activity: Activity): Boolean =
         withContext(viewModelScope.coroutineContext) {
-            val sharedPref = activity.getPreferences(Context.MODE_PRIVATE) ?: false
-            with(sharedPref as SharedPreferences) {
-                val value = this.getBoolean(activity.getString(R.string.key_auto_remove), false)
-                value
-            }
+            memoRepository.readBooleanPreference(
+                activity.getString(R.string.file_shared_preference_auto_remove),
+                activity.getString(R.string.key_auto_remove),
+                false
+            )
         }
-
     companion object {
         const val TAG = "SettingsViewModel"
     }
 }
 
-class SettingsViewModelFactory
+class SettingsViewModelFactory(private val memoRepository: MemoRepository)
     : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return SettingsViewModel() as T
+            return SettingsViewModel(memoRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
