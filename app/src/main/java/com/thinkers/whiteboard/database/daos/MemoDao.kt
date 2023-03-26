@@ -48,7 +48,7 @@ interface MemoDao {
             "WHERE fts.rowid = memo.rowid")
     fun getSearchingMemos(query: String): List<Memo>
 
-    @Query("SELECT COUNT(*) FROM memo")
+    @Query("SELECT COUNT(*) FROM memo WHERE note_name NOT IN ('waste_bin')")
     fun getAllMemosCount(): Flow<Int>
 
     @Query("SELECT COUNT(*) FROM memo WHERE is_favorite LIKE 1")
