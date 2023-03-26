@@ -12,7 +12,7 @@ interface MemoDao {
     @Query("SELECT * FROM memo")
     fun getAllMemos(): Flow<List<Memo>>
 
-    @Query("SELECT * FROM memo WHERE is_favorite LIKE 0")
+    @Query("SELECT * FROM memo WHERE is_favorite LIKE 0 AND note_name NOT IN ('waste_bin')")
     fun getAllMemosWithoutFavorites(): List<Memo>
 
     @Query("SELECT * FROM memo ORDER BY created_time DESC")

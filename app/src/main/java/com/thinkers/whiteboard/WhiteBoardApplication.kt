@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.room.Room
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.thinkers.whiteboard.common.utils.DispatcherProviderUtil
@@ -41,7 +42,7 @@ class WhiteBoardApplication: Application() {
         startAutoRemove()
     }
 
-    private fun startAutoRemove() {
+    fun startAutoRemove() {
         val isAutoRemoveOn = memoRepository.readBooleanPreference(
             context().getString(R.string.file_shared_preference_auto_remove),
             context().getString(R.string.key_auto_remove),
@@ -57,7 +58,11 @@ class WhiteBoardApplication: Application() {
 
             WorkManager
                 .getInstance(context())
-                .enqueue(autoRemoveRequest)
+                .enqueueUniquePeriodicWork(
+                    WORK_NAME,
+                    ExistingPeriodicWorkPolicy.KEEP,
+                    autoRemoveRequest
+                )
         }
     }
 
@@ -68,5 +73,6 @@ class WhiteBoardApplication: Application() {
         }
 
         const val TAG = "WhiteBoardApplication"
+        const val WORK_NAME = "auto_remove"
     }
 }

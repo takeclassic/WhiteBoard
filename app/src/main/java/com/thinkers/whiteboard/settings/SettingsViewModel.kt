@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -21,6 +22,7 @@ class SettingsViewModel(private val memoRepository: MemoRepository) : ViewModel(
                 activity.getString(R.string.key_auto_remove),
                 value
             )
+            if(value) { WhiteBoardApplication.instance!!.startAutoRemove() }
         }
     }
 

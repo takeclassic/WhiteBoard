@@ -32,6 +32,7 @@ class AutoRemoveWorker(
     }
 
     companion object {
+        // Two weeks in millis
         const val TIME = 1209600000
         const val TAG = "AutoRemoveWorker"
     }

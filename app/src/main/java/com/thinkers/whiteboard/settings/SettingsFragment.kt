@@ -80,7 +80,7 @@ class SettingsFragment : Fragment() {
     }
 
     private fun drawDivider() {
-        val customDecoration = CustomDecoration(1f, 30f, resources.getColor(R.color.default_icon, null))
+        val customDecoration = CustomDecoration(1f, 5f, resources.getColor(R.color.default_icon, null))
         binding.settingsRecyclerview.recyclerView.addItemDecoration(customDecoration)
     }
 
