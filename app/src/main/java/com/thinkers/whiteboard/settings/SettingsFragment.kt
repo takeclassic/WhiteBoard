@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.recyclerview.SettingsListAdapter
@@ -15,6 +16,7 @@ import com.thinkers.whiteboard.common.view.CustomDecoration
 import com.thinkers.whiteboard.databinding.FragmentSettingsBinding
 import com.thinkers.whiteboard.search.SearchViewModel
 import com.thinkers.whiteboard.search.SearchViewModelFactory
+import com.thinkers.whiteboard.total.TotalFragmentDirections
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +35,8 @@ class SettingsFragment : Fragment() {
     }
 
     private val onLockButtonClicked: () -> Unit = {
-
+        val action = SettingsFragmentDirections.actionNavSettingsToLockFragment()
+        findNavController().navigate(action)
     }
 
     private val onAutoRemoveToggleClicked: () -> Unit = {
@@ -73,7 +76,6 @@ class SettingsFragment : Fragment() {
         )
 
         binding.settingsClose.setOnClickListener { requireActivity().onBackPressed() }
-
         binding.settingsRecyclerview.recyclerView.adapter = settingsListAdapter
         settingsListAdapter.submitList(settingsArray.toList())
         drawDivider()

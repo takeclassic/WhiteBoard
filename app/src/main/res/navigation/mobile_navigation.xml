@@ -163,5 +163,14 @@
         android:name="com.thinkers.whiteboard.settings.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings"
-        />
+        >
+        <action
+            android:id="@+id/action_nav_settings_to_lockFragment"
+            app:destination="@id/lockFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/lockFragment"
+        android:name="com.thinkers.whiteboard.settings.LockFragment"
+        android:label="fragment_lock"
+        tools:layout="@layout/fragment_lock" />
 </navigation>
