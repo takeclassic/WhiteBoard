@@ -54,6 +54,7 @@
 - MVVM, Clean Architecture
 - Kotlin Coroutines, Flow, StateFlow
 - Sqlite Full Text Search
+- Pagenation(Paging Library아님, 수동)
 
 ## 구현예정기능
 - 메모 추가, 수정, 삭제 (완료)
