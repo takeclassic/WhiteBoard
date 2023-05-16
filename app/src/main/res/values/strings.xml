@@ -30,4 +30,5 @@
     <string name="key_auto_remove">auto-remove</string>
 
     <string name="item_settings_text">메모의 최종 작성 / 수정일부터 2주가 지나면 자동으로 메모를 휴지통에 버립니다. 메모를 즐겨찾기 하실 경우 자동삭제 대상에서 제외됩니다.</string>
+    <string name="lock_caution_text">비밀번호를 잊으실 경우 \n복구가 불가능하니\n반드시 기억해주세요.</string>
 </resources>

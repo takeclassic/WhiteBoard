@@ -210,5 +210,16 @@
         app:layout_constraintStart_toEndOf="@+id/lock_button_10"
         app:layout_constraintTop_toBottomOf="@+id/lock_button_9" />
 
+    <TextView
+        android:id="@+id/lock_caution_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="@string/lock_caution_text"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lock_button_10" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
