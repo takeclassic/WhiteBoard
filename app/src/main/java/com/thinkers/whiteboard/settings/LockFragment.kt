@@ -1,16 +1,19 @@
 package com.thinkers.whiteboard.settings
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.FragmentLockBinding
 import com.thinkers.whiteboard.databinding.FragmentSettingsBinding
+import java.lang.StringBuilder
 
 class LockFragment : Fragment() {
     private var _binding: FragmentLockBinding? = null
@@ -55,11 +58,7 @@ class LockFragment : Fragment() {
                 lockViewModel.passcode.append("0")
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
+        changeLockNumberImage()
     }
 
     override fun onCreateView(
@@ -72,6 +71,12 @@ class LockFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        lockViewModel.initProperties()
+        lockViewModel.lockNumbers.add(binding.lockNumber1)
+        lockViewModel.lockNumbers.add(binding.lockNumber2)
+        lockViewModel.lockNumbers.add(binding.lockNumber3)
+        lockViewModel.lockNumbers.add(binding.lockNumber4)
+
         binding.lockClose.setOnClickListener {
             requireActivity().onBackPressed()
         }
@@ -80,6 +85,7 @@ class LockFragment : Fragment() {
         binding.lockBackspaceButton.setOnClickListener {
             lockViewModel.passcode.apply {
                 if (this.isNotEmpty()) {
+                    changeLockNumberImage()
                     this.deleteAt(this.lastIndex)
                     Log.i(TAG, "after remove passcode: ${lockViewModel.passcode}")
                 }
@@ -98,6 +104,22 @@ class LockFragment : Fragment() {
         binding.lockButton8.setOnClickListener(numberButtonClickListener)
         binding.lockButton9.setOnClickListener(numberButtonClickListener)
         binding.lockButton10.setOnClickListener(numberButtonClickListener)
+    }
+
+    private fun changeLockNumberImage() {
+        Log.i(TAG, "passcode: ${lockViewModel.passcode}, length: ${lockViewModel.passcode.length-1}")
+        val index = lockViewModel.passcode.length-1
+        if (index < 0) return
+
+        if (lockViewModel.lockTinted[index]) {
+            lockViewModel.lockNumbers[index].imageTintList =
+                ColorStateList.valueOf(requireContext().getColor(R.color.default_drawable))
+            lockViewModel.lockTinted[index] = false
+        } else {
+            lockViewModel.lockNumbers[index].imageTintList =
+                ColorStateList.valueOf(requireContext().getColor(R.color.black))
+            lockViewModel.lockTinted[index] = true
+        }
     }
 
     companion object {

@@ -8,6 +8,7 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="default_icon">#696969</color>
+    <color name="default_drawable">#A9A9A9</color>
     <color name="favorite_selected">#FFEB3B</color>
     <color name="app_main_color">#FF66A8FF</color>
     <color name="transparent">#00000000</color>
