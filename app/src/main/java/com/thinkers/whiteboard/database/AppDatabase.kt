@@ -7,16 +7,19 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.thinkers.whiteboard.database.daos.MemoDao
 import com.thinkers.whiteboard.database.daos.NoteDao
+import com.thinkers.whiteboard.database.daos.SettingDao
 import com.thinkers.whiteboard.database.entities.Memo
 import com.thinkers.whiteboard.database.entities.MemoFTS
 import com.thinkers.whiteboard.database.entities.Note
+import com.thinkers.whiteboard.database.entities.Setting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-@Database(entities = [Memo::class, Note::class, MemoFTS::class], version = 1)
+@Database(entities = [Memo::class, Note::class, MemoFTS::class, Setting::class], version = 1)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun memoDao(): MemoDao
     abstract fun noteDao(): NoteDao
+    abstract fun settingDao(): SettingDao
 
     companion object {
         @Volatile
