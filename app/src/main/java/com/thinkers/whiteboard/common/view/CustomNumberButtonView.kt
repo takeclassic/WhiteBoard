@@ -4,10 +4,17 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.common.utils.convertDpToPixel
 
-class CustomNumberButtonView : View {
+class CustomNumberButtonView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet,
+    defStyleAttr: Int = 0,
+    defStyleRes: Int = 0
+) : View(context, attrs, defStyleAttr, defStyleRes) {
     var buttonColor: Int = 0
         set(value) {
             field = value
@@ -26,16 +33,11 @@ class CustomNumberButtonView : View {
             invalidate()
             requestLayout()
         }
-    private lateinit var buttonPaint: Paint
+    private var buttonPaint: Paint
 
-    constructor(context: Context) : super(context) {
-
-    }
-
-    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+    init {
         val typedArray = context.obtainStyledAttributes(attrs, R.styleable.custom_number_button_view)
         buttonPaint = Paint()
-
         try {
             buttonColor = typedArray.getInt(R.styleable.custom_number_button_view_button_color, context.getColor(R.color.default_icon))
             buttonTextColor = typedArray.getInt(R.styleable.custom_number_button_view_button_text_color, context.getColor(R.color.default_icon))
@@ -47,8 +49,36 @@ class CustomNumberButtonView : View {
         }
     }
 
-    constructor(context: Context, attrs: AttributeSet, defStyle: Int) : super(context, attrs, defStyle) {
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        val widthMode = MeasureSpec.getMode(widthMeasureSpec);
+        val widthSize = MeasureSpec.getSize(widthMeasureSpec);
+        val heightMode = MeasureSpec.getMode(heightMeasureSpec);
+        val heightSize = MeasureSpec.getSize(heightMeasureSpec);
+        val w: Int
+        val h: Int
+        val desiredWidth = this.convertDpToPixel(60f)
+        val desiredHeight = this.convertDpToPixel(60f)
 
+        Log.i(TAG, "widthSize: $widthSize, heightSize: $heightSize, desiredWidth: $desiredWidth, desiredHeight: $desiredHeight")
+
+        if (widthMode == MeasureSpec.EXACTLY) {
+            w = widthSize
+        } else if (widthMode == MeasureSpec.AT_MOST) {
+            w = Math.min(desiredWidth, widthSize)
+        } else {
+            w = desiredWidth;
+        }
+
+        if (heightMode == MeasureSpec.EXACTLY) {
+            h = heightSize
+        } else if (heightMode == MeasureSpec.AT_MOST) {
+            h = Math.min(desiredHeight, heightSize)
+        } else {
+            h = desiredHeight
+        }
+
+        Log.i(TAG, "w: $w, h: $h")
+        setMeasuredDimension(w, h);
     }
 
     override fun onDraw(canvas: Canvas?) {
