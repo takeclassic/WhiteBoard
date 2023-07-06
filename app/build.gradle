@@ -49,7 +49,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
     implementation "androidx.paging:paging-runtime:$paging_version"
     implementation "androidx.work:work-runtime-ktx:$work_version"
-
+    implementation "androidx.datastore:datastore-preferences:$datastore_version"
 
     //Room
     implementation "androidx.room:room-runtime:$room_version"
