@@ -22,5 +22,5 @@ class DataStoreHelper(private val dataStore: DataStore<Preferences>) {
 }
 
 enum class DataStoreKeys(val value: String) {
-    STRING_KEY_IV("string_key_iv")
+    STRING_KEY_IV("string_key_iv"), STRING_KEY_AAD("string_key_aad")
 }

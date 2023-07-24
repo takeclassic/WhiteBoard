@@ -24,8 +24,6 @@ class LockFragment : Fragment() {
     private val numberButtonClickListener = View.OnClickListener {
         Log.i(TAG, "${lockViewModel.passcode}")
 
-        if (lockViewModel.passcode.length == 4) return@OnClickListener
-
         when(it.id) {
             R.id.lock_button_1 -> {
                 lockViewModel.passcode.append("1")
@@ -59,6 +57,11 @@ class LockFragment : Fragment() {
             }
         }
         changeLockNumberImage()
+
+        if (lockViewModel.passcode.length == 4) {
+            lockViewModel.encryptPasscode()
+            return@OnClickListener
+        }
     }
 
     override fun onCreateView(

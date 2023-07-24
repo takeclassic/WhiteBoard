@@ -20,6 +20,8 @@ import com.thinkers.whiteboard.database.repositories.MemoRepository
 import com.thinkers.whiteboard.database.repositories.NoteRepository
 import com.thinkers.whiteboard.database.repositories.SettingRepository
 import com.thinkers.whiteboard.settings.AutoRemoveWorker
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.util.concurrent.TimeUnit
@@ -93,7 +95,6 @@ class WhiteBoardApplication: Application() {
             val keyStore: KeyStore = KeyStore.getInstance(AndroidKeyStore)
             keyStore.load(null)
             val secretKey: SecretKey = keyStore.getKey(KEY_NAME, null) as SecretKey
-            Log.i(TAG, "secretKey :$secretKey")
         }.onSuccess {
             Log.i(TAG, "succeed to get the key")
         }.onFailure {
@@ -103,16 +104,12 @@ class WhiteBoardApplication: Application() {
             val keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, AndroidKeyStore)
             keyGenerator.init(
                 KeyGenParameterSpec.Builder(KEY_NAME, KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT)
-                    .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+                    .setBlockModes(KeyProperties.BLOCK_MODE_GCM)
+                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_NONE)
                     .build()
             )
             keyGenerator.generateKey()
         }
-    }
-
-    fun getIv() {
-
     }
 
     companion object {
