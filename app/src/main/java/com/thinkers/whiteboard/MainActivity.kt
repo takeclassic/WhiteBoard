@@ -18,6 +18,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
+import androidx.navigation.ActivityNavigator
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -46,7 +47,7 @@ class MainActivity : AppCompatActivity() {
                 binding.appbarTotalButton.visibility = View.GONE
                 viewModel.setMemoBelongNote("my_memo")
                 navController.navigate(R.id.nav_total)
-                binding.drawerLayout.closeDrawer(Gravity.START)
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 true
             }
             R.id.nav_favorites -> {
@@ -54,7 +55,7 @@ class MainActivity : AppCompatActivity() {
                 binding.appbarFavoritesButton.visibility = View.GONE
                 binding.appbarTotalButton.visibility = View.VISIBLE
                 navController.navigate(R.id.nav_favorites)
-                binding.drawerLayout.closeDrawer(Gravity.START)
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 true
             }
             R.id.nav_custom_note -> {
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                 viewModel.setCustomNoteName(menuItem.title.toString())
                 val bundle = bundleOf("noteName" to menuItem.title.toString())
                 navController.navigate(R.id.nav_custom_note, bundle)
-                binding.drawerLayout.closeDrawer(Gravity.START)
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 true
             }
             R.id.nav_add_note -> {
@@ -86,7 +87,7 @@ class MainActivity : AppCompatActivity() {
                     .build()
 
                 navController.navigate(R.id.nav_add_note, null, navOptions)
-                binding.drawerLayout.closeDrawer(Gravity.START)
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 true
             }
             R.id.nav_edit_note -> {
@@ -100,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
                 val args = bundleOf("isActionMode" to false)
                 navController.navigate(R.id.nav_edit_note, args, navOptions)
-                binding.drawerLayout.closeDrawer(Gravity.START)
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 true
             }
             R.id.nav_waste_bin -> {
@@ -110,7 +111,7 @@ class MainActivity : AppCompatActivity() {
                 menuItem.title = "휴지통"
                 menuItemCache = menuItem
                 navController.navigate(R.id.nav_waste_bin)
-                binding.drawerLayout.closeDrawer(Gravity.START)
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 true
             }
             R.id.nav_settings -> {
@@ -126,15 +127,15 @@ class MainActivity : AppCompatActivity() {
                 menuItem.title = "설정"
                 menuItemCache = menuItem
                 navController.navigate(R.id.nav_settings, null, navOptions)
-                binding.drawerLayout.closeDrawer(Gravity.START)
+                binding.drawerLayout.closeDrawer(GravityCompat.START)
                 true
             }
         }
         false
     }
     private val appBarMenuButtonClickListener = View.OnClickListener {
-        if (!binding.drawerLayout.isDrawerOpen(Gravity.START)) {
-            binding.drawerLayout.openDrawer(Gravity.START)
+        if (!binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            binding.drawerLayout.openDrawer(GravityCompat.START)
         }
     }
 
@@ -289,7 +290,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerVisible(Gravity.START)) {
+        if (binding.drawerLayout.isDrawerVisible(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             when(navController.currentDestination?.id) {

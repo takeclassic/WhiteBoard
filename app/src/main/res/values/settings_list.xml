@@ -2,6 +2,7 @@
 <resources>
     <string-array name="settings">
         <item>백업하기</item>
+        <item>비밀번호 설정</item>
         <item>잠금설정</item>
         <item>자동삭제</item>
     </string-array>

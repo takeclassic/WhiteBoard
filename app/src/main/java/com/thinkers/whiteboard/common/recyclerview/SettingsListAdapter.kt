@@ -4,31 +4,33 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.marginTop
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
+import com.thinkers.whiteboard.databinding.ItemSettingsBinding
 
 class SettingsListAdapter(
-   val onBackupButtonClicked: () -> Unit,
-   val onLockButtonClicked:() -> Unit,
-   val onAutoRemoveToggleClicked: () -> Unit,
-   val autoRemoveStatus: Boolean
+    val onBackupButtonClicked: () -> Unit,
+    val onPasscodeSetButtonClicked:() -> Unit,
+    val onAutoRemoveToggleClicked: () -> Unit,
+    val onLockToggleClicked: () -> Unit,
+    val autoRemoveStatus: Boolean,
+    val lockStatus: Boolean
 ): ListAdapter<String, SettingsListAdapter.SettingsViewHolder>(SettingsAdapterDiffCallback) {
     class SettingsViewHolder(
-        itemView: View,
+        val binding: ItemSettingsBinding,
         val onBackupButtonClicked: () -> Unit,
-        val onLockButtonClicked:() -> Unit,
+        val onPasscodeSetButtonClicked:() -> Unit,
         val onAutoRemoveToggleClicked: () -> Unit,
-        val autoRemoveStatus: Boolean
-    ): RecyclerView.ViewHolder(itemView) {
-        private val settingName: TextView = itemView.findViewById(R.id.item_settings_name)
-
+        val onLockToggleClicked: () -> Unit,
+        val autoRemoveStatus: Boolean,
+        val lockStatus: Boolean
+    ): RecyclerView.ViewHolder(binding.root) {
+        private val settingName: TextView = binding.itemSettingsName
         fun bind(settingName: String) {
             this.settingName.text = settingName
 
@@ -37,23 +39,27 @@ class SettingsListAdapter(
                     itemView.setOnClickListener{ onBackupButtonClicked() }
                 }
                 "잠금설정" -> {
-                    itemView.setOnClickListener{ onLockButtonClicked() }
+                    binding.itemSettingsArrow.visibility = View.GONE
+
+                    binding.itemSettingsSwitch.visibility = View.VISIBLE
+                    binding.itemSettingsSwitch.isChecked = lockStatus
+                    Log.i(TAG, "lockStatus: $lockStatus")
+                    binding.itemSettingsSwitch.setOnClickListener{ onLockToggleClicked() }
+                }
+                "비밀번호 설정" -> {
+                    itemView.setOnClickListener{ onPasscodeSetButtonClicked() }
                 }
                 "자동삭제" -> {
-                    Log.i(TAG, "before marginTop: ${itemView.marginTop}, paddingTop: ${itemView.paddingTop}")
+                    binding.itemSettingsArrow.visibility = View.GONE
 
-                    itemView.findViewById<ImageView>(R.id.item_settings_arrow).visibility = View.GONE
+                    binding.itemSettingsSwitch.visibility = View.VISIBLE
+                    binding.itemSettingsSwitch.isChecked = autoRemoveStatus
+                    Log.i(TAG, "autoRemoveStatus: $autoRemoveStatus")
+                    binding.itemSettingsSwitch.setOnClickListener{ onAutoRemoveToggleClicked() }
 
-                    itemView.findViewById<SwitchCompat>(R.id.item_settings_switch).visibility = View.VISIBLE
-                    itemView.findViewById<SwitchCompat>(R.id.item_settings_switch).isChecked = autoRemoveStatus
-                    itemView.findViewById<SwitchCompat>(R.id.item_settings_switch)
-                        .setOnClickListener{ onAutoRemoveToggleClicked() }
-
-                    itemView.findViewById<TextView>(R.id.item_settings_text).visibility = View.VISIBLE
+                    binding.itemSettingsText.visibility = View.VISIBLE
                     val applicationContext = WhiteBoardApplication.context()
-                    itemView.findViewById<TextView>(R.id.item_settings_text).text = applicationContext.getText(R.string.item_settings_text)
-
-                    Log.i(TAG, "after marginTop: ${itemView.marginTop}, paddingTop: ${itemView.paddingTop}")
+                    binding.itemSettingsText.text = applicationContext.getText(R.string.item_settings_text)
                 }
             }
         }
@@ -63,16 +69,16 @@ class SettingsListAdapter(
         parent: ViewGroup,
         viewType: Int
     ): SettingsViewHolder {
-        val view = LayoutInflater
-            .from(parent.context)
-            .inflate(R.layout.item_settings, parent, false)
+        val binding = ItemSettingsBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return SettingsViewHolder(
-            view,
+            binding,
             onBackupButtonClicked,
-            onLockButtonClicked,
+            onPasscodeSetButtonClicked,
             onAutoRemoveToggleClicked,
-            autoRemoveStatus
+            onLockToggleClicked,
+            autoRemoveStatus,
+            lockStatus
         )
     }
 

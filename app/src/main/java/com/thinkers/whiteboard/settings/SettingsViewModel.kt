@@ -15,22 +15,22 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SettingsViewModel(private val memoRepository: MemoRepository) : ViewModel() {
-    fun putAutoRemoveSwitchStatus(activity: Activity, value: Boolean) {
+    fun putSwitchStatus(fileName: String, key: String, value: Boolean, job: (() -> Unit)? = null) {
         viewModelScope.launch {
             memoRepository.writeBooleanPreference(
-                activity.getString(R.string.file_shared_preference_auto_remove),
-                activity.getString(R.string.key_auto_remove),
+                fileName,
+                key,
                 value
             )
-            if(value) { WhiteBoardApplication.instance!!.startAutoRemove() }
+            job?.invoke()
         }
     }
 
-    suspend fun getAutoRemoveSwtichStatus(activity: Activity): Boolean =
-        withContext(viewModelScope.coroutineContext) {
+    suspend fun getSwtichStatus(fileName: String, key: String): Boolean =
+        withContext(Dispatchers.IO) {
             memoRepository.readBooleanPreference(
-                activity.getString(R.string.file_shared_preference_auto_remove),
-                activity.getString(R.string.key_auto_remove),
+                fileName,
+                key,
                 false
             )
         }

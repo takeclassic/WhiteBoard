@@ -14,11 +14,6 @@ import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.recyclerview.SettingsListAdapter
 import com.thinkers.whiteboard.common.view.CustomDecoration
 import com.thinkers.whiteboard.databinding.FragmentSettingsBinding
-import com.thinkers.whiteboard.search.SearchViewModel
-import com.thinkers.whiteboard.search.SearchViewModelFactory
-import com.thinkers.whiteboard.total.TotalFragmentDirections
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SettingsFragment : Fragment() {
@@ -29,18 +24,27 @@ class SettingsFragment : Fragment() {
     private lateinit var settingsListAdapter: SettingsListAdapter
 
     private var autoRemoveSwitch: Boolean = false
+    private var lockSwitch: Boolean = false
+
+    private var fileName: String = ""
+    private var autoRemoveKey: String = ""
+    private var lockKey: String = ""
 
     private val onBackupButtonClicked: () -> Unit = {
 
     }
 
-    private val onLockButtonClicked: () -> Unit = {
+    private val onLockToggleClicked: () -> Unit = {
+        viewModel.putSwitchStatus(fileName, lockKey, !lockSwitch)
+    }
+
+    private val onPasscodeSetButtonClicked: () -> Unit = {
         val action = SettingsFragmentDirections.actionNavSettingsToLockFragment()
         findNavController().navigate(action)
     }
 
     private val onAutoRemoveToggleClicked: () -> Unit = {
-        viewModel.putAutoRemoveSwitchStatus(requireActivity(), !autoRemoveSwitch)
+        viewModel.putSwitchStatus(fileName, autoRemoveKey, !autoRemoveSwitch) { WhiteBoardApplication.instance!!.startAutoRemove() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,11 +53,6 @@ class SettingsFragment : Fragment() {
             this,
             SettingsViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
         ).get(SettingsViewModel::class.java)
-
-        lifecycleScope.launchWhenCreated {
-            autoRemoveSwitch = viewModel.getAutoRemoveSwtichStatus(requireActivity())
-            Log.i(TAG, "autoRemoveSwitch: $autoRemoveSwitch")
-        }
     }
 
     override fun onCreateView(
@@ -67,18 +66,28 @@ class SettingsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val settingsArray: Array<String> = requireContext().resources.getStringArray(R.array.settings)
+        fileName = requireActivity().getString(R.string.file_name_shared_preference)
+        autoRemoveKey = requireActivity().getString(R.string.key_auto_remove)
+        lockKey = requireActivity().getString(R.string.key_lock)
 
-        settingsListAdapter = SettingsListAdapter(
-            onBackupButtonClicked,
-            onLockButtonClicked,
-            onAutoRemoveToggleClicked,
-            autoRemoveSwitch
-        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            autoRemoveSwitch = viewModel.getSwtichStatus(fileName, autoRemoveKey)
+            lockSwitch = viewModel.getSwtichStatus(fileName, lockKey)
+            Log.i(TAG, "autoRemoveSwitch: $autoRemoveSwitch, lockSwitch: $lockSwitch")
 
-        binding.settingsClose.setOnClickListener { requireActivity().onBackPressed() }
-        binding.settingsRecyclerview.recyclerView.adapter = settingsListAdapter
-        settingsListAdapter.submitList(settingsArray.toList())
-        drawDivider()
+            settingsListAdapter = SettingsListAdapter(
+                onBackupButtonClicked,
+                onPasscodeSetButtonClicked,
+                onAutoRemoveToggleClicked,
+                onLockToggleClicked,
+                autoRemoveSwitch,
+                lockSwitch
+            )
+            binding.settingsClose.setOnClickListener { requireActivity().onBackPressed() }
+            binding.settingsRecyclerview.recyclerView.adapter = settingsListAdapter
+            settingsListAdapter.submitList(settingsArray.toList())
+            drawDivider()
+        }
     }
 
     private fun drawDivider() {

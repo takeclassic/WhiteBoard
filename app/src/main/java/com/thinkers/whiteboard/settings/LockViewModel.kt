@@ -14,6 +14,7 @@ import com.thinkers.whiteboard.common.utils.CryptoHelper
 import com.thinkers.whiteboard.common.utils.DataStoreKeys
 import com.thinkers.whiteboard.database.entities.Setting
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -41,7 +42,9 @@ class LockViewModel: ViewModel() {
 
     fun encryptPasscode() {
         viewModelScope.launch {
+            Log.i(TAG, "to encrypt: $passcode")
             CryptoHelper.encryptStringAesGcm(passcode.toString())
+            initProperties()
         }
     }
 
@@ -50,10 +53,6 @@ class LockViewModel: ViewModel() {
             val decrypted = CryptoHelper.decryptPassCodeAesGcm()
             Log.i(TAG, "decrypted: $decrypted")
         }
-    }
-
-    fun test(onSuccess: () -> Unit) {
-        CryptoHelper.encryptStringAesGcm(passcode.toString())
     }
 
     companion object {

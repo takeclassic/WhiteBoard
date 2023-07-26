@@ -5,7 +5,6 @@ import android.security.keystore.KeyProperties
 import android.util.Base64
 import android.util.Log
 import com.thinkers.whiteboard.WhiteBoardApplication
-import com.thinkers.whiteboard.database.entities.Setting
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -41,7 +40,7 @@ object CryptoHelper {
 
             cipher.init(Cipher.ENCRYPT_MODE, secretKey)
             val iv = cipher.iv.copyOf()
-            val aad = SecureRandom().generateSeed(16)
+            val aad = SecureRandom().generateSeed(CryptoConstants.gcmSeedSize)
             cipher.updateAAD(aad)
 
             val encodedIv: String = Base64.encodeToString(iv, Base64.NO_WRAP)
@@ -86,7 +85,7 @@ object CryptoHelper {
             val cipher = Cipher.getInstance(transformation)
             val ivStr: String = WhiteBoardApplication.instance!!.dataStoreHelper.getStringValue(DataStoreKeys.STRING_KEY_IV).first()
             val iv = Base64.decode(ivStr, Base64.NO_WRAP)
-            val ivSpec = GCMParameterSpec(16 * 8, iv)
+            val ivSpec = GCMParameterSpec(CryptoConstants.gcmSpecSize, iv)
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
 
             val aadStr: String = WhiteBoardApplication.instance!!.dataStoreHelper.getStringValue(DataStoreKeys.STRING_KEY_AAD).first()
@@ -126,4 +125,6 @@ object CryptoHelper {
 object CryptoConstants {
     val fileName = "crypt.dat"
     val byteSize = 20
+    val gcmSeedSize = 16
+    val gcmSpecSize = 128
 }

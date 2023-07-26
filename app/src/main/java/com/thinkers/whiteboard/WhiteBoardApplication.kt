@@ -68,7 +68,7 @@ class WhiteBoardApplication: Application() {
 
     fun startAutoRemove() {
         val isAutoRemoveOn = memoRepository.readBooleanPreference(
-            context().getString(R.string.file_shared_preference_auto_remove),
+            context().getString(R.string.file_name_shared_preference),
             context().getString(R.string.key_auto_remove),
             false
         )
@@ -87,6 +87,10 @@ class WhiteBoardApplication: Application() {
                     ExistingPeriodicWorkPolicy.KEEP,
                     autoRemoveRequest
                 )
+        } else {
+            WorkManager
+                .getInstance(context())
+                .cancelAllWorkByTag(WORK_NAME)
         }
     }
 

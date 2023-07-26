@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.FragmentLockBinding
 import com.thinkers.whiteboard.databinding.FragmentSettingsBinding
@@ -60,6 +61,7 @@ class LockFragment : Fragment() {
 
         if (lockViewModel.passcode.length == 4) {
             lockViewModel.encryptPasscode()
+            findNavController().popBackStack()
             return@OnClickListener
         }
     }
