@@ -1,24 +1,20 @@
 package com.thinkers.whiteboard
 
-import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
-import android.view.Gravity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.annotation.ColorRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.coroutineScope
-import androidx.navigation.ActivityNavigator
+import androidx.lifecycle.*
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -205,7 +201,7 @@ class MainActivity : AppCompatActivity() {
     private val mainDestinationChangedListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
             when(controller.currentDestination?.id) {
-                R.id.lockFragment,
+                R.id.nav_lock,
                 R.id.nav_search,
                 R.id.nav_edit_note,
                 R.id.nav_add_note,
@@ -228,6 +224,8 @@ class MainActivity : AppCompatActivity() {
 //        item.setIcon(wrapDrawable)
 //    }
 
+    private var processLifeCycleObserver: ProcessLifeCycleObserver? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = ViewModelProvider(this,
@@ -242,6 +240,20 @@ class MainActivity : AppCompatActivity() {
 
         val navView: NavigationView = binding.navView
         navView.itemIconTintList = null
+        navController = findNavController(R.id.nav_host_fragment_content_main)
+        navView.setupWithNavController(navController)
+        navView.setNavigationItemSelectedListener(navigationViewListener)
+        navController.addOnDestinationChangedListener(mainDestinationChangedListener)
+
+        val fileName = getString(R.string.file_name_shared_preference)
+        val lockKey = getString(R.string.key_lock)
+        val isLockModeOn = viewModel.getSwtichStatus(fileName, lockKey)
+
+        if (processLifeCycleObserver == null && isLockModeOn) {
+            processLifeCycleObserver = ProcessLifeCycleObserver(navController)
+            ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
+        }
+
         lifecycle.coroutineScope.launch {
             viewModel.getAllCustomNotes.collect { list ->
                 navView.menu.removeGroup(R.id.nav_view_note_group)
@@ -263,11 +275,6 @@ class MainActivity : AppCompatActivity() {
                             this.title = s
                         }
                 }
-                navController = findNavController(R.id.nav_host_fragment_content_main)
-                navView.setupWithNavController(navController)
-                navView.setNavigationItemSelectedListener(navigationViewListener)
-
-                navController.addOnDestinationChangedListener(mainDestinationChangedListener)
             }
         }
 
@@ -294,7 +301,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             when(navController.currentDestination?.id) {
-                R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo, R.id.nav_search, R.id.nav_settings, R.id.lockFragment -> {
+                R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo, R.id.nav_search, R.id.nav_settings, R.id.nav_lock -> {
                     super.onBackPressed()
                 }
                 else -> {
@@ -310,6 +317,26 @@ class MainActivity : AppCompatActivity() {
                     finish()
                 }
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val fileName = getString(R.string.file_name_shared_preference)
+        val lockKey = getString(R.string.key_lock)
+        val isLockModeOn = viewModel.getSwtichStatus(fileName, lockKey)
+
+        Log.i(TAG, "isLockModeOn: $isLockModeOn, processLifeCycleObserver is null: ${processLifeCycleObserver == null}")
+
+        if (!isLockModeOn && processLifeCycleObserver != null) {
+            ProcessLifecycleOwner.get().lifecycle.removeObserver(processLifeCycleObserver!!)
+        }
+
+        if (isLockModeOn) {
+            if (processLifeCycleObserver == null) {
+                processLifeCycleObserver = ProcessLifeCycleObserver(navController)
+            }
+            ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
         }
     }
 
@@ -329,5 +356,15 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         val TAG = "MainActivity"
+    }
+}
+
+class ProcessLifeCycleObserver(private val navController: NavController): LifecycleEventObserver {
+    override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+        if (event == Lifecycle.Event.ON_RESUME) {
+            if(navController.currentDestination?.id != R.id.nav_lock) {
+                navController.navigate(R.id.nav_lock)
+            }
+        }
     }
 }

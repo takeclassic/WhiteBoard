@@ -28,6 +28,7 @@ class SettingsFragment : Fragment() {
 
     private var fileName: String = ""
     private var autoRemoveKey: String = ""
+    //TODO: this value should be in the server not the client
     private var lockKey: String = ""
 
     private val onBackupButtonClicked: () -> Unit = {
@@ -35,7 +36,8 @@ class SettingsFragment : Fragment() {
     }
 
     private val onLockToggleClicked: () -> Unit = {
-        viewModel.putSwitchStatus(fileName, lockKey, !lockSwitch)
+        lockSwitch = !lockSwitch
+        viewModel.putSwitchStatus(fileName, lockKey, lockSwitch)
     }
 
     private val onPasscodeSetButtonClicked: () -> Unit = {
@@ -44,7 +46,8 @@ class SettingsFragment : Fragment() {
     }
 
     private val onAutoRemoveToggleClicked: () -> Unit = {
-        viewModel.putSwitchStatus(fileName, autoRemoveKey, !autoRemoveSwitch) { WhiteBoardApplication.instance!!.startAutoRemove() }
+        autoRemoveSwitch = !autoRemoveSwitch
+        viewModel.putSwitchStatus(fileName, autoRemoveKey, autoRemoveSwitch) { WhiteBoardApplication.instance!!.startAutoRemove() }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

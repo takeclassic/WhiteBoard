@@ -166,14 +166,14 @@
         >
         <action
             android:id="@+id/action_nav_settings_to_lockFragment"
-            app:destination="@id/lockFragment"
+            app:destination="@id/nav_lock"
             app:enterAnim="@anim/fade_in"
             app:exitAnim="@anim/fade_out"
             app:popEnterAnim="@anim/fade_in"
             app:popExitAnim="@anim/fade_out" />
     </fragment>
     <fragment
-        android:id="@+id/lockFragment"
+        android:id="@+id/nav_lock"
         android:name="com.thinkers.whiteboard.settings.LockFragment"
         android:label="fragment_lock"
         tools:layout="@layout/fragment_lock" />

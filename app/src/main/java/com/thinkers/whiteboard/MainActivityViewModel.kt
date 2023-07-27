@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModelProvider
 import com.thinkers.whiteboard.database.entities.Note
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import com.thinkers.whiteboard.database.repositories.NoteRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 
 class MainActivityViewModel(
     private val noteRepository: NoteRepository,
@@ -28,6 +30,14 @@ class MainActivityViewModel(
 
     fun setCustomNoteName(noteName: String) {
         noteRepository.customNoteName = noteName
+    }
+
+    fun getSwtichStatus(fileName: String, key: String): Boolean {
+            return memoRepository.readBooleanPreference(
+                fileName,
+                key,
+                false
+            )
     }
 }
 
