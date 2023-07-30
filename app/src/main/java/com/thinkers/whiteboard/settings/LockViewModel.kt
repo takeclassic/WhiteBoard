@@ -48,11 +48,10 @@ class LockViewModel: ViewModel() {
         }
     }
 
-    fun decryptPasscode() {
-        viewModelScope.launch {
-            val decrypted = CryptoHelper.decryptPassCodeAesGcm()
-            Log.i(TAG, "decrypted: $decrypted")
-        }
+    suspend fun comparePasscode(): Boolean = withContext(Dispatchers.Default) {
+        val decrypted = CryptoHelper.decryptPassCodeAesGcm()
+        Log.i(TAG, "decrypted: $decrypted")
+        passcode.toString() == decrypted
     }
 
     companion object {

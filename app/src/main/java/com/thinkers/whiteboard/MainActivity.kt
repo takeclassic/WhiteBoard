@@ -330,13 +330,14 @@ class MainActivity : AppCompatActivity() {
 
         if (!isLockModeOn && processLifeCycleObserver != null) {
             ProcessLifecycleOwner.get().lifecycle.removeObserver(processLifeCycleObserver!!)
+            processLifeCycleObserver = null
         }
 
         if (isLockModeOn) {
             if (processLifeCycleObserver == null) {
                 processLifeCycleObserver = ProcessLifeCycleObserver(navController)
+                ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
             }
-            ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
         }
     }
 
@@ -363,7 +364,8 @@ class ProcessLifeCycleObserver(private val navController: NavController): Lifecy
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         if (event == Lifecycle.Event.ON_RESUME) {
             if(navController.currentDestination?.id != R.id.nav_lock) {
-                navController.navigate(R.id.nav_lock)
+                val bundle = bundleOf("isResume" to true)
+                navController.navigate(R.id.nav_lock, bundle)
             }
         }
     }

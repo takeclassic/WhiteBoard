@@ -8,12 +8,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.FragmentLockBinding
 import com.thinkers.whiteboard.databinding.FragmentSettingsBinding
+import kotlinx.coroutines.launch
 import java.lang.StringBuilder
 
 class LockFragment : Fragment() {
@@ -21,6 +24,7 @@ class LockFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val lockViewModel: LockViewModel by viewModels()
+    private var isResume: Boolean = false
 
     private val numberButtonClickListener = View.OnClickListener {
         Log.i(TAG, "${lockViewModel.passcode}")
@@ -60,9 +64,25 @@ class LockFragment : Fragment() {
         changeLockNumberImage()
 
         if (lockViewModel.passcode.length == 4) {
-            lockViewModel.encryptPasscode()
-            findNavController().popBackStack()
-            return@OnClickListener
+            if (!isResume) {
+                lockViewModel.encryptPasscode()
+                findNavController().popBackStack()
+            } else {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val result = lockViewModel.comparePasscode()
+                    if (result) {
+                        findNavController().popBackStack()
+                    } else {
+                        Toast.makeText(requireContext(), R.string.lock_passcode_is_wrong, Toast.LENGTH_SHORT).show()
+                        lockViewModel.lockNumbers.forEach {imageView ->
+                            imageView.imageTintList =
+                                ColorStateList.valueOf(requireContext().getColor(R.color.default_drawable))
+                        }
+                        lockViewModel.lockTinted = Array(4) { false }
+                        lockViewModel.passcode.clear()
+                    }
+                }
+            }
         }
     }
 
@@ -76,6 +96,19 @@ class LockFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.lockCautionText.visibility = View.VISIBLE
+        binding.lockClose.visibility = View.VISIBLE
+        this.isResume = false
+        val isResume: Boolean? = arguments?.getBoolean("isResume")
+        Log.i(TAG, "isResume: $isResume")
+        isResume?.let {
+            if(it) {
+                this.isResume = true
+                binding.lockCautionText.visibility = View.GONE
+                binding.lockClose.visibility = View.INVISIBLE
+            }
+        }
+
         lockViewModel.initProperties()
         lockViewModel.lockNumbers.add(binding.lockNumber1)
         lockViewModel.lockNumbers.add(binding.lockNumber2)
