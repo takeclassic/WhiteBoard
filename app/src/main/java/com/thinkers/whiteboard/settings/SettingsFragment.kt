@@ -7,11 +7,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.recyclerview.SettingsListAdapter
+import com.thinkers.whiteboard.common.utils.CryptoHelper
 import com.thinkers.whiteboard.common.view.CustomDecoration
 import com.thinkers.whiteboard.databinding.FragmentSettingsBinding
 import kotlinx.coroutines.launch
@@ -35,9 +38,17 @@ class SettingsFragment : Fragment() {
 
     }
 
-    private val onLockToggleClicked: () -> Unit = {
-        lockSwitch = !lockSwitch
-        viewModel.putSwitchStatus(fileName, lockKey, lockSwitch)
+    private val onLockToggleClicked: (SwitchCompat) -> Unit = { switch ->
+        viewLifecycleOwner.lifecycleScope.launch {
+            val res = CryptoHelper.decryptPassCodeAesGcm()
+            if (res == "failed") {
+                Toast.makeText(requireContext(), R.string.settings_passcode_is_not_set, Toast.LENGTH_SHORT).show()
+                switch.toggle()
+                return@launch
+            }
+            lockSwitch = !lockSwitch
+            viewModel.putSwitchStatus(fileName, lockKey, lockSwitch)
+        }
     }
 
     private val onPasscodeSetButtonClicked: () -> Unit = {

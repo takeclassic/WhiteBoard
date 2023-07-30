@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.view.marginTop
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -17,7 +18,7 @@ class SettingsListAdapter(
     val onBackupButtonClicked: () -> Unit,
     val onPasscodeSetButtonClicked:() -> Unit,
     val onAutoRemoveToggleClicked: () -> Unit,
-    val onLockToggleClicked: () -> Unit,
+    val onLockToggleClicked: (SwitchCompat) -> Unit,
     val autoRemoveStatus: Boolean,
     val lockStatus: Boolean
 ): ListAdapter<String, SettingsListAdapter.SettingsViewHolder>(SettingsAdapterDiffCallback) {
@@ -26,7 +27,7 @@ class SettingsListAdapter(
         val onBackupButtonClicked: () -> Unit,
         val onPasscodeSetButtonClicked:() -> Unit,
         val onAutoRemoveToggleClicked: () -> Unit,
-        val onLockToggleClicked: () -> Unit,
+        val onLockToggleClicked: (SwitchCompat) -> Unit,
         val autoRemoveStatus: Boolean,
         val lockStatus: Boolean
     ): RecyclerView.ViewHolder(binding.root) {
@@ -44,7 +45,7 @@ class SettingsListAdapter(
                     binding.itemSettingsSwitch.visibility = View.VISIBLE
                     binding.itemSettingsSwitch.isChecked = lockStatus
                     Log.i(TAG, "lockStatus: $lockStatus")
-                    binding.itemSettingsSwitch.setOnClickListener{ onLockToggleClicked() }
+                    binding.itemSettingsSwitch.setOnClickListener{ onLockToggleClicked(binding.itemSettingsSwitch) }
                 }
                 "비밀번호 설정" -> {
                     itemView.setOnClickListener{ onPasscodeSetButtonClicked() }
