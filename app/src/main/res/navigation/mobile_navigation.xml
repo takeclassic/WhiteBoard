@@ -177,4 +177,9 @@
         android:name="com.thinkers.whiteboard.settings.LockFragment"
         android:label="fragment_lock"
         tools:layout="@layout/fragment_lock" />
+    <fragment
+        android:id="@+id/nav_backup"
+        android:name="com.thinkers.whiteboard.settings.BackupFragment"
+        android:label="fragment_backup"
+        tools:layout="@layout/fragment_backup" />
 </navigation>

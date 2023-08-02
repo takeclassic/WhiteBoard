@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "441355248374",
+    "project_id": "whiteboard-88103",
+    "storage_bucket": "whiteboard-88103.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441355248374:android:3036173caf9a8cee1102d7",
+        "android_client_info": {
+          "package_name": "com.thinkers.whiteboard"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441355248374-n45u2119duuntq6661c37p6u6lg7jqjp.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.thinkers.whiteboard",
+            "certificate_hash": "d656e2318af77c472b42458c7d3726ecdae86f7c"
+          }
+        },
+        {
+          "client_id": "441355248374-t5kf1bc98hhtafrqm6kj73dad58gemc3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZwd57L7OxO63Ovdra5u-b8Lhj0mHvIgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441355248374-8r219hafoh1b5jof6sg60mcja7sltsc3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
