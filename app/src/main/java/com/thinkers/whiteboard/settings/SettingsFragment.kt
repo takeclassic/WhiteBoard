@@ -35,7 +35,7 @@ class SettingsFragment : Fragment() {
     private var lockKey: String = ""
 
     private val onBackupButtonClicked: () -> Unit = {
-        findNavController().navigate(R.id.nav_backup)
+        findNavController().navigate(R.id.action_nav_settings_to_nav_backup)
     }
 
     private val onLockToggleClicked: (SwitchCompat) -> Unit = { switch ->

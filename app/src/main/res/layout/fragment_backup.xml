@@ -4,7 +4,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/backup_layout"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".settings.BackupFragment">
+
+    <ImageView
+        android:id="@+id/backup_close_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/ic_close_36"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <ImageView
         android:id="@+id/backup_logo_imageview"
@@ -17,7 +32,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.3" />
+        app:layout_constraintVertical_bias="0.19999999" />
 
     <TextView
         android:id="@+id/backup_logo_textview"
@@ -30,29 +45,65 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backup_logo_imageview" />
 
+    <com.thinkers.whiteboard.common.view.CustomEditText
+        android:id="@+id/backup_id_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/colored_rounder_corner_view"
+        android:ems="17"
+        android:hint="E-MAIL"
+        android:inputType="textEmailAddress"
+        android:padding="8dp"
+        android:paddingStart="16dp"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backup_logo_textview" />
+
+    <com.thinkers.whiteboard.common.view.CustomEditText
+        android:id="@+id/backup_password_edittext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:background="@drawable/colored_rounder_corner_view"
+        android:ems="17"
+        android:hint="비밀번호"
+        android:inputType="textPassword"
+        android:padding="8dp"
+        android:paddingStart="16dp"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backup_id_edittext" />
+
     <Button
         android:id="@+id/backup_register_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="4dp"
+        android:width="276dp"
+        android:backgroundTint="@color/light_grey"
         android:text="등록"
-        app:layout_constraintEnd_toStartOf="@+id/backup_login_button"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backup_logo_textview" />
+        app:layout_constraintTop_toBottomOf="@+id/backup_login_button" />
 
     <Button
         android:id="@+id/backup_login_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="4dp"
+        android:width="276dp"
         android:backgroundTint="#FF5494E8"
         android:text="로그인"
         android:textColor="@color/light_grey"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.67"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/backup_logo_textview" />
+        app:layout_constraintTop_toBottomOf="@+id/backup_password_edittext" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

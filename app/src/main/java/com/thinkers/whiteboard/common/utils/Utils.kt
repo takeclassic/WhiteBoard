@@ -1,7 +1,10 @@
 package com.thinkers.whiteboard.common.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
 
 object Utils {
@@ -52,5 +55,10 @@ object Utils {
             }
         }
         builder.create().show()
+    }
+
+    fun hideKeyboard(context: Context, view: View) {
+        val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }

@@ -3,6 +3,7 @@ package com.thinkers.whiteboard.common.view
 import android.content.Context
 import android.util.AttributeSet
 import android.view.KeyEvent
+import android.view.inputmethod.EditorInfo
 import androidx.appcompat.widget.AppCompatEditText
 
 
@@ -16,5 +17,12 @@ class CustomEditText: AppCompatEditText {
             clearFocus()
         }
         return super.onKeyPreIme(keyCode, event)
+    }
+
+    override fun onEditorAction(actionCode: Int) {
+        if (actionCode == EditorInfo.IME_ACTION_DONE) {
+            clearFocus()
+        }
+        super.onEditorAction(actionCode)
     }
 }
