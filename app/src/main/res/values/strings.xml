@@ -35,4 +35,7 @@
     <string name="lock_passcode_is_wrong">입력하신 암호가 틀립니다. 다시 입력해주세요.</string>
 
     <string name="settings_passcode_is_not_set">잠금 기능을 사용하시려면 먼저 비밀번호를 설정해 주세요.</string>
+
+    <string name="backup_agreement_text">- 보안상의 이유로 백업기능은 인증이 반드시 필요합니다.\n- 백업된 파일은 최대 한달 간 보관됩니다.</string>
+    <string name="backup_password_info_text">비밀번호는 영문대소문자, 숫자, 특수문자를 포함,\n 10자 이상, 20자 이하로 설정되어야 합니다</string>
 </resources>

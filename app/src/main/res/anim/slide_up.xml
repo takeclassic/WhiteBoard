@@ -2,7 +2,7 @@
     <translate
         android:fromYDelta="15%p"
         android:toYDelta="0%p"
-        android:duration="1000"
+        android:duration="700"
         android:repeatCount="0"
         android:fillAfter="true"/>
 </set>
