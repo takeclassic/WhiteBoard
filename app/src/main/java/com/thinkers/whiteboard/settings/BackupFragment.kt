@@ -29,6 +29,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.common.enums.AuthErrorCodes
+import com.thinkers.whiteboard.common.enums.AuthInfo
+import com.thinkers.whiteboard.common.enums.AuthType
 import com.thinkers.whiteboard.common.memo.MemoFragment
 import com.thinkers.whiteboard.common.utils.Utils
 import com.thinkers.whiteboard.databinding.FragmentBackupBinding
@@ -105,13 +108,22 @@ class BackupFragment : Fragment() {
         Log.i(TAG, "id: ${viewModel.id}, password: ${viewModel.password}")
         if (isAuthExceptions(it)) { return@OnClickListener }
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getAuthResult(BackupViewModel.AuthType.LOGIN).collect { res ->
-                   if (res == null) {
-                       Toast.makeText(requireContext(), "log in failed!", Toast.LENGTH_SHORT).show()
-                       Log.i(TAG, "log in failed!")
-                   } else {
-                       Log.i(TAG, "log in successful")
-                   }
+            viewModel.getAuthResult(AuthType.LOGIN).collect { res ->
+                Log.i(TAG, "res: $res")
+                when(res) {
+                    is AuthInfo.Success -> {
+                        Toast.makeText(requireContext(), "log in is successsful!", Toast.LENGTH_SHORT).show()
+                    }
+                    is AuthInfo.Failure -> {
+                        if (res.errorCode == AuthErrorCodes.NETWORK) {
+                            Toast.makeText(requireContext(), "network problem occured!", Toast.LENGTH_SHORT).show()
+                        } else if (res.errorCode == AuthErrorCodes.NOT_EXIST) {
+                            Toast.makeText(requireContext(), "user is not exist!", Toast.LENGTH_SHORT).show()
+                        } else if(res.errorCode == AuthErrorCodes.DEFAULT) {
+                            Toast.makeText(requireContext(), "something was wrong. please try again.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
             }
         }
     }
@@ -119,16 +131,24 @@ class BackupFragment : Fragment() {
     private val registerListener = OnClickListener {
         Log.i(TAG, "id: ${viewModel.id}, password: ${viewModel.password}")
         if (isAuthExceptions(it)) { return@OnClickListener }
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            viewModel.getAuthResult(BackupViewModel.AuthType.REGISTER).collect { res ->
-//                if (res == null) {
-//                    Toast.makeText(requireContext(), "register failed!", Toast.LENGTH_SHORT).show()
-//                    Log.i(TAG, "register failed!")
-//                } else {
-//                    Log.i(TAG, "register successful")
-//                }
-//            }
-//        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getAuthResult(AuthType.REGISTER).collect { res ->
+                when(res) {
+                    is AuthInfo.Success -> {
+                        Toast.makeText(requireContext(), "register is successsful!", Toast.LENGTH_SHORT).show()
+                    }
+                    is AuthInfo.Failure -> {
+                        if (res.errorCode == AuthErrorCodes.NETWORK) {
+                            Toast.makeText(requireContext(), "network problem occured!", Toast.LENGTH_SHORT).show()
+                        } else if (res.errorCode == AuthErrorCodes.ALREADY_EXIST) {
+                            Toast.makeText(requireContext(), "user is already exist! try the other id.", Toast.LENGTH_SHORT).show()
+                        } else if(res.errorCode == AuthErrorCodes.DEFAULT) {
+                            Toast.makeText(requireContext(), "something was wrong. please try again.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onAttach(context: Context) {

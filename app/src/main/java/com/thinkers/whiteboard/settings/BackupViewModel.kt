@@ -2,29 +2,24 @@ package com.thinkers.whiteboard.settings
 
 import android.util.Log
 import android.util.Patterns
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWebException
+import com.thinkers.whiteboard.common.enums.AuthErrorCodes
+import com.thinkers.whiteboard.common.enums.AuthInfo
+import com.thinkers.whiteboard.common.enums.AuthType
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
 
 class BackupViewModel : ViewModel() {
     var id: String = ""
     var password: String = ""
     var auth: FirebaseAuth? = null
     val backupUseCase = BackupUseCase()
-
-    enum class AuthType {
-        LOGIN, REGISTER
-    }
 
     fun isPasswordCorrect(): Boolean {
         val matchResult = passwordRegex.matchEntire(password) ?: return false
@@ -40,12 +35,29 @@ class BackupViewModel : ViewModel() {
         return false
     }
 
-    fun getAuthResult(authType: AuthType): Flow<AuthResult?> = callbackFlow {
+    fun getAuthResult(authType: AuthType): Flow<AuthInfo> = callbackFlow {
         val listener = OnCompleteListener {
             if (it.isSuccessful) {
-                trySend(it.result)
+                trySend(AuthInfo.Success(it.result))
             } else {
-                trySend(null)
+                runCatching {
+                    when(it.exception!!) {
+                        is FirebaseAuthUserCollisionException -> {
+                            trySend(AuthInfo.Failure(AuthErrorCodes.ALREADY_EXIST))
+                        }
+                        is FirebaseAuthInvalidUserException -> {
+                            trySend(AuthInfo.Failure(AuthErrorCodes.NOT_EXIST))
+                        }
+                        is FirebaseAuthWebException -> {
+                            trySend(AuthInfo.Failure(AuthErrorCodes.NETWORK))
+                        }
+                        else -> {
+                            trySend(AuthInfo.Failure(AuthErrorCodes.DEFAULT))
+                        }
+                    }
+                }.onFailure {
+                    trySend(AuthInfo.Failure(AuthErrorCodes.DEFAULT))
+                }
             }
         }
         when(authType) {
