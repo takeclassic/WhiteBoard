@@ -33,6 +33,19 @@
         app:layout_constraintTop_toBottomOf="@+id/backup_home_toolbar">
 
         <TextView
+            android:id="@+id/backup_home_empty_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="24dp"
+            android:text="@string/backup_home_empty_string"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/backup_home_history_date_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -40,6 +53,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/backup_home_history_date_title"
             android:textColor="@color/default_drawable"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -50,6 +64,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="TextView"
+            android:visibility="gone"
             android:textColor="@color/default_drawable"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -60,6 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:visibility="gone"
             android:text="@string/backup_home_history_deadline_title"
             android:textColor="@color/default_drawable"
             app:layout_constraintStart_toStartOf="parent"
@@ -72,6 +88,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="TextView"
+            android:visibility="gone"
             android:textColor="@color/default_drawable"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/backup_home_history_date_content" />
@@ -82,6 +99,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:visibility="gone"
             android:text="@string/backup_home_history_os_title"
             android:textColor="@color/default_drawable"
             app:layout_constraintStart_toStartOf="parent"
@@ -94,6 +112,7 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="TextView"
+            android:visibility="gone"
             android:textColor="@color/default_drawable"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/backup_home_history_deadline_content" />
@@ -105,6 +124,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:visibility="gone"
             android:text="@string/backup_home_history_size_title"
             android:textColor="@color/default_drawable"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -119,6 +139,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text="TextView"
+            android:visibility="gone"
             android:textColor="@color/default_drawable"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -179,7 +200,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/default_drawable"
         android:text="백업 파일 삭제"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/backup_home_download_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -191,6 +214,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:backgroundTint="@color/default_drawable"
+        android:visibility="gone"
         android:text="백업 파일 다운로드"
         app:layout_constraintBottom_toTopOf="@+id/backup_home_backup_button"
         app:layout_constraintEnd_toEndOf="parent"
@@ -203,7 +228,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="32dp"
+        android:backgroundTint="@color/app_main_color"
         android:text="백업 하기"
+        android:textColor="@color/light_grey"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

@@ -1,14 +1,13 @@
 package com.thinkers.whiteboard.settings
 
+import android.R.layout
 import android.annotation.SuppressLint
-import android.app.Activity.RESULT_OK
 import android.content.Context
-import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -16,31 +15,31 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
+import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract
-import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.common.enums.AuthErrorCodes
 import com.thinkers.whiteboard.common.enums.AuthInfo
 import com.thinkers.whiteboard.common.enums.AuthType
-import com.thinkers.whiteboard.common.memo.MemoFragment
 import com.thinkers.whiteboard.common.utils.Utils
-import com.thinkers.whiteboard.databinding.FragmentBackupBinding
-import kotlinx.coroutines.flow.collect
+import com.thinkers.whiteboard.databinding.FragmentBackupLogInBinding
 import kotlinx.coroutines.launch
 
-class BackupFragment : Fragment() {
+
+class BackupLogInFragment : Fragment() {
     private val viewModel: BackupViewModel by viewModels()
-    private var _binding: FragmentBackupBinding? = null
+    private var _binding: FragmentBackupLogInBinding? = null
     private val binding get() = _binding!!
     private lateinit var slideUp: Animation
     private lateinit var fadeIn: Animation
@@ -105,22 +104,25 @@ class BackupFragment : Fragment() {
     }
 
     private val signInListener = OnClickListener {
-        Log.i(TAG, "id: ${viewModel.id}, password: ${viewModel.password}")
+        Log.i(TAG, "sign in id: ${viewModel.id}, password: ${viewModel.password}")
+        val progressBar = addProgressBar()
         if (isAuthExceptions(it)) { return@OnClickListener }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getAuthResult(AuthType.LOGIN).collect { res ->
-                Log.i(TAG, "res: $res")
                 when(res) {
                     is AuthInfo.Success -> {
-                        Toast.makeText(requireContext(), "log in is successsful!", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), R.string.backup_login_sign_in_success, Toast.LENGTH_SHORT).show()
+                        removeProgressBar(progressBar)
+                        findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
                     }
                     is AuthInfo.Failure -> {
+                        removeProgressBar(progressBar)
                         if (res.errorCode == AuthErrorCodes.NETWORK) {
-                            Toast.makeText(requireContext(), "network problem occured!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), R.string.backup_login_network_problem, Toast.LENGTH_SHORT).show()
                         } else if (res.errorCode == AuthErrorCodes.NOT_EXIST) {
-                            Toast.makeText(requireContext(), "user is not exist!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), R.string.backup_login_not_exist_problem, Toast.LENGTH_SHORT).show()
                         } else if(res.errorCode == AuthErrorCodes.DEFAULT) {
-                            Toast.makeText(requireContext(), "something was wrong. please try again.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), R.string.backup_login_default_problem, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -129,26 +131,75 @@ class BackupFragment : Fragment() {
     }
 
     private val registerListener = OnClickListener {
-        Log.i(TAG, "id: ${viewModel.id}, password: ${viewModel.password}")
+        val progressBar = addProgressBar()
+
+        Log.i(TAG, "register id: ${viewModel.id}, password: ${viewModel.password}")
         if (isAuthExceptions(it)) { return@OnClickListener }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getAuthResult(AuthType.REGISTER).collect { res ->
                 when(res) {
                     is AuthInfo.Success -> {
-                        Toast.makeText(requireContext(), "register is successsful!", Toast.LENGTH_SHORT).show()
+                        removeProgressBar(progressBar)
+                        Toast.makeText(requireContext(), R.string.backup_login_register_success, Toast.LENGTH_SHORT).show()
+                        sendVerifyEmail()
                     }
                     is AuthInfo.Failure -> {
+                        removeProgressBar(progressBar)
                         if (res.errorCode == AuthErrorCodes.NETWORK) {
-                            Toast.makeText(requireContext(), "network problem occured!", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), R.string.backup_login_network_problem, Toast.LENGTH_SHORT).show()
                         } else if (res.errorCode == AuthErrorCodes.ALREADY_EXIST) {
-                            Toast.makeText(requireContext(), "user is already exist! try the other id.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), R.string.backup_login_duplicate_problem, Toast.LENGTH_SHORT).show()
                         } else if(res.errorCode == AuthErrorCodes.DEFAULT) {
-                            Toast.makeText(requireContext(), "something was wrong. please try again.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), R.string.backup_login_default_problem, Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
             }
         }
+    }
+
+    private fun addProgressBar(): ProgressBar {
+        val progressBar = ProgressBar(requireContext())
+        progressBar.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.app_main_color))
+        progressBar.id = View.generateViewId()
+        binding.backupLayout.addView(progressBar, 0)
+        val set = ConstraintSet()
+        set.clone(binding.backupLayout)
+        set.connect(progressBar.id, ConstraintSet.TOP, binding.backupLayout.id, ConstraintSet.TOP, 0)
+        set.connect(progressBar.id, ConstraintSet.BOTTOM, binding.backupLayout.id, ConstraintSet.BOTTOM, 0)
+        set.connect(progressBar.id, ConstraintSet.START, binding.backupLayout.id, ConstraintSet.START, 0)
+        set.connect(progressBar.id, ConstraintSet.END, binding.backupLayout.id, ConstraintSet.END, 0)
+        set.applyTo(binding.backupLayout)
+        return progressBar
+    }
+
+    private fun removeProgressBar(progressBar: ProgressBar) {
+        binding.backupLayout.removeView(progressBar)
+    }
+
+    private fun sendVerifyEmail() {
+        val auth = Firebase.auth
+        val user = auth.currentUser
+        user?.let {
+            Log.i(TAG, "1, user is not null")
+        }
+        val url = "https://whiteboard1.page.link/verify"
+        //val url = "https://www.thinkers/whiteboard/verify"
+        val actionCodeSettings = ActionCodeSettings.newBuilder()
+            .setUrl(url)
+            .setAndroidPackageName("https://www.thinkers/whiteboard/verify", false, null)
+            .build()
+        Log.i(TAG, "2")
+
+        user?.sendEmailVerification(actionCodeSettings)
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    Log.i(TAG, "send completed")
+                    findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
+                } else {
+                    Log.i(TAG, "3 ${task.exception}")
+                }
+            }
     }
 
     override fun onAttach(context: Context) {
@@ -166,7 +217,7 @@ class BackupFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel.auth = Firebase.auth
-        _binding = FragmentBackupBinding.inflate(inflater, container, false)
+        _binding = FragmentBackupLogInBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -208,7 +259,7 @@ class BackupFragment : Fragment() {
 
     private fun isAuthExceptions(view: View): Boolean {
         if(!viewModel.isEmailCorrect()) {
-            Snackbar.make(view, "입력하신 id가 이메일 형식이 아닙니다", Snackbar.LENGTH_SHORT).show()
+            Snackbar.make(view, R.string.backup_id_info_text, Snackbar.LENGTH_SHORT).show()
             return true
         }
         if (!viewModel.isPasswordCorrect()) {

@@ -201,13 +201,16 @@ class MainActivity : AppCompatActivity() {
     private val mainDestinationChangedListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
             when(controller.currentDestination?.id) {
-                R.id.nav_backup,
+                R.id.nav_backup_login,
                 R.id.nav_lock,
                 R.id.nav_search,
                 R.id.nav_edit_note,
                 R.id.nav_add_note,
                 R.id.nav_memo,
-                R.id.nav_settings -> {
+                R.id.nav_settings,
+                R.id.nav_backup_home,
+                R.id.nav_backup_login,
+                R.id.nav_backup_verify -> {
                     binding.appBar.visibility = View.GONE
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                 }
@@ -303,7 +306,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             when(navController.currentDestination?.id) {
                 R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo, R.id.nav_search, R.id.nav_settings, R.id.nav_lock,
-                R.id.nav_backup -> {
+                R.id.nav_backup_login, R.id.nav_backup_login, R.id.nav_backup_verify, R.id.nav_backup_home -> {
                     super.onBackPressed()
                 }
                 else -> {
