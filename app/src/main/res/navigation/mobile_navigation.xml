@@ -158,65 +158,80 @@
             app:exitAnim="@anim/bottom_down_disapper"
             app:popExitAnim="@anim/bottom_down_disapper" />
     </fragment>
-    <fragment
-        android:id="@+id/nav_settings"
-        android:name="com.thinkers.whiteboard.settings.SettingsFragment"
-        android:label="SettingsFragment"
-        tools:layout="@layout/fragment_settings"
-        >
-        <action
-            android:id="@+id/action_nav_settings_to_lockFragment"
-            app:destination="@id/nav_lock"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
-        <action
-            android:id="@+id/action_nav_settings_to_nav_backup"
-            app:destination="@id/nav_backup_login"
-            app:enterAnim="@anim/fade_in"
-            app:exitAnim="@anim/fade_out"
-            app:popEnterAnim="@anim/fade_in"
-            app:popExitAnim="@anim/fade_out" />
-    </fragment>
-    <fragment
-        android:id="@+id/nav_lock"
-        android:name="com.thinkers.whiteboard.settings.LockFragment"
-        android:label="fragment_lock"
-        tools:layout="@layout/fragment_lock" />
-    <fragment
-        android:id="@+id/nav_backup_login"
-        android:name="com.thinkers.whiteboard.settings.BackupLogInFragment"
-        android:label="fragment_backup"
-        tools:layout="@layout/fragment_backup_log_in" >
-        <action
-            android:id="@+id/action_nav_backup_login_to_nav_backup_home"
-            app:destination="@id/nav_backup_home"
-            app:popUpTo="@id/nav_settings" />
-        <action
-            android:id="@+id/action_nav_backup_login_to_nav_backup_verify"
-            app:destination="@id/nav_backup_verify"
-            app:enterAnim="@anim/slide_left"
-            app:exitAnim="@anim/slide_right"
-            app:popEnterAnim="@anim/slide_left"
-            app:popExitAnim="@anim/slide_right" />
-    </fragment>
-    <fragment
-        android:id="@+id/nav_backup_home"
-        android:name="com.thinkers.whiteboard.settings.BackupHomeFragment"
-        android:label="fragment_backup_home"
-        tools:layout="@layout/fragment_backup_home" />
-    <fragment
-        android:id="@+id/nav_backup_verify"
-        android:name="com.thinkers.whiteboard.settings.BackupVerifyFragment"
-        android:label="fragment_backup_verify"
-        tools:layout="@layout/fragment_backup_verify">
-        <deepLink
-            android:id="@+id/deepLink"
-            app:uri="https://www.thinkers/whiteboard/verify" />
-        <action
-            android:id="@+id/action_nav_backup_verify_to_nav_backup_home"
-            app:destination="@id/nav_backup_home"
-            app:popUpTo="@id/nav_settings" />
-    </fragment>
+    <navigation
+        android:id="@+id/settings_navigation"
+        app:startDestination="@id/nav_settings">
+        <fragment
+            android:id="@+id/nav_settings"
+            android:name="com.thinkers.whiteboard.settings.SettingsFragment"
+            android:label="SettingsFragment"
+            tools:layout="@layout/fragment_settings"
+            >
+            <action
+                android:id="@+id/action_nav_settings_to_lockFragment"
+                app:destination="@id/nav_lock"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out"
+                app:popEnterAnim="@anim/fade_in"
+                app:popExitAnim="@anim/fade_out" />
+            <action
+                android:id="@+id/action_nav_settings_to_nav_backup"
+                app:destination="@id/nav_backup_login"
+                app:enterAnim="@anim/fade_in"
+                app:exitAnim="@anim/fade_out"
+                app:popEnterAnim="@anim/fade_in"
+                app:popExitAnim="@anim/fade_out" />
+        </fragment>
+        <fragment
+            android:id="@+id/nav_lock"
+            android:name="com.thinkers.whiteboard.settings.LockFragment"
+            android:label="fragment_lock"
+            tools:layout="@layout/fragment_lock" />
+        <fragment
+            android:id="@+id/nav_backup_login"
+            android:name="com.thinkers.whiteboard.settings.BackupLogInFragment"
+            android:label="fragment_backup"
+            tools:layout="@layout/fragment_backup_log_in" >
+            <action
+                android:id="@+id/action_nav_backup_login_to_nav_backup_home"
+                app:destination="@id/nav_backup_home" />
+            <action
+                android:id="@+id/action_nav_backup_login_to_nav_backup_verify"
+                app:destination="@id/nav_backup_verify"
+                app:enterAnim="@anim/slide_left"
+                app:exitAnim="@anim/slide_right"
+                app:popEnterAnim="@anim/slide_left"
+                app:popExitAnim="@anim/slide_right" />
+        </fragment>
+        <fragment
+            android:id="@+id/nav_backup_home"
+            android:name="com.thinkers.whiteboard.settings.BackupHomeFragment"
+            android:label="fragment_backup_home"
+            tools:layout="@layout/fragment_backup_home" >
+            <action
+                android:id="@+id/action_nav_backup_home_to_nav_settings"
+                app:enterAnim="@anim/slide_left"
+                app:exitAnim="@anim/slide_right"
+                app:popUpTo="@id/nav_settings"
+                app:popEnterAnim="@anim/slide_left"
+                app:popExitAnim="@anim/slide_right" />
+        </fragment>
+        <fragment
+            android:id="@+id/nav_backup_verify"
+            android:name="com.thinkers.whiteboard.settings.BackupVerifyFragment"
+            android:label="fragment_backup_verify"
+            tools:layout="@layout/fragment_backup_verify">
+            <deepLink
+                android:id="@+id/deepLink"
+                app:uri="https://www.thinkers/whiteboard/verify" />
+            <action
+                android:id="@+id/action_nav_backup_verify_to_nav_backup_home"
+                app:destination="@id/nav_backup_home"
+                app:enterAnim="@anim/slide_left"
+                app:exitAnim="@anim/slide_right"
+                app:popEnterAnim="@anim/slide_left"
+                app:popExitAnim="@anim/slide_right"
+                app:popUpTo="@id/nav_settings" />
+        </fragment>
+    </navigation>
 </navigation>

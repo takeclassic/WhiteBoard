@@ -1,6 +1,5 @@
 package com.thinkers.whiteboard.settings
 
-import android.R.layout
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.res.ColorStateList
@@ -38,7 +37,7 @@ import kotlinx.coroutines.launch
 
 
 class BackupLogInFragment : Fragment() {
-    private val viewModel: BackupViewModel by viewModels()
+    private val viewModel: BackupLoginViewModel by viewModels()
     private var _binding: FragmentBackupLogInBinding? = null
     private val binding get() = _binding!!
     private lateinit var slideUp: Animation
@@ -46,7 +45,6 @@ class BackupLogInFragment : Fragment() {
 
     private val onBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            Log.i(TAG, "it is called!")
             findNavController().popBackStack()
         }
     }
@@ -106,7 +104,10 @@ class BackupLogInFragment : Fragment() {
     private val signInListener = OnClickListener {
         Log.i(TAG, "sign in id: ${viewModel.id}, password: ${viewModel.password}")
         val progressBar = addProgressBar()
-        if (isAuthExceptions(it)) { return@OnClickListener }
+        if (isAuthExceptions(it)) {
+            removeProgressBar(progressBar)
+            return@OnClickListener
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getAuthResult(AuthType.LOGIN).collect { res ->
                 when(res) {
@@ -134,7 +135,10 @@ class BackupLogInFragment : Fragment() {
         val progressBar = addProgressBar()
 
         Log.i(TAG, "register id: ${viewModel.id}, password: ${viewModel.password}")
-        if (isAuthExceptions(it)) { return@OnClickListener }
+        if (isAuthExceptions(it)) {
+            removeProgressBar(progressBar)
+            return@OnClickListener
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getAuthResult(AuthType.REGISTER).collect { res ->
                 when(res) {
@@ -160,7 +164,7 @@ class BackupLogInFragment : Fragment() {
 
     private fun addProgressBar(): ProgressBar {
         val progressBar = ProgressBar(requireContext())
-        progressBar.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.app_main_color))
+        progressBar.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black))
         progressBar.id = View.generateViewId()
         binding.backupLayout.addView(progressBar, 0)
         val set = ConstraintSet()
@@ -174,22 +178,19 @@ class BackupLogInFragment : Fragment() {
     }
 
     private fun removeProgressBar(progressBar: ProgressBar) {
+        Log.i(TAG, "remove is called!")
         binding.backupLayout.removeView(progressBar)
     }
 
     private fun sendVerifyEmail() {
         val auth = Firebase.auth
         val user = auth.currentUser
-        user?.let {
-            Log.i(TAG, "1, user is not null")
-        }
+
         val url = "https://whiteboard1.page.link/verify"
-        //val url = "https://www.thinkers/whiteboard/verify"
         val actionCodeSettings = ActionCodeSettings.newBuilder()
             .setUrl(url)
             .setAndroidPackageName("https://www.thinkers/whiteboard/verify", false, null)
             .build()
-        Log.i(TAG, "2")
 
         user?.sendEmailVerification(actionCodeSettings)
             ?.addOnCompleteListener { task ->
@@ -244,11 +245,6 @@ class BackupLogInFragment : Fragment() {
 
         binding.backupLoginButton.setOnClickListener(signInListener)
         binding.backupRegisterButton.setOnClickListener(registerListener)
-
-        val currentUser = viewModel.auth?.currentUser
-        if (currentUser != null) {
-
-        }
     }
 
     override fun onDestroy() {

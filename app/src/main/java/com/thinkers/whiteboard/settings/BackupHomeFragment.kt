@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.FragmentBackupHomeBinding
 
 class BackupHomeFragment : Fragment() {
@@ -33,7 +34,7 @@ class BackupHomeFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             val auth = Firebase.auth
             auth.signOut()
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_nav_backup_home_to_nav_settings)
         }
     }
 

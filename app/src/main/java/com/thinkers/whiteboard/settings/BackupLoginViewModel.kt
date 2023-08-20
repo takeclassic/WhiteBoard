@@ -1,6 +1,5 @@
 package com.thinkers.whiteboard.settings
 
-import android.util.Log
 import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.tasks.OnCompleteListener
@@ -15,7 +14,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class BackupViewModel : ViewModel() {
+class BackupLoginViewModel : ViewModel() {
     var id: String = ""
     var password: String = ""
     var auth: FirebaseAuth? = null

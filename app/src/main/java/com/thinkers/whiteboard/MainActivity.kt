@@ -122,7 +122,7 @@ class MainActivity : AppCompatActivity() {
                 menuItem.setCheckable(true)
                 menuItem.title = "설정"
                 menuItemCache = menuItem
-                navController.navigate(R.id.nav_settings, null, navOptions)
+                navController.navigate(R.id.settings_navigation, null, navOptions)
                 binding.drawerLayout.closeDrawer(GravityCompat.START)
                 true
             }
