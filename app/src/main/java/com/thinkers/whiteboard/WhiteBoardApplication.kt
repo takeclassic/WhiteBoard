@@ -2,7 +2,6 @@ package com.thinkers.whiteboard
 
 import android.app.Application
 import android.content.Context
-import android.security.KeyPairGeneratorSpec
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Log
@@ -20,6 +19,7 @@ import com.thinkers.whiteboard.database.repositories.MemoRepository
 import com.thinkers.whiteboard.database.repositories.NoteRepository
 import com.thinkers.whiteboard.database.repositories.SettingRepository
 import com.thinkers.whiteboard.settings.AutoRemoveWorker
+import com.thinkers.whiteboard.settings.BackupUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.security.KeyPairGenerator
@@ -52,6 +52,9 @@ class WhiteBoardApplication: Application() {
             database.settingDao(),
             DispatcherProviderUtil()
         )
+    }
+    val backupUseCase by lazy {
+        BackupUseCase()
     }
 
     private val dataStore: DataStore<Preferences> by preferencesDataStore(name = "whiteboard_prefs")

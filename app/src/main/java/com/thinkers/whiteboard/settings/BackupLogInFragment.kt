@@ -14,13 +14,13 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
-import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -28,16 +28,20 @@ import com.google.firebase.auth.ActionCodeSettings
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.enums.AuthErrorCodes
 import com.thinkers.whiteboard.common.enums.AuthInfo
 import com.thinkers.whiteboard.common.enums.AuthType
 import com.thinkers.whiteboard.common.utils.Utils
+import com.thinkers.whiteboard.common.view.ProgressBarWithText
+import com.thinkers.whiteboard.customs.EditNoteViewModel
+import com.thinkers.whiteboard.customs.EditNoteViewModelFactory
 import com.thinkers.whiteboard.databinding.FragmentBackupLogInBinding
 import kotlinx.coroutines.launch
 
 
 class BackupLogInFragment : Fragment() {
-    private val viewModel: BackupLoginViewModel by viewModels()
+    private lateinit var viewModel: BackupLoginViewModel
     private var _binding: FragmentBackupLogInBinding? = null
     private val binding get() = _binding!!
     private lateinit var slideUp: Animation
@@ -124,6 +128,10 @@ class BackupLogInFragment : Fragment() {
                             Toast.makeText(requireContext(), R.string.backup_login_not_exist_problem, Toast.LENGTH_SHORT).show()
                         } else if(res.errorCode == AuthErrorCodes.DEFAULT) {
                             Toast.makeText(requireContext(), R.string.backup_login_default_problem, Toast.LENGTH_SHORT).show()
+                        } else if(res.errorCode == AuthErrorCodes.NOT_VERIFIED) {
+                            viewModel.sendVerifyEmail {
+                                findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
+                            }
                         }
                     }
                 }
@@ -145,7 +153,9 @@ class BackupLogInFragment : Fragment() {
                     is AuthInfo.Success -> {
                         removeProgressBar(progressBar)
                         Toast.makeText(requireContext(), R.string.backup_login_register_success, Toast.LENGTH_SHORT).show()
-                        sendVerifyEmail()
+                        viewModel.sendVerifyEmail {
+                            findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
+                        }
                     }
                     is AuthInfo.Failure -> {
                         removeProgressBar(progressBar)
@@ -162,45 +172,44 @@ class BackupLogInFragment : Fragment() {
         }
     }
 
-    private fun addProgressBar(): ProgressBar {
-        val progressBar = ProgressBar(requireContext())
-        progressBar.progressTintList = ColorStateList.valueOf(ContextCompat.getColor(requireContext(), R.color.black))
+    private fun addProgressBar(): ProgressBarWithText {
+        val progressBar = ProgressBarWithText(requireContext())
+        progressBar.setProgressBarColor(ContextCompat.getColor(requireContext(), R.color.default_icon))
+        val str = getString(R.string.progressbar_waiting)
+        progressBar.setText(str)
+        progressBar.setTextSize(16f)
+        progressBar.setTextColor(ContextCompat.getColor(requireContext(), R.color.default_icon))
         progressBar.id = View.generateViewId()
-        binding.backupLayout.addView(progressBar, 0)
+        progressBar.setLayoutColor(ContextCompat.getColor(requireContext(), R.color.default_drawable))
+
+        binding.backupViewLayout.alpha = 0.5f
+        binding.backupEmptyLayout.addView(progressBar, 0)
+        binding.backupEmptyLayout.translationZ = 10f
+
         val set = ConstraintSet()
-        set.clone(binding.backupLayout)
-        set.connect(progressBar.id, ConstraintSet.TOP, binding.backupLayout.id, ConstraintSet.TOP, 0)
-        set.connect(progressBar.id, ConstraintSet.BOTTOM, binding.backupLayout.id, ConstraintSet.BOTTOM, 0)
-        set.connect(progressBar.id, ConstraintSet.START, binding.backupLayout.id, ConstraintSet.START, 0)
-        set.connect(progressBar.id, ConstraintSet.END, binding.backupLayout.id, ConstraintSet.END, 0)
-        set.applyTo(binding.backupLayout)
+        set.clone(binding.backupEmptyLayout)
+        set.connect(progressBar.id, ConstraintSet.TOP, binding.backupEmptyLayout.id, ConstraintSet.TOP, 0)
+        set.connect(progressBar.id, ConstraintSet.BOTTOM, binding.backupEmptyLayout.id, ConstraintSet.BOTTOM, 0)
+        set.connect(progressBar.id, ConstraintSet.START, binding.backupEmptyLayout.id, ConstraintSet.START, 0)
+        set.connect(progressBar.id, ConstraintSet.END, binding.backupEmptyLayout.id, ConstraintSet.END, 0)
+        set.applyTo(binding.backupEmptyLayout)
         return progressBar
     }
 
-    private fun removeProgressBar(progressBar: ProgressBar) {
+    private fun removeProgressBar(progressBar: ProgressBarWithText) {
         Log.i(TAG, "remove is called!")
-        binding.backupLayout.removeView(progressBar)
+        binding.backupEmptyLayout.removeView(progressBar)
+        binding.backupViewLayout.alpha = 1f
     }
 
-    private fun sendVerifyEmail() {
-        val auth = Firebase.auth
-        val user = auth.currentUser
-
-        val url = "https://whiteboard1.page.link/verify"
-        val actionCodeSettings = ActionCodeSettings.newBuilder()
-            .setUrl(url)
-            .setAndroidPackageName("https://www.thinkers/whiteboard/verify", false, null)
-            .build()
-
-        user?.sendEmailVerification(actionCodeSettings)
-            ?.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.i(TAG, "send completed")
-                    findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
-                } else {
-                    Log.i(TAG, "3 ${task.exception}")
-                }
-            }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = ViewModelProvider(
+            this,
+            BackUpLoginViewModelFactory(
+                WhiteBoardApplication.instance!!.backupUseCase
+            )
+        ).get(BackupLoginViewModel::class.java)
     }
 
     override fun onAttach(context: Context) {

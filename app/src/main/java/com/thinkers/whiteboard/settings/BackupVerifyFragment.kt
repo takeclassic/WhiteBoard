@@ -61,6 +61,9 @@ class BackupVerifyFragment : Fragment() {
             findNavController().popBackStack()
         }
         binding.backupVerifyRefresh.setOnClickListener(checkVerifiedListener)
+        binding.backupVerifyRetry.setOnClickListener {
+
+        }
     }
 
     override fun onResume() {

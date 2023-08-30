@@ -18,19 +18,16 @@ class CustomNumberButtonView @JvmOverloads constructor(
     var buttonColor: Int = 0
         set(value) {
             field = value
-            invalidate()
             requestLayout()
         }
     var buttonTextColor: Int = 0
         set(value) {
             field = value
-            invalidate()
             requestLayout()
         }
     var buttonText: String = "1"
         set(value) {
             field = value
-            invalidate()
             requestLayout()
         }
     private var buttonPaint: Paint

@@ -8,7 +8,7 @@ sealed interface AuthInfo {
 }
 
 enum class AuthErrorCodes(code: Int) {
-    ALREADY_EXIST(1001), NOT_EXIST(1002), NETWORK(1003), DEFAULT(1000)
+    DEFAULT(1000), ALREADY_EXIST(1001), NOT_EXIST(1002), NETWORK(1003), NOT_VERIFIED(1004)
 }
 
 enum class AuthType {

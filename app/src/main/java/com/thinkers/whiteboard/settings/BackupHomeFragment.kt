@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +21,18 @@ class BackupHomeFragment : Fragment() {
     private var _binding: FragmentBackupHomeBinding? = null
     private val binding get() = _binding!!
 
+    private val backPressListener = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            backPressListenerImpl()
+        }
+    }
+
+    private val backPressListenerImpl: () -> Unit = {
+        val auth = Firebase.auth
+        auth.signOut()
+        findNavController().navigate(R.id.action_nav_backup_home_to_nav_settings)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,10 +45,18 @@ class BackupHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val toolbar = binding.backupHomeToolbar
         toolbar.setNavigationOnClickListener {
-            val auth = Firebase.auth
-            auth.signOut()
-            findNavController().navigate(R.id.action_nav_backup_home_to_nav_settings)
+            backPressListenerImpl()
         }
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher.addCallback(this, backPressListener)
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        backPressListener.remove()
     }
 
 }

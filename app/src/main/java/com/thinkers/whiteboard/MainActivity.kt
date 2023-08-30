@@ -305,11 +305,7 @@ class MainActivity : AppCompatActivity() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
             when(navController.currentDestination?.id) {
-                R.id.nav_add_note, R.id.nav_edit_note, R.id.nav_memo, R.id.nav_search, R.id.nav_settings, R.id.nav_lock,
-                R.id.nav_backup_login, R.id.nav_backup_login, R.id.nav_backup_verify, R.id.nav_backup_home -> {
-                    super.onBackPressed()
-                }
-                else -> {
+                R.id.nav_total, R.id.nav_favorites, R.id.nav_custom_note -> {
                     if (System.currentTimeMillis() - time > 1000L) {
                         time = System.currentTimeMillis()
                         Toast.makeText(
@@ -320,6 +316,9 @@ class MainActivity : AppCompatActivity() {
                         return
                     }
                     finish()
+                }
+                else -> {
+                    super.onBackPressed()
                 }
             }
         }
