@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -14,6 +15,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintSet
@@ -62,6 +64,7 @@ class BackupLogInFragment : Fragment() {
             binding.backupLoginButton.startAnimation(fadeIn)
             binding.backupRegisterButton.startAnimation(fadeIn)
             binding.backupAgreementText.startAnimation(fadeIn)
+            binding.backupFindPassword.startAnimation(fadeIn)
         }
 
         override fun onAnimationRepeat(animation: Animation?) {}
@@ -74,6 +77,7 @@ class BackupLogInFragment : Fragment() {
             binding.backupLoginButton.visibility = View.VISIBLE
             binding.backupRegisterButton.visibility = View.VISIBLE
             binding.backupAgreementText.visibility = View.VISIBLE
+            binding.backupFindPassword.visibility  = View.VISIBLE
         }
 
         override fun onAnimationEnd(animation: Animation?) {}
@@ -251,9 +255,19 @@ class BackupLogInFragment : Fragment() {
 
         binding.backupIdEdittext.addTextChangedListener(idTextWatcher)
         binding.backupPasswordEdittext.addTextChangedListener(passwordTextWatcher)
+        binding.backupPasswordEdittext.setOnEditorActionListener { v, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                binding.backupLoginButton.callOnClick()
+                true
+            }
+            false
+        }
 
         binding.backupLoginButton.setOnClickListener(signInListener)
         binding.backupRegisterButton.setOnClickListener(registerListener)
+        binding.backupFindPassword.setOnClickListener {
+            findNavController().navigate(R.id.action_nav_backup_login_to_nav_send_password_reset)
+        }
     }
 
     override fun onDestroy() {

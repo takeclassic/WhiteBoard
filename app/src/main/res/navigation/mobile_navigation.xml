@@ -202,6 +202,13 @@
                 app:exitAnim="@anim/slide_right"
                 app:popEnterAnim="@anim/slide_left"
                 app:popExitAnim="@anim/slide_right" />
+            <action
+                android:id="@+id/action_nav_backup_login_to_nav_send_password_reset"
+                app:destination="@id/nav_send_password_reset"
+                app:enterAnim="@anim/slide_left"
+                app:exitAnim="@anim/slide_right"
+                app:popEnterAnim="@anim/slide_left"
+                app:popExitAnim="@anim/slide_right" />
         </fragment>
         <fragment
             android:id="@+id/nav_backup_home"
@@ -232,6 +239,12 @@
                 app:popEnterAnim="@anim/slide_left"
                 app:popExitAnim="@anim/slide_right"
                 app:popUpTo="@id/nav_settings" />
+        </fragment>
+        <fragment
+            android:id="@+id/nav_send_password_reset"
+            android:name="com.thinkers.whiteboard.settings.BackupSendPasswordResetEmailFragment"
+            android:label="fragment_backup_send_password_reset_email"
+            tools:layout="@layout/fragment_backup_send_password_reset_email" >
         </fragment>
     </navigation>
 </navigation>

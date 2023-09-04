@@ -37,6 +37,7 @@
     <string name="settings_passcode_is_not_set">잠금 기능을 사용하시려면 먼저 비밀번호를 설정해 주세요.</string>
 
     <string name="backup_agreement_text">- 보안상의 이유로 백업기능은 인증이 반드시 필요합니다.\n- 백업된 파일은 최대 한달 간 보관됩니다.</string>
+    <string name="backup_find_password_text">- <u>비밀번호 찾기</u></string>
     <string name="backup_password_info_text">비밀번호는 영문대소문자, 숫자, 특수문자를 포함,\n 10자 이상, 20자 이하로 설정되어야 합니다</string>
     <string name="backup_id_info_text">입력하신 id가 이메일 형식이 아닙니다</string>
 
@@ -61,4 +62,10 @@
     <string name="backup_home_empty_string" translatable="false">메모 백업 기록이 없습니다.\n백업된 파일이 이곳에 보이게 됩니다.</string>
 
     <string name="progressbar_waiting" translatable="false">로딩 중...</string>
+
+    <string name="backup_password_reset_new_password_text">새 비밀번호를 입력하세요</string>
+    <string name="backup_password_reset_new_password_hint">영문 대소문자, 특수문자, 숫자, 10자 이상, 20자 이하</string>
+    <string name="backup_password_reset_password_again_text">비밀번호를 다시 한번 입력하세요</string>
+
+    <string name="backup_send_password_reset_email_text">비밀번호를 찾으실 id를 입력하세요</string>
 </resources>
