@@ -18,13 +18,10 @@ import com.thinkers.whiteboard.common.enums.AuthInfo
 import com.thinkers.whiteboard.common.enums.AuthType
 import com.thinkers.whiteboard.database.repositories.MemoRepository
 import com.thinkers.whiteboard.database.repositories.NoteRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.CancellableContinuation.*
+
 
 class BackupLoginViewModel(private val backupUseCase: BackupUseCase) : ViewModel() {
     var id: String = ""
@@ -49,38 +46,34 @@ class BackupLoginViewModel(private val backupUseCase: BackupUseCase) : ViewModel
         backupUseCase.sendVerifyEmail(callback)
     }
 
-    fun getAuthResult(authType: AuthType): Flow<AuthInfo> = callbackFlow {
+    suspend fun getAuthResult(authType: AuthType): AuthInfo<AuthResult> = suspendCancellableCoroutine { cont ->
         val listener = OnCompleteListener {
             if (it.isSuccessful) {
                 if (authType == AuthType.LOGIN) {
                     FirebaseAuth.getInstance().currentUser?.let { user ->
                         if (user.isEmailVerified) {
-                            trySend(AuthInfo.Success(it.result))
+                            cont.resume(AuthInfo.Success(it.result), null)
                             return@OnCompleteListener
                         }
                     }
-                    trySend(AuthInfo.Failure(AuthErrorCodes.NOT_VERIFIED))
+                    cont.resume(AuthInfo.Failure(AuthErrorCodes.NOT_VERIFIED), null)
                 } else {
-                    trySend(AuthInfo.Success(it.result))
+                    cont.resume(AuthInfo.Success(it.result), null)
                 }
             } else {
-                runCatching {
-                    when(it.exception!!) {
-                        is FirebaseAuthUserCollisionException -> {
-                            trySend(AuthInfo.Failure(AuthErrorCodes.ALREADY_EXIST))
-                        }
-                        is FirebaseAuthInvalidUserException -> {
-                            trySend(AuthInfo.Failure(AuthErrorCodes.NOT_EXIST))
-                        }
-                        is FirebaseAuthWebException -> {
-                            trySend(AuthInfo.Failure(AuthErrorCodes.NETWORK))
-                        }
-                        else -> {
-                            trySend(AuthInfo.Failure(AuthErrorCodes.DEFAULT))
-                        }
+                when (it.exception!!) {
+                    is FirebaseAuthUserCollisionException -> {
+                        cont.resume(AuthInfo.Failure(AuthErrorCodes.ALREADY_EXIST), null)
                     }
-                }.onFailure {
-                    trySend(AuthInfo.Failure(AuthErrorCodes.DEFAULT))
+                    is FirebaseAuthInvalidUserException -> {
+                        cont.resume(AuthInfo.Failure(AuthErrorCodes.NOT_EXIST), null)
+                    }
+                    is FirebaseAuthWebException -> {
+                        cont.resume(AuthInfo.Failure(AuthErrorCodes.NETWORK), null)
+                    }
+                    else -> {
+                        cont.resume(AuthInfo.Failure(AuthErrorCodes.DEFAULT), null)
+                    }
                 }
             }
         }
@@ -92,7 +85,6 @@ class BackupLoginViewModel(private val backupUseCase: BackupUseCase) : ViewModel
                 backupUseCase.createAccount(auth!!, id, password, listener)
             }
         }
-        awaitClose()
     }
 
     companion object {

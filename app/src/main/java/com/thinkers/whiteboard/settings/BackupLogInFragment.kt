@@ -117,25 +117,40 @@ class BackupLogInFragment : Fragment() {
             return@OnClickListener
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getAuthResult(AuthType.LOGIN).collect { res ->
-                when(res) {
-                    is AuthInfo.Success -> {
-                        Toast.makeText(requireContext(), R.string.backup_login_sign_in_success, Toast.LENGTH_SHORT).show()
-                        removeProgressBar(progressBar)
-                        findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
-                    }
-                    is AuthInfo.Failure -> {
-                        removeProgressBar(progressBar)
-                        if (res.errorCode == AuthErrorCodes.NETWORK) {
-                            Toast.makeText(requireContext(), R.string.backup_login_network_problem, Toast.LENGTH_SHORT).show()
-                        } else if (res.errorCode == AuthErrorCodes.NOT_EXIST) {
-                            Toast.makeText(requireContext(), R.string.backup_login_not_exist_problem, Toast.LENGTH_SHORT).show()
-                        } else if(res.errorCode == AuthErrorCodes.DEFAULT) {
-                            Toast.makeText(requireContext(), R.string.backup_login_default_problem, Toast.LENGTH_SHORT).show()
-                        } else if(res.errorCode == AuthErrorCodes.NOT_VERIFIED) {
-                            viewModel.sendVerifyEmail {
-                                findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
-                            }
+            val res = viewModel.getAuthResult(AuthType.LOGIN)
+            when (res) {
+                is AuthInfo.Success -> {
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.backup_login_sign_in_success,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    removeProgressBar(progressBar)
+                    findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
+                }
+                is AuthInfo.Failure -> {
+                    removeProgressBar(progressBar)
+                    if (res.errorCode == AuthErrorCodes.NETWORK) {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.backup_login_network_problem,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (res.errorCode == AuthErrorCodes.NOT_EXIST) {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.backup_login_not_exist_problem,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (res.errorCode == AuthErrorCodes.DEFAULT) {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.backup_login_default_problem,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (res.errorCode == AuthErrorCodes.NOT_VERIFIED) {
+                        viewModel.sendVerifyEmail {
+                            findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
                         }
                     }
                 }
@@ -152,24 +167,39 @@ class BackupLogInFragment : Fragment() {
             return@OnClickListener
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getAuthResult(AuthType.REGISTER).collect { res ->
-                when(res) {
-                    is AuthInfo.Success -> {
-                        removeProgressBar(progressBar)
-                        Toast.makeText(requireContext(), R.string.backup_login_register_success, Toast.LENGTH_SHORT).show()
-                        viewModel.sendVerifyEmail {
-                            findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
-                        }
+            val res = viewModel.getAuthResult(AuthType.REGISTER)
+            when (res) {
+                is AuthInfo.Success -> {
+                    removeProgressBar(progressBar)
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.backup_login_register_success,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    viewModel.sendVerifyEmail {
+                        findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
                     }
-                    is AuthInfo.Failure -> {
-                        removeProgressBar(progressBar)
-                        if (res.errorCode == AuthErrorCodes.NETWORK) {
-                            Toast.makeText(requireContext(), R.string.backup_login_network_problem, Toast.LENGTH_SHORT).show()
-                        } else if (res.errorCode == AuthErrorCodes.ALREADY_EXIST) {
-                            Toast.makeText(requireContext(), R.string.backup_login_duplicate_problem, Toast.LENGTH_SHORT).show()
-                        } else if(res.errorCode == AuthErrorCodes.DEFAULT) {
-                            Toast.makeText(requireContext(), R.string.backup_login_default_problem, Toast.LENGTH_SHORT).show()
-                        }
+                }
+                is AuthInfo.Failure -> {
+                    removeProgressBar(progressBar)
+                    if (res.errorCode == AuthErrorCodes.NETWORK) {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.backup_login_network_problem,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (res.errorCode == AuthErrorCodes.ALREADY_EXIST) {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.backup_login_duplicate_problem,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    } else if (res.errorCode == AuthErrorCodes.DEFAULT) {
+                        Toast.makeText(
+                            requireContext(),
+                            R.string.backup_login_default_problem,
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
             }
