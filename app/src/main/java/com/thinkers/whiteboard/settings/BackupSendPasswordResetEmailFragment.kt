@@ -54,6 +54,7 @@ class BackupSendPasswordResetEmailFragment : Fragment() {
         }
 
         binding.sendPasswordResetEmailBackButton.setOnClickListener {
+            Utils.hideKeyboard(requireContext(), binding.sendPasswordResetEmailEdittext)
             findNavController().popBackStack()
         }
 
