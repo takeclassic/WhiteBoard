@@ -25,6 +25,8 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
+        fun getInstance() = INSTANCE
+
         fun getDatabase(
             context: Context,
         ): AppDatabase {

@@ -75,4 +75,7 @@
     <string name="send_email_completed">이메일 전송 완료. 메일함에서 비밀번호를 변경하세요</string>
     <string name="email_not_exist">가입되지 않은 이메일 주소입니다.</string>
     <string name="max_retry_count">최대 전송 가능 횟수를 초과했습니다. 잠시 후 다시 시도해주세요.</string>
+
+    <string name="horizontal_progress_download_text">다운로드 진행 중...</string>
+    <string name="horizontal_progress_upload_text">업로드 진행 중...</string>
 </resources>

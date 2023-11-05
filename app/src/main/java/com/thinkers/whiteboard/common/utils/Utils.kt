@@ -1,11 +1,12 @@
 package com.thinkers.whiteboard.common.utils
 
-import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AlertDialog
+import java.text.SimpleDateFormat
+import java.util.*
 
 object Utils {
     fun showAlertDialog(
@@ -65,5 +66,11 @@ object Utils {
     fun showKeyboard(context: Context, view: View) {
         val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    fun showDate(time: Long): String {
+        val format = "yyyy-MM-dd HH:mm:ss"
+        val dateFormat = SimpleDateFormat(format)
+        return dateFormat.format(time)
     }
 }

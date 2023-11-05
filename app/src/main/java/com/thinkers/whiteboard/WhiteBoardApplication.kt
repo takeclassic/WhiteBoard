@@ -35,6 +35,7 @@ class WhiteBoardApplication: Application() {
     }
 
     val database by lazy { AppDatabase.getDatabase(this) }
+    val dbInstance = AppDatabase.getInstance()
     val memoRepository by lazy {
         MemoRepository(
             database.memoDao(),

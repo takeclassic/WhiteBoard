@@ -202,21 +202,6 @@
         android:layout_marginBottom="8dp"
         android:backgroundTint="@color/default_drawable"
         android:text="백업 파일 삭제"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/backup_home_download_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/backup_home_download_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:backgroundTint="@color/default_drawable"
-        android:visibility="gone"
-        android:text="백업 파일 다운로드"
         app:layout_constraintBottom_toTopOf="@+id/backup_home_backup_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

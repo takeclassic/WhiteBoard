@@ -111,25 +111,20 @@ class BackupLogInFragment : Fragment() {
 
     private val signInListener = OnClickListener {
         Log.i(TAG, "sign in id: ${viewModel.id}, password: ${viewModel.password}")
-        val progressBar = addProgressBar()
+        addProgressBar()
         if (isAuthExceptions(it)) {
-            removeProgressBar(progressBar)
+            removeProgressBar()
             return@OnClickListener
         }
         viewLifecycleOwner.lifecycleScope.launch {
             val res = viewModel.getAuthResult(AuthType.LOGIN)
             when (res) {
                 is AuthInfo.Success -> {
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.backup_login_sign_in_success,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    removeProgressBar(progressBar)
+                    removeProgressBar()
                     findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
                 }
                 is AuthInfo.Failure -> {
-                    removeProgressBar(progressBar)
+                    removeProgressBar()
                     if (res.errorCode == AuthErrorCodes.NETWORK) {
                         Toast.makeText(
                             requireContext(),
@@ -159,18 +154,18 @@ class BackupLogInFragment : Fragment() {
     }
 
     private val registerListener = OnClickListener {
-        val progressBar = addProgressBar()
+        addProgressBar()
 
         Log.i(TAG, "register id: ${viewModel.id}, password: ${viewModel.password}")
         if (isAuthExceptions(it)) {
-            removeProgressBar(progressBar)
+            removeProgressBar()
             return@OnClickListener
         }
         viewLifecycleOwner.lifecycleScope.launch {
             val res = viewModel.getAuthResult(AuthType.REGISTER)
             when (res) {
                 is AuthInfo.Success -> {
-                    removeProgressBar(progressBar)
+                    removeProgressBar()
                     Toast.makeText(
                         requireContext(),
                         R.string.backup_login_register_success,
@@ -181,7 +176,7 @@ class BackupLogInFragment : Fragment() {
                     }
                 }
                 is AuthInfo.Failure -> {
-                    removeProgressBar(progressBar)
+                    removeProgressBar()
                     if (res.errorCode == AuthErrorCodes.NETWORK) {
                         Toast.makeText(
                             requireContext(),
@@ -206,33 +201,14 @@ class BackupLogInFragment : Fragment() {
         }
     }
 
-    private fun addProgressBar(): ProgressBarWithText {
-        val progressBar = ProgressBarWithText(requireContext())
-        progressBar.setProgressBarColor(ContextCompat.getColor(requireContext(), R.color.default_icon))
-        val str = getString(R.string.progressbar_waiting)
-        progressBar.setText(str)
-        progressBar.setTextSize(16f)
-        progressBar.setTextColor(ContextCompat.getColor(requireContext(), R.color.default_icon))
-        progressBar.id = View.generateViewId()
-        progressBar.setLayoutColor(ContextCompat.getColor(requireContext(), R.color.default_drawable))
-
-        binding.backupViewLayout.alpha = 0.5f
-        binding.backupEmptyLayout.addView(progressBar, 0)
+    private fun addProgressBar() {
+        binding.backupProgressBar.visibility = View.VISIBLE
         binding.backupEmptyLayout.translationZ = 10f
-
-        val set = ConstraintSet()
-        set.clone(binding.backupEmptyLayout)
-        set.connect(progressBar.id, ConstraintSet.TOP, binding.backupEmptyLayout.id, ConstraintSet.TOP, 0)
-        set.connect(progressBar.id, ConstraintSet.BOTTOM, binding.backupEmptyLayout.id, ConstraintSet.BOTTOM, 0)
-        set.connect(progressBar.id, ConstraintSet.START, binding.backupEmptyLayout.id, ConstraintSet.START, 0)
-        set.connect(progressBar.id, ConstraintSet.END, binding.backupEmptyLayout.id, ConstraintSet.END, 0)
-        set.applyTo(binding.backupEmptyLayout)
-        return progressBar
+        binding.backupViewLayout.alpha = 0.5f
     }
 
-    private fun removeProgressBar(progressBar: ProgressBarWithText) {
-        Log.i(TAG, "remove is called!")
-        binding.backupEmptyLayout.removeView(progressBar)
+    private fun removeProgressBar() {
+        binding.backupProgressBar.visibility = View.GONE
         binding.backupViewLayout.alpha = 1f
     }
 
