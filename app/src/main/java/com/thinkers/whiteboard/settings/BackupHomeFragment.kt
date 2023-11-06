@@ -1,21 +1,19 @@
 package com.thinkers.whiteboard.settings
 
 import android.content.Context
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageReference
@@ -24,11 +22,10 @@ import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.utils.Utils
 import com.thinkers.whiteboard.databinding.FragmentBackupHomeBinding
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
-import java.util.Date
+import java.util.*
 
 class BackupHomeFragment : Fragment() {
     private val viewModel: BackupHomeViewModel by viewModels()
@@ -138,6 +135,7 @@ class BackupHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.backupHomeProgressbar.visibility = View.VISIBLE
         val toolbar = binding.backupHomeToolbar
         toolbar.setNavigationOnClickListener {
             backPressListenerImpl()
@@ -147,7 +145,9 @@ class BackupHomeFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.checkUpdates()
                 launch {
-                    viewModel.metaSize.collect {
+                    viewModel.metaSize.collectLatest {
+                        Log.i(TAG, "metasize: $it")
+                        binding.backupHomeProgressbar.visibility = View.GONE
                         if (it == 0L) {
                             binding.backupHomeEmptyText.visibility = View.VISIBLE
                             binding.backupHomeHistorySizeTitle.visibility = View.GONE
@@ -162,17 +162,30 @@ class BackupHomeFragment : Fragment() {
                     }
                 }
                 launch {
-                    viewModel.uploadDate.collect {
+                    viewModel.uploadDate.collectLatest {
+                        Log.i(TAG, "uploadDate: $it")
+                        binding.backupHomeProgressbar.visibility = View.GONE
                         if (it == 0L) {
+                            binding.backupHomeHistoryLayout.setBackgroundColor(resources.getColor(R.color.light_grey, null))
                             binding.backupHomeEmptyText.visibility = View.VISIBLE
                             binding.backupHomeHistoryDateTitle.visibility = View.GONE
                             binding.backupHomeHistoryDateContent.visibility = View.GONE
+                            binding.backupHomeHistoryDeadlineTitle.visibility = View.GONE
+                            binding.backupHomeHistoryDeadlineContent.visibility = View.GONE
                         } else {
-                            Log.i(TAG, "date: $it, res: ${Utils.showDate(it)}")
+                            val c = Calendar.getInstance()
+                            c.timeInMillis = it
+                            c.add(Calendar.MONTH, 1)
+                            val dueDate = c.timeInMillis
+                            Log.i(TAG, "date: $it, before: ${Utils.showDate(it)}, after: ${Utils.showDate(dueDate)}")
+                            binding.backupHomeHistoryLayout.setBackgroundColor(resources.getColor(R.color.app_main_color, null))
                             binding.backupHomeEmptyText.visibility = View.GONE
                             binding.backupHomeHistoryDateTitle.visibility = View.VISIBLE
                             binding.backupHomeHistoryDateContent.visibility = View.VISIBLE
                             binding.backupHomeHistoryDateContent.text = Utils.showDate(it)
+                            binding.backupHomeHistoryDeadlineTitle.visibility = View.VISIBLE
+                            binding.backupHomeHistoryDeadlineContent.visibility = View.VISIBLE
+                            binding.backupHomeHistoryDeadlineContent.text = Utils.showDate(dueDate)
                         }
                     }
                 }

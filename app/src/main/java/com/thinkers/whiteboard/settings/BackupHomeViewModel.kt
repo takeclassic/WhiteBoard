@@ -11,9 +11,7 @@ import com.google.firebase.storage.ktx.storage
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.enums.Constants
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -34,11 +32,11 @@ class BackupHomeViewModel : ViewModel() {
     private val _uploadedSize = MutableStateFlow(0L)
     val uploadedSize: StateFlow<Long> = _uploadedSize.asStateFlow()
 
-    private val _metaSize = MutableStateFlow(0L)
-    val metaSize: StateFlow<Long> = _metaSize.asStateFlow()
+    private val _metaSize = MutableSharedFlow<Long>()
+    val metaSize: SharedFlow<Long> = _metaSize.asSharedFlow()
 
-    private val _uploadDate = MutableStateFlow(0L)
-    val uploadDate: StateFlow<Long> = _uploadDate.asStateFlow()
+    private val _uploadDate = MutableSharedFlow<Long>()
+    val uploadDate: SharedFlow<Long> = _uploadDate.asSharedFlow()
 
     private val useCase = BackupHomeUseCase(viewModelScope, resultCallback)
 
@@ -59,15 +57,17 @@ class BackupHomeViewModel : ViewModel() {
         result == 3
     }
 
-    fun checkUpdates() {
+    suspend fun checkUpdates() {
         viewModelScope.launch {
+            Log.i(TAG, "in")
             val dbMetadata = async { useCase.checkFileUpdate(Constants.backupFileName) }.await()
             val walMetadata = async { useCase.checkFileUpdate(Constants.backupWalFileName) }.await()
             val shmMetadata = async { useCase.checkFileUpdate(Constants.backupShmFileName) }.await()
 
-            _metaSize.value = dbMetadata.sizeBytes + walMetadata.sizeBytes + shmMetadata.sizeBytes
-            _uploadDate.value = dbMetadata.updatedTimeMillis
-            Log.i(TAG, "size: ${metaSize.value}, date: ${uploadDate.value}, currenttime: ${System.currentTimeMillis()}")
+            val totalSize = dbMetadata.sizeBytes + walMetadata.sizeBytes + shmMetadata.sizeBytes
+            _metaSize.emit(totalSize)
+            _uploadDate.emit(dbMetadata.updatedTimeMillis)
+            Log.i(TAG, "size: ${totalSize}, date: ${dbMetadata.updatedTimeMillis}, currenttime: ${System.currentTimeMillis()}")
         }
     }
 

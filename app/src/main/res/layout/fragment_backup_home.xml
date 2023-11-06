@@ -32,6 +32,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/backup_home_toolbar">
 
+        <ProgressBar
+            android:id="@+id/backup_home_progressbar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/backup_home_empty_text"
             android:layout_width="wrap_content"
@@ -43,6 +53,19 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone" />
+
+        <TextView
+            android:id="@+id/backup_home_restore_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/backup_home_restore_string"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
@@ -50,24 +73,26 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:text="@string/backup_home_history_date_title"
-            android:textColor="@color/default_drawable"
+            android:textColor="@color/white"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/backup_home_restore_text"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/backup_home_history_date_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="8dp"
             android:text="TextView"
+            android:textColor="@color/white"
             android:visibility="gone"
-            android:textColor="@color/default_drawable"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/backup_home_restore_text"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/backup_home_history_deadline_title"
@@ -75,11 +100,12 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:visibility="gone"
             android:text="@string/backup_home_history_deadline_title"
-            android:textColor="@color/default_drawable"
+            android:textColor="@color/white"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_home_history_date_title" />
+            app:layout_constraintTop_toBottomOf="@+id/backup_home_history_date_title"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/backup_home_history_deadline_content"
@@ -88,10 +114,11 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:text="TextView"
+            android:textColor="@color/white"
             android:visibility="gone"
-            android:textColor="@color/default_drawable"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_home_history_date_content" />
+            app:layout_constraintTop_toBottomOf="@+id/backup_home_history_date_content"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/backup_home_history_os_title"
@@ -124,12 +151,13 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:visibility="gone"
             android:text="@string/backup_home_history_size_title"
-            android:textColor="@color/default_drawable"
+            android:textColor="@color/white"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_home_history_os_title" />
+            app:layout_constraintTop_toBottomOf="@+id/backup_home_history_os_title"
+            tools:visibility="visible" />
 
         <TextView
             android:id="@+id/backup_home_history_size_content"
@@ -139,11 +167,12 @@
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
             android:text="TextView"
+            android:textColor="@color/white"
             android:visibility="gone"
-            android:textColor="@color/default_drawable"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_home_history_os_content" />
+            app:layout_constraintTop_toBottomOf="@+id/backup_home_history_os_content"
+            tools:visibility="visible" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
