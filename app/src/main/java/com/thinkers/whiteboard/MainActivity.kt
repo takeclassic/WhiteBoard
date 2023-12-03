@@ -359,8 +359,9 @@ class ProcessLifeCycleObserver(private val navController: NavController): Lifecy
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         if (event == Lifecycle.Event.ON_RESUME) {
             if(navController.currentDestination?.id != R.id.nav_lock) {
+                Log.i("KKKKK", "called 1")
                 val bundle = bundleOf("isResume" to true)
-                navController.navigate(R.id.nav_lock, bundle)
+                navController.navigate(R.id.settings_navigation, bundle)
             }
         }
     }

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
@@ -79,6 +80,15 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val isResume = arguments?.getBoolean("isResume")
+        isResume?.let {
+            if (it) {
+                Log.i("KKKKK", "called 2")
+                val bundle = bundleOf("isResume" to true)
+                findNavController().navigate(R.id.nav_lock, bundle)
+            }
+        }
+
         val settingsArray: Array<String> = requireContext().resources.getStringArray(R.array.settings)
         fileName = requireActivity().getString(R.string.file_name_shared_preference)
         autoRemoveKey = requireActivity().getString(R.string.key_auto_remove)

@@ -2,12 +2,12 @@ package com.thinkers.whiteboard.settings
 
 import android.net.Uri
 import android.util.Log
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
+import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.enums.Constants
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
@@ -18,7 +18,7 @@ import kotlin.coroutines.resume
 
 class BackupHomeUseCase(
     private val scope: CoroutineScope,
-    private val resultCallback: (Double) -> Unit
+    private val resultCallback: (Pair<String, Double>) -> Unit
 ) {
     companion object {
         const val TAG = "BackupHomeUseCase"
@@ -33,7 +33,9 @@ class BackupHomeUseCase(
     private var shmFileSize = 0L
     private var shmFileTransferred = 0L
 
-    private var totalFileSize = 0L
+    var totalFileSize = 0L
+
+    var restoreFilePath = ""
 
     private val dataTransferredChannel = Channel<Pair<String, Long>>()
     private val channelJob = scope.launch(Dispatchers.Default) {
@@ -52,7 +54,7 @@ class BackupHomeUseCase(
             }
 
             val result = (walFileTransferred.toDouble() + shmFileTransferred.toDouble() + dbFileTransferred.toDouble()) /  totalFileSize.toDouble() * 100
-            resultCallback.invoke(result)
+            resultCallback.invoke(Pair(fileName, result))
         }
     }
 
@@ -67,7 +69,7 @@ class BackupHomeUseCase(
 
     suspend fun doBackup(path: String, fileName: String): Int {
         val uid = Firebase.auth.uid
-        val fileRefStr = "users/$uid/$fileName"
+        val fileRefStr = "${Constants.commonFolderName}/$uid/$fileName"
         val fileRef: StorageReference = Firebase.storage.reference.child(fileRefStr)
 
         val file = File(path)
@@ -79,11 +81,11 @@ class BackupHomeUseCase(
             fileUploadTask.addOnProgressListener { taskSnapShot ->
                 updateTransferredData(fileName, taskSnapShot.bytesTransferred)
             }.addOnFailureListener {
-                Log.i(BackupHomeViewModel.TAG, "fileUploadTask failed! reason: $it")
+                Log.i(TAG, "fileUploadTask failed! reason: $it")
                 cont.resume(-1)
             }.addOnSuccessListener { taskSnapshot ->
                 Log.i(
-                    BackupHomeViewModel.TAG,
+                    TAG,
                     "fileUploadTask succeed! snapshot: ${taskSnapshot.metadata}"
                 )
                 cont.resume(1)
@@ -93,15 +95,102 @@ class BackupHomeUseCase(
         return result
     }
 
-    suspend fun checkFileUpdate(fileName: String): StorageMetadata {
+    suspend fun doDownload(downloadPath: String, downloadFileName: String): Int {
+        val storage = Firebase.storage
+        var storageRef = storage.reference
+        val fileRefStr = "${Constants.commonFolderName}/${Firebase.auth.uid}/$downloadFileName"
+        var fileRef: StorageReference = storageRef.child(fileRefStr)
+
+        val fileName = when(downloadFileName) {
+            Constants.backupFileName -> Constants.originalFileName
+            Constants.backupWalFileName -> Constants.originalWalFileName
+            Constants.backupShmFileName -> Constants.originalShmFileName
+            else -> ""
+        }
+
+        restoreFilePath = downloadPath
+        val path = "$downloadPath/$fileName"
+        val file = File(path)
+
+        val result = suspendCancellableCoroutine { cont ->
+            fileRef.getFile(file).addOnProgressListener { taskSnapShot ->
+                updateTransferredData(fileName, taskSnapShot.bytesTransferred)
+            }.addOnFailureListener {
+                Log.i(TAG, "file download failed! reason: $it")
+                cont.resume(-1)
+            }.addOnSuccessListener { taskSnapshot ->
+                Log.i(TAG, "file download succeed! $taskSnapshot")
+                cont.resume(1)
+            }
+        }
+
+        return result
+    }
+
+    suspend fun doDelete(fileName: String): Int {
+        val storage = Firebase.storage
+        val storageRef = storage.reference
+        val fileRefStr = "${Constants.commonFolderName}/${Firebase.auth.uid}/$fileName"
+        val fileRef: StorageReference = storageRef.child(fileRefStr)
+        val result = suspendCancellableCoroutine<Int> { cont ->
+            fileRef.delete().addOnSuccessListener {
+                Log.i(TAG, "file delete success!")
+                cont.resume(1)
+            }.addOnFailureListener {
+                Log.i(TAG, "file delete failed! reason: $it")
+                cont.resume(-1)
+            }
+        }
+
+        return result
+    }
+
+    suspend fun doRestore() {
+        val dbInstance = WhiteBoardApplication.instance?.database!!
+        val originalPath = dbInstance.openHelper.readableDatabase.path
+        val originalFile = File(originalPath)
+        Log.i(TAG, "original path: $originalPath, exist: ${originalFile.exists()}")
+
+        val originalWalPath = dbInstance.openHelper.readableDatabase.path + "-wal"
+        val originalWalFile = File(originalWalPath)
+
+        val originalShmPath = dbInstance.openHelper.readableDatabase.path + "-shm"
+        val originalShmFile = File(originalShmPath)
+
+        dbInstance.close()
+
+        val path = "$restoreFilePath/${Constants.originalFileName}"
+        val file = File(path)
+
+        val pathWal = "$restoreFilePath/${Constants.originalWalFileName}"
+        val fileWal = File(pathWal)
+
+        val pathShm = "$restoreFilePath/${Constants.originalShmFileName}"
+        val fileShm = File(pathShm)
+        Log.i(TAG, "backup path: $path, exist: ${file.exists()}")
+
+        val res = file.copyTo(originalFile, true)
+        Log.i(TAG, "result: ${res.exists()}, ${res.absolutePath}")
+
+        val res2 = fileWal.copyTo(originalWalFile, true)
+        Log.i(TAG, "result: ${res2.exists()}, ${res2.absolutePath}")
+
+        val res3 = fileShm.copyTo(originalShmFile, true)
+        Log.i(TAG, "result: ${res3.exists()}, ${res3.absolutePath}")
+    }
+
+    suspend fun checkFileUpdate(fileName: String): Result<StorageMetadata> {
         val storage = Firebase.storage
         val storageRef = storage.reference
         val fileRefStr = "${Constants.commonFolderName}/${Firebase.auth.uid}/$fileName"
         val fileRef: StorageReference = storageRef.child(fileRefStr)
 
-        val result = suspendCancellableCoroutine { cont ->
+        val result = suspendCancellableCoroutine<Result<StorageMetadata>> { cont ->
             fileRef.metadata.addOnSuccessListener {
-                cont.resume(it)
+                cont.resume(Result.success(it))
+            }.addOnFailureListener {
+                Log.i(TAG, "failed to check file metadata : $it")
+                cont.resume(Result.failure(it))
             }
         }
         return result

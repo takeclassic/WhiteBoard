@@ -63,6 +63,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/backup_home_restore_string"
             android:textAlignment="center"
+            android:visibility="gone"
             android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

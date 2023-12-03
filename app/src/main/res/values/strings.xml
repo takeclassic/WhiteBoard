@@ -79,4 +79,6 @@
 
     <string name="horizontal_progress_download_text">다운로드 진행 중...</string>
     <string name="horizontal_progress_upload_text">업로드 진행 중...</string>
+    <string name="horizontal_progress_restore_text">데이터베이스 복구 진행 중...</string>
+    <string name="horizontal_progress_delete_text">삭제 진행 중...</string>
 </resources>

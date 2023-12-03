@@ -6,14 +6,18 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.HorizontalProgressbarFragmentBinding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.system.exitProcess
 
 class HorizontalProgressBarFragment: DialogFragment() {
     companion object {
@@ -48,17 +52,56 @@ class HorizontalProgressBarFragment: DialogFragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             launch {
-                viewModel.backUpDbFiles()
-                viewModel.checkUpdates()
-                dismiss()
-            }
+                when(viewModel.state) {
+                    BackupHomeViewModel.Companion.states.BACK_UP -> {
+                        launch {
+                            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                viewModel.uploadedSize.collectLatest {
+                                    binding.horizontalProgressbarPercentageText.text = "$it%"
+                                    binding.horizontalProgressbarProgressbar.progress = it.toInt()
+                                    Log.i(TAG, "UP total: ${viewModel.totalSize.value}, current: $it")
+                                }
+                            }
+                        }
+                        viewModel.backUpDbFiles()
+                        viewModel.checkUpdates()
+                        viewModel.resetState()
+                        dismiss()
+                    }
+                    BackupHomeViewModel.Companion.states.RESTORE -> {
+                        launch {
+                            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                                viewModel.downloadSize.collectLatest {
+                                    binding.horizontalProgressbarPercentageText.text = "$it%"
+                                    binding.horizontalProgressbarProgressbar.progress = it.toInt()
+                                    if (it == 100L) {
+                                        binding.horizontalProgressbarTitle.text = getString(R.string.horizontal_progress_restore_text)
+                                    }
+                                    Log.i(TAG, "DOWN total: ${viewModel.currentMetaSize}, current: $it")
+                                }
+                            }
+                        }
+                        viewModel.restoreDbFiles(requireContext().filesDir.absolutePath)
+                        viewModel.resetState()
+                        Toast.makeText(requireContext(), "데이터 복구 완료. 복구된 데이터 사용을 위해 앱을 종료합니다.", Toast.LENGTH_SHORT).show()
+                        exitProcess(0)
+                    }
+                    BackupHomeViewModel.Companion.states.DELETE -> {
+                        binding.horizontalProgressbarPercentageText.visibility = View.GONE
+                        binding.horizontalProgressbarProgressbar.visibility = View.GONE
 
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                Log.i(TAG, "I AM HERE")
-                viewModel.uploadedSize.collectLatest {
-                    binding.horizontalProgressbarPercentageText.text = "$it%"
-                    binding.horizontalProgressbarProgressbar.progress = it.toInt()
-                    Log.i(TAG, "DOWN total: ${viewModel.totalSize.value}, current: $it")
+                        if (viewModel.deleteFilesOnServer()) {
+                            delay(500)
+                            viewModel.checkUpdates()
+                            viewModel.resetState()
+                        } else {
+                            Toast.makeText(requireContext(), "파일 삭제에 실패했습니다. 다시 한번 시도해주세요", Toast.LENGTH_SHORT).show()
+                        }
+                        dismiss()
+                    }
+                    BackupHomeViewModel.Companion.states.NONE -> {
+
+                    }
                 }
             }
         }

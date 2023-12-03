@@ -72,6 +72,9 @@ class LockFragment : Fragment() {
                     val result = lockViewModel.comparePasscode()
                     if (result) {
                         findNavController().popBackStack()
+                        findNavController().popBackStack()
+                        //findNavController().navigateUp()
+                        //findNavController().navigateUp()
                     } else {
                         Toast.makeText(requireContext(), R.string.lock_passcode_is_wrong, Toast.LENGTH_SHORT).show()
                         lockViewModel.lockNumbers.forEach {imageView ->
@@ -101,6 +104,7 @@ class LockFragment : Fragment() {
         this.isResume = false
         val isResume: Boolean? = arguments?.getBoolean("isResume")
         Log.i(TAG, "isResume: $isResume")
+        Log.i("KKKKK", "called 3")
         isResume?.let {
             if(it) {
                 this.isResume = true

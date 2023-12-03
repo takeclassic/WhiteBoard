@@ -22,6 +22,7 @@ import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.common.utils.Utils
 import com.thinkers.whiteboard.databinding.FragmentBackupHomeBinding
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.io.File
@@ -45,84 +46,16 @@ class BackupHomeFragment : Fragment() {
     }
 
     private val deleteButtonListener = OnClickListener {
-        val instance = WhiteBoardApplication.instance?.database
-        val originalPath = instance!!.openHelper.readableDatabase.path
-        val originalFile = File(originalPath)
-        Log.i(TAG, "original path: $originalPath, exist: ${originalFile.exists()}")
-
-        val originalWalPath = instance!!.openHelper.readableDatabase.path + "-wal"
-        val originalWalFile = File(originalWalPath)
-
-        val originalShmPath = instance!!.openHelper.readableDatabase.path + "-shm"
-        val originalShmFile = File(originalShmPath)
-
-        instance!!.close()
-
-        val path = requireContext().filesDir.absolutePath + "/whiteboard_db"
-        val file = File(path)
-
-        val pathWal = requireContext().filesDir.absolutePath + "/whiteboard_db-wal"
-        val fileWal = File(pathWal)
-
-        val pathShm = requireContext().filesDir.absolutePath + "/whiteboard_db-shm"
-        val fileShm = File(pathShm)
-        Log.i(TAG, "backup path: $path, exist: ${file.exists()}")
-
-        val res = file.copyTo(originalFile, true)
-        Log.i(TAG, "result: ${res.exists()}, ${res.absolutePath}")
-
-        val res2 = fileWal.copyTo(originalWalFile, true)
-        Log.i(TAG, "result: ${res2.exists()}, ${res2.absolutePath}")
-
-        val res3 = fileShm.copyTo(originalShmFile, true)
-        Log.i(TAG, "result: ${res3.exists()}, ${res3.absolutePath}")
-
-        //System.exit(0)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.dialogTitle = getString(R.string.horizontal_progress_delete_text)
+            viewModel.state = BackupHomeViewModel.Companion.states.DELETE
+            val instance = HorizontalProgressBarFragment()
+            instance.show(childFragmentManager, HorizontalProgressBarFragment.TAG)
+        }
     }
 
     private val restoreButtonListener = OnClickListener {
-        //val downloadFolder = requireContext().getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
-        val storage = Firebase.storage
-        var storageRef = storage.reference
-        val fileRefStr = "users/" + Firebase.auth.uid + "/db_file.db"
-        val walFileRefStr = "users/" + Firebase.auth.uid + "/db_file.db-wal"
-        val shmFileRefStr = "users/" + Firebase.auth.uid + "/db_file.db-shm"
-
-        var fileRef: StorageReference = storageRef.child(fileRefStr)
-        var walFileRef: StorageReference = storageRef.child(walFileRefStr)
-        var shmFileRef: StorageReference = storageRef.child(shmFileRefStr)
-
-        val path = requireContext().filesDir.absolutePath + "/whiteboard_db"
-        val walPath = requireContext().filesDir.absolutePath + "/whiteboard_db-wal"
-        val shmPath = requireContext().filesDir.absolutePath + "/whiteboard_db-shm"
-        val file = File(path)
-        val fileWal = File(walPath)
-        val fileShm = File(shmPath)
-        //requireContext().deleteFile(file.name)
-
-        fileRef.getFile(file).addOnSuccessListener {
-            Log.i(TAG, "1 number: ${it.bytesTransferred}")
-            Log.i(TAG, "1 path: ${file.absolutePath}")
-        }.addOnFailureListener {
-            // Handle any errors
-            Log.i(TAG, "1 failed!, reason: $it")
-        }
-
-        walFileRef.getFile(fileWal).addOnSuccessListener {
-            Log.i(TAG, "2 number: ${it.bytesTransferred}")
-            Log.i(TAG, "2 path: ${fileWal.absolutePath}")
-        }.addOnFailureListener {
-            // Handle any errors
-            Log.i(TAG, "2 failed!, reason: $it")
-        }
-
-        shmFileRef.getFile(fileShm).addOnSuccessListener {
-            Log.i(TAG, "3 number: ${it.bytesTransferred}")
-            Log.i(TAG, "3 path: ${fileShm.absolutePath}")
-        }.addOnFailureListener {
-            // Handle any errors
-            Log.i(TAG, "3 failed!, reason: $it")
-        }
+        showRestoreWarningAlert()
     }
 
     override fun onCreateView(
@@ -152,12 +85,14 @@ class BackupHomeFragment : Fragment() {
                             binding.backupHomeEmptyText.visibility = View.VISIBLE
                             binding.backupHomeHistorySizeTitle.visibility = View.GONE
                             binding.backupHomeHistorySizeContent.visibility = View.GONE
+                            binding.backupHomeHistoryLayout.setOnClickListener(null)
                         } else {
                             binding.backupHomeEmptyText.visibility = View.GONE
                             binding.backupHomeHistorySizeTitle.visibility = View.VISIBLE
                             binding.backupHomeHistorySizeContent.visibility = View.VISIBLE
                             binding.backupHomeHistorySizeContent.text =
                                 "${(it / 1000).toString()} KB"
+                            binding.backupHomeHistoryLayout.setOnClickListener(restoreButtonListener)
                         }
                     }
                 }
@@ -172,6 +107,7 @@ class BackupHomeFragment : Fragment() {
                             binding.backupHomeHistoryDateContent.visibility = View.GONE
                             binding.backupHomeHistoryDeadlineTitle.visibility = View.GONE
                             binding.backupHomeHistoryDeadlineContent.visibility = View.GONE
+                            binding.backupHomeRestoreText.visibility = View.GONE
                         } else {
                             val c = Calendar.getInstance()
                             c.timeInMillis = it
@@ -185,6 +121,7 @@ class BackupHomeFragment : Fragment() {
                             binding.backupHomeHistoryDateContent.text = Utils.showDate(it)
                             binding.backupHomeHistoryDeadlineTitle.visibility = View.VISIBLE
                             binding.backupHomeHistoryDeadlineContent.visibility = View.VISIBLE
+                            binding.backupHomeRestoreText.visibility = View.VISIBLE
                             binding.backupHomeHistoryDeadlineContent.text = Utils.showDate(dueDate)
                         }
                     }
@@ -195,12 +132,32 @@ class BackupHomeFragment : Fragment() {
         binding.backupHomeBackupButton.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.dialogTitle = getString(R.string.horizontal_progress_upload_text)
+                viewModel.state = BackupHomeViewModel.Companion.states.BACK_UP
                 Log.i(TAG, "set title: ${viewModel.dialogTitle}, viewmodel: ${viewModel.hashCode()}")
                 val instance = HorizontalProgressBarFragment()
                 instance.show(childFragmentManager, HorizontalProgressBarFragment.TAG)
             }
         }
         binding.backupHomeRemoveButton.setOnClickListener(deleteButtonListener)
+    }
+
+    private fun showRestoreWarningAlert() {
+        Utils.showAlertDialog(
+            requireContext(),
+            "데이터 복구를 진행하시겠습니까?",
+            "현재 폰에 저장된 메모는 모두 삭제되고 백업된 데이터로 대체됩니다.",
+            "예",
+            "아니오",
+            restore,
+            null
+        )
+    }
+
+    private val restore: () -> Unit = {
+        viewModel.state = BackupHomeViewModel.Companion.states.RESTORE
+        viewModel.dialogTitle = getString(R.string.horizontal_progress_download_text)
+        val instance = HorizontalProgressBarFragment()
+        instance.show(childFragmentManager, HorizontalProgressBarFragment.TAG)
     }
 
     override fun onAttach(context: Context) {

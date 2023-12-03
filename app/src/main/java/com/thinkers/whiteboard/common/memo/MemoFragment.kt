@@ -18,6 +18,7 @@ import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.core.view.MenuHost
@@ -29,6 +30,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.work.*
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
@@ -69,7 +72,6 @@ class MemoFragment : Fragment() {
 
     private val textWatcher = object: TextWatcher {
         override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-            Log.i(TAG, "beforeTextChanged $p0")
             p0?.let {
                 beforeTextChangeEditable = Editable.Factory.getInstance().newEditable(p0)
             }
@@ -79,7 +81,6 @@ class MemoFragment : Fragment() {
         }
 
         override fun afterTextChanged(p0: Editable?) {
-            Log.i(TAG, "afterTextChanged $p0")
             p0?.let {
                 afterTextChangeEditable = p0
             }
@@ -160,7 +161,7 @@ class MemoFragment : Fragment() {
         toolbar.setNavigationOnClickListener {
             val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
-            requireActivity().onBackPressed()
+            findNavController().popBackStack()
         }
         toolbar.inflateMenu(R.menu.fragment_memo_options)
         toolbar.setOnMenuItemClickListener{ onOptionsItemSelected(it) }
@@ -310,9 +311,10 @@ class MemoFragment : Fragment() {
             noteName = viewModel.getMemoBelongNoteName(),
             isFavorite = isFavorite
         )
+        this.memo = memo
         viewModel.setHasUpdate(Memo(-1, "", 0,0,0, ""), MemoUpdateState.INSERT)
         viewModel.saveMemo(memo)
-        Log.i(TAG, "try saveNewMemo, noteName: ${viewModel.getMemoBelongNoteName()}")
+        Log.i(TAG, "try saveNewMemo, noteName: ${viewModel.getMemoBelongNoteName()}, hashcode: ${this.hashCode()}")
     }
 
     private fun updateExistMemo() {

@@ -246,5 +246,12 @@
             android:label="fragment_backup_send_password_reset_email"
             tools:layout="@layout/fragment_backup_send_password_reset_email" >
         </fragment>
+        <action
+            android:id="@+id/action_global_nav_lock"
+            app:destination="@id/nav_lock"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out" />
     </navigation>
 </navigation>
