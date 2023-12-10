@@ -201,7 +201,7 @@ class MainActivity : AppCompatActivity() {
     private val mainDestinationChangedListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
             when(controller.currentDestination?.id) {
-                R.id.nav_total, R.id.nav_custom_note, R.id.nav_favorites -> {
+                R.id.nav_total, R.id.nav_custom_note, R.id.nav_favorites, R.id.nav_waste_bin -> {
                     binding.appBar.visibility = View.VISIBLE
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }

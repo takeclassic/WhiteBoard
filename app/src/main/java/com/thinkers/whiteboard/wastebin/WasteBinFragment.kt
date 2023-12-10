@@ -51,8 +51,8 @@ class WasteBinFragment : Fragment() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             if (recyclerViewAdaper.itemCount < memoCount
-                && (recyclerViewAdaper.itemCount == currentPage * TotalFragment.PAGE_SIZE
-                        || recyclerViewAdaper.itemCount - 1 == currentPage * TotalFragment.PAGE_SIZE)
+                && (recyclerViewAdaper.itemCount == currentPage * PAGE_SIZE
+                        || recyclerViewAdaper.itemCount - 1 == currentPage * PAGE_SIZE)
             ) {
                 viewModel.getNextPage(currentPage)
                 currentPage++
