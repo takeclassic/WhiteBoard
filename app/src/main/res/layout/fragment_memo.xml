@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".common.memo.MemoFragment">
+    tools:context=".presentation.fragments.MemoFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/memo_toolbar"
@@ -83,7 +83,7 @@
                 android:textSize="12sp"
                 android:visibility="gone" />
 
-            <com.thinkers.whiteboard.common.view.CustomEditText
+            <com.thinkers.whiteboard.presentation.views.CustomEditText
                 android:id="@+id/fragment_memo_text"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

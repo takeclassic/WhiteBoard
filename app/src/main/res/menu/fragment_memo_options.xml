@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".common.memo.MemoFragment">
+    tools:context=".presentation.fragments.MemoFragment">
     <item android:id="@+id/memo_action_overflow"
         android:title=""
         android:icon="@drawable/ic_more_vert_24"

@@ -7,7 +7,7 @@
     android:id="@+id/backup_layout"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    tools:context=".settings.BackupLogInFragment">
+    tools:context=".presentation.fragments.BackupLogInFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/backup_empty_layout"
@@ -81,7 +81,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/backup_logo_imageview" />
 
-        <com.thinkers.whiteboard.common.view.CustomEditText
+        <com.thinkers.whiteboard.presentation.views.CustomEditText
             android:id="@+id/backup_id_edittext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
             app:layout_constraintTop_toBottomOf="@+id/backup_logo_textview"
             tools:visibility="visible" />
 
-        <com.thinkers.whiteboard.common.view.CustomEditText
+        <com.thinkers.whiteboard.presentation.views.CustomEditText
             android:id="@+id/backup_password_edittext"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

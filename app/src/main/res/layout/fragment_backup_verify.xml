@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.BackupVerifyFragment">
+    tools:context=".presentation.fragments.BackupVerifyFragment">
 
     <ImageView
         android:id="@+id/backup_verify_close_button"

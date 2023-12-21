@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/nav_total"
-        android:name="com.thinkers.whiteboard.total.TotalFragment"
+        android:name="com.thinkers.whiteboard.presentation.fragments.TotalFragment"
         android:label="@string/menu_total"
         tools:layout="@layout/fragment_total" >
         <action
@@ -29,7 +29,7 @@
 
     <fragment
         android:id="@+id/nav_favorites"
-        android:name="com.thinkers.whiteboard.favorites.FavoritesFragment"
+        android:name="com.thinkers.whiteboard.presentation.fragments.FavoritesFragment"
         android:label="@string/menu_favorites"
         tools:layout="@layout/fragment_favorites" >
         <action
@@ -51,7 +51,7 @@
 
     <fragment
         android:id="@+id/nav_custom_note"
-        android:name="com.thinkers.whiteboard.customs.CustomNoteFragment"
+        android:name="com.thinkers.whiteboard.presentation.fragments.CustomNoteFragment"
         android:label="fragment_custom_note"
         tools:layout="@layout/fragment_custom_note" >
         <argument
@@ -76,7 +76,7 @@
 
     <fragment
         android:id="@+id/nav_memo"
-        android:name="com.thinkers.whiteboard.common.memo.MemoFragment"
+        android:name="com.thinkers.whiteboard.presentation.fragments.MemoFragment"
         android:label="fragment_memo"
         tools:layout="@layout/fragment_memo" >
         <argument
@@ -93,18 +93,18 @@
     </fragment>
     <fragment
         android:id="@+id/nav_add_note"
-        android:name="com.thinkers.whiteboard.customs.NewNoteFragment"
+        android:name="com.thinkers.whiteboard.presentation.fragments.NewNoteFragment"
         android:label="NewNoteFragment"
         tools:layout="@layout/fragment_new_note">
         <argument
             android:name="note"
-            app:argType="com.thinkers.whiteboard.database.entities.Note"
+            app:argType="com.thinkers.whiteboard.data.database.entities.Note"
             app:nullable="true"
             android:defaultValue="@null" />
     </fragment>
     <fragment
         android:id="@+id/nav_edit_note"
-        android:name="com.thinkers.whiteboard.customs.EditNoteFragment"
+        android:name="com.thinkers.whiteboard.presentation.fragments.EditNoteFragment"
         android:label="EditNoteFragment"
         tools:layout="@layout/fragment_edit_note"
         >
@@ -113,7 +113,7 @@
             app:argType="boolean" />
         <argument
             android:name="memoList"
-            app:argType="com.thinkers.whiteboard.database.entities.Memo[]"
+            app:argType="com.thinkers.whiteboard.data.database.entities.Memo[]"
             app:nullable="true"
             android:defaultValue="@null"
             />
@@ -125,7 +125,7 @@
     </fragment>
     <fragment
         android:id="@+id/nav_search"
-        android:name="com.thinkers.whiteboard.search.SearchFragment"
+        android:name="com.thinkers.whiteboard.presentation.fragments.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
         <action
@@ -139,7 +139,7 @@
 
     <fragment
         android:id="@+id/nav_waste_bin"
-        android:name="com.thinkers.whiteboard.wastebin.WasteBinFragment"
+        android:name="com.thinkers.whiteboard.presentation.fragments.WasteBinFragment"
         android:label="@string/menu_total"
         tools:layout="@layout/fragment_waste_bin" >
         <action
@@ -163,7 +163,7 @@
         app:startDestination="@id/nav_settings">
         <fragment
             android:id="@+id/nav_settings"
-            android:name="com.thinkers.whiteboard.settings.SettingsFragment"
+            android:name="com.thinkers.whiteboard.presentation.fragments.SettingsFragment"
             android:label="SettingsFragment"
             tools:layout="@layout/fragment_settings"
             >
@@ -184,12 +184,12 @@
         </fragment>
         <fragment
             android:id="@+id/nav_lock"
-            android:name="com.thinkers.whiteboard.settings.LockFragment"
+            android:name="com.thinkers.whiteboard.presentation.fragments.LockFragment"
             android:label="fragment_lock"
             tools:layout="@layout/fragment_lock" />
         <fragment
             android:id="@+id/nav_backup_login"
-            android:name="com.thinkers.whiteboard.settings.BackupLogInFragment"
+            android:name="com.thinkers.whiteboard.presentation.fragments.BackupLogInFragment"
             android:label="fragment_backup"
             tools:layout="@layout/fragment_backup_log_in" >
             <action
@@ -212,7 +212,7 @@
         </fragment>
         <fragment
             android:id="@+id/nav_backup_home"
-            android:name="com.thinkers.whiteboard.settings.BackupHomeFragment"
+            android:name="com.thinkers.whiteboard.presentation.fragments.BackupHomeFragment"
             android:label="fragment_backup_home"
             tools:layout="@layout/fragment_backup_home" >
             <action
@@ -225,7 +225,7 @@
         </fragment>
         <fragment
             android:id="@+id/nav_backup_verify"
-            android:name="com.thinkers.whiteboard.settings.BackupVerifyFragment"
+            android:name="com.thinkers.whiteboard.presentation.fragments.BackupVerifyFragment"
             android:label="fragment_backup_verify"
             tools:layout="@layout/fragment_backup_verify">
             <deepLink
@@ -242,7 +242,7 @@
         </fragment>
         <fragment
             android:id="@+id/nav_send_password_reset"
-            android:name="com.thinkers.whiteboard.settings.BackupSendPasswordResetEmailFragment"
+            android:name="com.thinkers.whiteboard.presentation.fragments.BackupSendPasswordResetEmailFragment"
             android:label="fragment_backup_send_password_reset_email"
             tools:layout="@layout/fragment_backup_send_password_reset_email" >
         </fragment>

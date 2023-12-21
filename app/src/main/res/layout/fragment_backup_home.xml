@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings.BackupHomeFragment">
+    tools:context=".presentation.fragments.BackupHomeFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/backup_home_toolbar"
