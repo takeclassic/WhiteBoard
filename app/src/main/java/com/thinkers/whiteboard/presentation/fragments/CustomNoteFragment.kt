@@ -10,13 +10,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.thinkers.whiteboard.presentation.MainActivity
 import com.thinkers.whiteboard.R
-import com.thinkers.whiteboard.WhiteBoardApplication
 
 import com.thinkers.whiteboard.presentation.views.ActionModeHandler
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
@@ -25,17 +24,22 @@ import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.data.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentCustomNoteBinding
 import com.thinkers.whiteboard.presentation.viewmodels.CustomNoteViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.CustomNoteViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 
 
+@AndroidEntryPoint
 class CustomNoteFragment : Fragment() {
+    companion object {
+        const val TAG = "CustomNoteFragment"
+        const val PAGE_SIZE = 30
+    }
 
     private var _binding: FragmentCustomNoteBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: CustomNoteViewModel
+    private val viewModel: CustomNoteViewModel by viewModels()
     private lateinit var recyclerViewAdaper: MemoListAdapter
     private lateinit var recyclerView: RecyclerView
 
@@ -63,14 +67,6 @@ class CustomNoteFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(
-            this,
-            CustomNoteViewModelFactory(
-                WhiteBoardApplication.instance!!.noteRepository,
-                WhiteBoardApplication.instance!!.memoRepository
-            )
-        ).get(CustomNoteViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -88,11 +84,11 @@ class CustomNoteFragment : Fragment() {
             viewModel.removeMovedItems()
         }
         (requireActivity() as MainActivity).init()
-        var receivedNoteName = viewModel.getNoteName()
+        var receivedNoteName = viewModel.getCustomNoteName()
 
-        Log.i(TAG, "noteNameBefore: ${noteName}, noteName: $receivedNoteName, isDelete: ${viewModel.checkDeletion()}")
+        Log.i(TAG, "noteNameBefore: ${noteName}, noteName: $receivedNoteName, isDelete: ${viewModel.isDeletion()}")
         if (receivedNoteName.isNullOrBlank() ||
-            (receivedNoteName == noteName && viewModel.checkDeletion())) {
+            (receivedNoteName == noteName && viewModel.isDeletion())) {
             viewModel.setDeletion(false)
             this.findNavController().navigate(R.id.nav_total)
             return
@@ -291,10 +287,5 @@ class CustomNoteFragment : Fragment() {
         binding.customNoteTextView.visibility = View.VISIBLE
         binding.customsRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
-    }
-
-    companion object {
-        const val TAG = "CustomNoteFragment"
-        const val PAGE_SIZE = 30
     }
 }

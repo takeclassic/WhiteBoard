@@ -1,4 +1,4 @@
-package com.thinkers.whiteboard.usecase
+package com.thinkers.whiteboard.presentation.helpers
 
 import android.net.Uri
 import android.util.Log
@@ -7,21 +7,30 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
-import com.thinkers.whiteboard.WhiteBoardApplication
+import com.thinkers.whiteboard.data.database.AppDatabase
 import com.thinkers.whiteboard.data.enums.Constants
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import javax.inject.Inject
 import kotlin.coroutines.resume
 
-class BackupHomeUseCase(
-    private val scope: CoroutineScope,
-    private val resultCallback: (Pair<String, Double>) -> Unit
+@AssistedFactory
+interface DataBackupHelperFactory {
+    fun create(scope: CoroutineScope, resultCallback: (Pair<String, Double>) -> Unit): DataBackupHelper
+}
+
+class DataBackupHelper @AssistedInject constructor(
+    @Assisted private val scope: CoroutineScope,
+    @Assisted private val resultCallback: (Pair<String, Double>) -> Unit
 ) {
     companion object {
-        const val TAG = "BackupHomeUseCase"
+        const val TAG = "DataBackupHelper"
     }
 
     private var dbFileSize = 0L
@@ -36,6 +45,8 @@ class BackupHomeUseCase(
     var totalFileSize = 0L
 
     var restoreFilePath = ""
+
+    @Inject lateinit var dbInstance: AppDatabase
 
     private val dataTransferredChannel = Channel<Pair<String, Long>>()
     private val channelJob = scope.launch(Dispatchers.Default) {
@@ -146,7 +157,6 @@ class BackupHomeUseCase(
     }
 
     suspend fun doRestore() {
-        val dbInstance = WhiteBoardApplication.instance?.database!!
         val originalPath = dbInstance.openHelper.readableDatabase.path
         val originalFile = File(originalPath)
         Log.i(TAG, "original path: $originalPath, exist: ${originalFile.exists()}")

@@ -4,18 +4,24 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.data.database.entities.Note
-import com.thinkers.whiteboard.data.database.repositories.MemoRepository
-import com.thinkers.whiteboard.data.database.repositories.NoteRepository
+import com.thinkers.whiteboard.domain.MemoRepository
+import com.thinkers.whiteboard.domain.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-
-class EditNoteViewModel(
+@HiltViewModel
+class EditNoteViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
     private val memoRepository: MemoRepository
     ): ViewModel() {
+    companion object {
+        const val TAG = "EditNoteViewModel"
+    }
+
     val allEditableNotes: LiveData<List<Note>> = noteRepository
-        .allNotes
+        .getAllNotes()
         .map{ list ->
             list.filter {
                 it.noteName != "favorites"
@@ -27,7 +33,7 @@ class EditNoteViewModel(
         }.asLiveData()
 
     val allMoveableNotes: LiveData<List<Note>> = noteRepository
-        .allNotes
+        .getAllNotes()
         .map{ list ->
             list.filter {
                 it.noteName != "waste_bin"
@@ -52,22 +58,5 @@ class EditNoteViewModel(
                 memoRepository.updateMemo(memo)
             }
         }
-    }
-
-    companion object {
-        const val TAG = "EditNoteViewModel"
-    }
-}
-
-class EditNoteViewModelFactory(
-    private val noteRepository: NoteRepository,
-    private val memoRepository: MemoRepository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(EditNoteViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return EditNoteViewModel(noteRepository, memoRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

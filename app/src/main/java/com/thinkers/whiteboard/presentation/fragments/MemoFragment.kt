@@ -17,28 +17,33 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.presentation.MainActivity
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
-import com.thinkers.whiteboard.presentation.notifications.NotificationHelper
-import com.thinkers.whiteboard.data.utils.AlertDialogArguments
-import com.thinkers.whiteboard.data.utils.Utils
+import com.thinkers.whiteboard.utils.notifications.NotificationHelper
+import com.thinkers.whiteboard.utils.AlertDialogArguments
+import com.thinkers.whiteboard.utils.Utils
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentMemoBinding
 import com.thinkers.whiteboard.presentation.viewmodels.MemoViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.MemoViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
 import java.util.*
 
+@AndroidEntryPoint
 class MemoFragment : Fragment() {
+    companion object {
+        val TAG = "MemoFragment"
+    }
 
     private var _binding: FragmentMemoBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: MemoViewModel
+    private val viewModel: MemoViewModel by viewModels()
     private lateinit var favoriteButton: ImageButton
     private lateinit var alarmButton: ImageButton
     private lateinit var memoText: EditText
@@ -113,14 +118,6 @@ class MemoFragment : Fragment() {
             viewModel.isDeletion = true
             requireActivity().onBackPressed()
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            MemoViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
-        ).get(MemoViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -416,9 +413,5 @@ class MemoFragment : Fragment() {
 
         memoDate.text = formatter.format(calendar.time)
         memoDate.visibility = View.VISIBLE
-    }
-
-    companion object {
-        val TAG = "MemoFragment"
     }
 }

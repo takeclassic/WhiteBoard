@@ -1,7 +1,6 @@
 package com.thinkers.whiteboard.presentation.fragments
 
 import android.content.DialogInterface
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
@@ -11,12 +10,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.thinkers.whiteboard.presentation.MainActivity
 import com.thinkers.whiteboard.R
-import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.presentation.views.ActionModeHandler
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.presentation.views.recyclerviews.MemoListAdapter
@@ -25,17 +24,22 @@ import com.thinkers.whiteboard.data.database.entities.Note
 
 import com.thinkers.whiteboard.databinding.FragmentWasteBinBinding
 import com.thinkers.whiteboard.presentation.viewmodels.WasteBinViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.WasteBinViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class WasteBinFragment : Fragment() {
+    companion object {
+        const val TAG = "WasteBinFragment"
+        const val PAGE_SIZE = 30
+    }
 
     private var _binding: FragmentWasteBinBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: WasteBinViewModel
+    private val viewModel: WasteBinViewModel by viewModels()
     private lateinit var recyclerViewAdaper: MemoListAdapter
     private lateinit var recyclerView: RecyclerView
 
@@ -59,18 +63,6 @@ class WasteBinFragment : Fragment() {
                 currentPage++
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(
-            this,
-            WasteBinViewModelFactory(
-                WhiteBoardApplication.instance!!.noteRepository,
-                WhiteBoardApplication.instance!!.memoRepository
-            )
-        ).get(WasteBinViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -298,10 +290,5 @@ class WasteBinFragment : Fragment() {
         binding.wasteBinClearAllImageview.visibility = View.GONE
         binding.wasteBinRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
-    }
-
-    companion object {
-        const val TAG = "WasteBinFragment"
-        const val PAGE_SIZE = 30
     }
 }

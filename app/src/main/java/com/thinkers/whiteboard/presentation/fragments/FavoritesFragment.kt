@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -24,17 +25,21 @@ import com.thinkers.whiteboard.presentation.views.recyclerviews.MemoListAdapter
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentFavoritesBinding
 import com.thinkers.whiteboard.presentation.viewmodels.FavoritesViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.FavoritesViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-
+@AndroidEntryPoint
 class FavoritesFragment : Fragment() {
+    companion object {
+        val TAG = "FavoritesFragment"
+        val PAGE_SIZE = 30
+    }
 
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: FavoritesViewModel
+    private val viewModel: FavoritesViewModel by viewModels()
     private lateinit var recyclerViewAdaper: MemoListAdapter
     private lateinit var recyclerView: RecyclerView
 
@@ -61,15 +66,6 @@ class FavoritesFragment : Fragment() {
             }
         }
     }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            FavoritesViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
-        ).get(FavoritesViewModel::class.java)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -254,10 +250,5 @@ class FavoritesFragment : Fragment() {
         binding.favoritesNoteTextView.visibility = View.VISIBLE
         binding.favoritesRecyclerview.recyclerView.visibility = View.GONE
         _binding = null
-    }
-
-    companion object {
-        val TAG = "FavoritesFragment"
-        val PAGE_SIZE = 30
     }
 }

@@ -7,7 +7,7 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.thinkers.whiteboard.R
-import com.thinkers.whiteboard.data.utils.convertDpToPixel
+import com.thinkers.whiteboard.utils.convertDpToPixel
 
 class CustomNumberButtonView @JvmOverloads constructor(
     context: Context,

@@ -5,13 +5,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.data.enums.Constants
-import com.thinkers.whiteboard.usecase.BackupHomeUseCase
+import com.thinkers.whiteboard.presentation.helpers.DataBackupHelper
+import com.thinkers.whiteboard.presentation.helpers.DataBackupHelperFactory
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class BackupHomeViewModel : ViewModel() {
+@HiltViewModel
+class BackupHomeViewModel @Inject constructor() : ViewModel() {
     companion object {
         const val TAG = "BackupHomeViewModel"
         enum class states {
@@ -47,7 +51,8 @@ class BackupHomeViewModel : ViewModel() {
     private val _uploadDate = MutableSharedFlow<Long>()
     val uploadDate: SharedFlow<Long> = _uploadDate.asSharedFlow()
 
-    private val useCase = BackupHomeUseCase(viewModelScope, resultCallback)
+    @Inject lateinit var dataBackupHelperFactory: DataBackupHelperFactory
+    private val dataBackupHelper = dataBackupHelperFactory.create(viewModelScope, resultCallback)
 
     var dialogTitle = ""
     // none, backup, restore, delete
@@ -57,25 +62,25 @@ class BackupHomeViewModel : ViewModel() {
         val dbFile =
             WhiteBoardApplication.instance!!.applicationContext.getDatabasePath(Constants.originalFileName)
 
-        _totalSize.value = useCase.getTotalSize(dbFile)
+        _totalSize.value = dataBackupHelper.getTotalSize(dbFile)
         Log.i(TAG, "size: ${totalSize.value}")
 
-        val res1 = async { useCase.doBackup(dbFile.path, Constants.backupFileName) }
-        val res2 = async { useCase.doBackup(dbFile.path + "-wal", Constants.backupWalFileName) }
-        val res3 = async { useCase.doBackup(dbFile.path + "-shm", Constants.backupShmFileName) }
+        val res1 = async { dataBackupHelper.doBackup(dbFile.path, Constants.backupFileName) }
+        val res2 = async { dataBackupHelper.doBackup(dbFile.path + "-wal", Constants.backupWalFileName) }
+        val res3 = async { dataBackupHelper.doBackup(dbFile.path + "-shm", Constants.backupShmFileName) }
 
         val result = res1.await() + res2.await() + res3.await()
         result == 3
     }
 
     suspend fun restoreDbFiles(downloadPath: String) = withContext(viewModelScope.coroutineContext) {
-        val res1 = async { useCase.doDownload(downloadPath, Constants.backupFileName) }
-        val res2 = async { useCase.doDownload(downloadPath, Constants.backupWalFileName) }
-        val res3 = async { useCase.doDownload(downloadPath, Constants.backupShmFileName) }
+        val res1 = async { dataBackupHelper.doDownload(downloadPath, Constants.backupFileName) }
+        val res2 = async { dataBackupHelper.doDownload(downloadPath, Constants.backupWalFileName) }
+        val res3 = async { dataBackupHelper.doDownload(downloadPath, Constants.backupShmFileName) }
 
         val result = res1.await() + res2.await() + res3.await()
         if (result == 3) {
-            useCase.doRestore()
+            dataBackupHelper.doRestore()
             true
         } else {
             false
@@ -85,12 +90,12 @@ class BackupHomeViewModel : ViewModel() {
     suspend fun checkUpdates() {
         viewModelScope.launch {
             Log.i(TAG, "in")
-            val dbMetadata = async { useCase.checkFileUpdate(Constants.backupFileName) }.await()
-            val walMetadata = async { useCase.checkFileUpdate(Constants.backupWalFileName) }.await()
-            val shmMetadata = async { useCase.checkFileUpdate(Constants.backupShmFileName) }.await()
+            val dbMetadata = async { dataBackupHelper.checkFileUpdate(Constants.backupFileName) }.await()
+            val walMetadata = async { dataBackupHelper.checkFileUpdate(Constants.backupWalFileName) }.await()
+            val shmMetadata = async { dataBackupHelper.checkFileUpdate(Constants.backupShmFileName) }.await()
 
             if (dbMetadata.isFailure || walMetadata.isFailure || shmMetadata.isFailure) {
-                useCase.totalFileSize = 0
+                dataBackupHelper.totalFileSize = 0
                 currentMetaSize = 0
                 _metaSize.emit(0)
                 _uploadDate.emit(0)
@@ -99,7 +104,7 @@ class BackupHomeViewModel : ViewModel() {
             }
 
             val totalSize = dbMetadata.getOrNull()!!.sizeBytes + walMetadata.getOrNull()!!.sizeBytes + shmMetadata.getOrNull()!!.sizeBytes
-            useCase.totalFileSize = totalSize
+            dataBackupHelper.totalFileSize = totalSize
             currentMetaSize = totalSize
             _metaSize.emit(totalSize)
             _uploadDate.emit(dbMetadata.getOrNull()!!.updatedTimeMillis)
@@ -108,9 +113,9 @@ class BackupHomeViewModel : ViewModel() {
     }
 
     suspend fun deleteFilesOnServer() = withContext(viewModelScope.coroutineContext) {
-        val dbFileDeleteResult = async { useCase.doDelete(Constants.backupFileName) }
-        val walFileDeleteResult = async { useCase.doDelete(Constants.backupWalFileName) }
-        val shmFileDeleteResult = async { useCase.doDelete(Constants.backupShmFileName) }
+        val dbFileDeleteResult = async { dataBackupHelper.doDelete(Constants.backupFileName) }
+        val walFileDeleteResult = async { dataBackupHelper.doDelete(Constants.backupWalFileName) }
+        val shmFileDeleteResult = async { dataBackupHelper.doDelete(Constants.backupShmFileName) }
 
         val result =
             dbFileDeleteResult.await() + walFileDeleteResult.await() + shmFileDeleteResult.await()

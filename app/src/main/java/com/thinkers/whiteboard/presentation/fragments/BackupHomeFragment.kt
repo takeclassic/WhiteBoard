@@ -17,14 +17,21 @@ import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
-import com.thinkers.whiteboard.data.utils.Utils
+import com.thinkers.whiteboard.utils.Utils
 import com.thinkers.whiteboard.databinding.FragmentBackupHomeBinding
 import com.thinkers.whiteboard.presentation.viewmodels.BackupHomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.util.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class BackupHomeFragment : Fragment() {
+    companion object {
+        const val TAG = "BackupHomeFragment"
+    }
+
     private val viewModel: BackupHomeViewModel by viewModels()
     private var _binding: FragmentBackupHomeBinding? = null
     private val binding get() = _binding!!
@@ -169,9 +176,5 @@ class BackupHomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        const val TAG = "BackupHomeFragment"
     }
 }

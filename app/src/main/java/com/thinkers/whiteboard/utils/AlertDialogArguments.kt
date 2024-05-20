@@ -1,4 +1,4 @@
-package com.thinkers.whiteboard.data.utils
+package com.thinkers.whiteboard.utils
 
 import com.thinkers.whiteboard.data.database.entities.Memo
 

@@ -11,12 +11,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.data.enums.AuthErrorCodes
 import com.thinkers.whiteboard.data.enums.AuthInfo
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 
-class BackupSendPasswordResetEmailViewModel : ViewModel() {
+@HiltViewModel
+class BackupSendPasswordResetEmailViewModel @Inject constructor() : ViewModel() {
     var emailAddress: String = ""
 
     fun isEmailCorrect(): Boolean {

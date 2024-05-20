@@ -3,10 +3,13 @@ package com.thinkers.whiteboard.presentation.viewmodels
 import android.util.Log
 import androidx.lifecycle.*
 import com.thinkers.whiteboard.data.database.entities.Memo
-import com.thinkers.whiteboard.data.database.repositories.MemoRepository
+import com.thinkers.whiteboard.domain.MemoRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SearchViewModel(private val memoRepository: MemoRepository) : ViewModel() {
+@HiltViewModel
+class SearchViewModel @Inject constructor(private val memoRepository: MemoRepository) : ViewModel() {
     private val _searchResults = MutableLiveData<List<Memo>>()
     val searchResults: LiveData<List<Memo>> = _searchResults
 
@@ -25,16 +28,4 @@ class SearchViewModel(private val memoRepository: MemoRepository) : ViewModel() 
     companion object {
         const val TAG = "SearchViewModel"
     }
-}
-
-class SearchViewModelFactory(
-    private val memoRepository: MemoRepository
-)
-    : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(SearchViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return SearchViewModel(memoRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")    }
 }

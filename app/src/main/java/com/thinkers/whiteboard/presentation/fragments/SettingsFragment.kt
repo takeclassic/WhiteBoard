@@ -10,23 +10,29 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.os.bundleOf
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.presentation.views.recyclerviews.SettingsListAdapter
-import com.thinkers.whiteboard.data.utils.CryptoHelper
+import com.thinkers.whiteboard.utils.CryptoHelper
 import com.thinkers.whiteboard.presentation.views.CustomDecoration
 import com.thinkers.whiteboard.databinding.FragmentSettingsBinding
 import com.thinkers.whiteboard.presentation.viewmodels.SettingsViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.SettingsViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class SettingsFragment : Fragment() {
+    companion object {
+        const val TAG = "SettingsFragment"
+    }
+
     private var _binding: FragmentSettingsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModels()
     private lateinit var settingsListAdapter: SettingsListAdapter
 
     private var autoRemoveSwitch: Boolean = false
@@ -62,14 +68,6 @@ class SettingsFragment : Fragment() {
     private val onAutoRemoveToggleClicked: () -> Unit = {
         autoRemoveSwitch = !autoRemoveSwitch
         viewModel.putSwitchStatus(fileName, autoRemoveKey, autoRemoveSwitch) { WhiteBoardApplication.instance!!.startAutoRemove() }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            SettingsViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
-        ).get(SettingsViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -119,9 +117,5 @@ class SettingsFragment : Fragment() {
     private fun drawDivider() {
         val customDecoration = CustomDecoration(1f, 5f, resources.getColor(R.color.default_icon, null))
         binding.settingsRecyclerview.recyclerView.addItemDecoration(customDecoration)
-    }
-
-    companion object {
-        const val TAG = "SettingsFragment"
     }
 }

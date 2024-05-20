@@ -1,4 +1,4 @@
-package com.thinkers.whiteboard.data.utils
+package com.thinkers.whiteboard.utils
 
 import android.content.res.Resources
 import android.view.View

@@ -2,12 +2,11 @@ package com.thinkers.whiteboard.presentation.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.*
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.data.database.entities.Memo
-import com.thinkers.whiteboard.data.database.repositories.MemoRepository
+import com.thinkers.whiteboard.domain.MemoRepository
 import com.thinkers.whiteboard.presentation.fragments.FavoritesFragment
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,11 +14,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
 
-class FavoritesViewModel(
+@HiltViewModel
+class FavoritesViewModel @Inject constructor(
     private val memoRepository: MemoRepository
 ) : ViewModel() {
-    val allFavorites: LiveData<List<Memo>> = memoRepository.allFavoriteMemos.asLiveData()
+    companion object {
+        const val TAG = "FavoritesViewModel"
+    }
+
+    val allFavorites: LiveData<List<Memo>> = memoRepository.getAllFavortieMemos().asLiveData()
 
     private var _memoList = mutableListOf<Memo>()
     val memoList: List<Memo> = _memoList
@@ -71,12 +76,8 @@ class FavoritesViewModel(
         }
     }
 
-    fun allPagingFavoriteNotes(): LiveData<PagingData<Memo>> {
-        return memoRepository.getFavoritePagingMemos().cachedIn(viewModelScope).asLiveData()
-    }
-
     fun FavoriteMemoCount(scope: CoroutineScope): StateFlow<Int> {
-        return memoRepository.favoritesMemoCount.stateIn(
+        return memoRepository.getFavoritesMemoCount().stateIn(
             scope = scope,
             started = SharingStarted.Lazily,
             initialValue = 0
@@ -128,18 +129,4 @@ class FavoritesViewModel(
             }
         }
     }
-
-    companion object {
-        const val TAG = "FavoritesViewModel"
-    }
-}
-
-class FavoritesViewModelFactory(private val memoRepository: MemoRepository)
-    : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(FavoritesViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return FavoritesViewModel(memoRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")    }
 }

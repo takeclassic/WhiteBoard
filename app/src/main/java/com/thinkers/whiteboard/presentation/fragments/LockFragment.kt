@@ -14,9 +14,15 @@ import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.FragmentLockBinding
 import com.thinkers.whiteboard.presentation.viewmodels.LockViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class LockFragment : Fragment() {
+    companion object {
+        const val TAG = "LockFragment"
+    }
+
     private var _binding: FragmentLockBinding? = null
     private val binding get() = _binding!!
 
@@ -159,9 +165,5 @@ class LockFragment : Fragment() {
                 ColorStateList.valueOf(requireContext().getColor(R.color.black))
             lockViewModel.lockTinted[index] = true
         }
-    }
-
-    companion object {
-        const val TAG = "LockFragment"
     }
 }

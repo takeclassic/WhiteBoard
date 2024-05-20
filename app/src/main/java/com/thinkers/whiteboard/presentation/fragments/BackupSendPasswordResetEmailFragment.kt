@@ -14,13 +14,19 @@ import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.data.enums.AuthErrorCodes
 import com.thinkers.whiteboard.data.enums.AuthInfo
-import com.thinkers.whiteboard.data.utils.Utils
+import com.thinkers.whiteboard.utils.Utils
 import com.thinkers.whiteboard.databinding.FragmentBackupSendPasswordResetEmailBinding
 import com.thinkers.whiteboard.presentation.viewmodels.BackupSendPasswordResetEmailViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class BackupSendPasswordResetEmailFragment : Fragment() {
+    companion object {
+        const val TAG = "BackupSendPasswordResetEmailFragment"
+    }
+
     private val viewModel: BackupSendPasswordResetEmailViewModel by viewModels()
     private var _binding: FragmentBackupSendPasswordResetEmailBinding? = null
     private val binding get() = _binding!!
@@ -109,9 +115,5 @@ class BackupSendPasswordResetEmailFragment : Fragment() {
             id,
             Toast.LENGTH_SHORT
         ).show()
-    }
-
-    companion object {
-        const val TAG = "BackupSendPasswordResetEmailFragment"
     }
 }

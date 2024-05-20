@@ -1,7 +1,6 @@
 package com.thinkers.whiteboard.presentation.fragments
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -14,17 +13,22 @@ import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.core.view.iterator
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.data.enums.NoteUpdateState
 import com.thinkers.whiteboard.data.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentNewNoteBinding
 import com.thinkers.whiteboard.presentation.viewmodels.NewNoteViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.NewNoteViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class NewNoteFragment : Fragment() {
+    companion object {
+        val TAG = "NewNoteFragment"
+    }
+
     private var _binding: FragmentNewNoteBinding? = null
     private val binding get() = _binding!!
 
@@ -82,18 +86,10 @@ class NewNoteFragment : Fragment() {
             }
         }
 
-    private lateinit var viewModel: NewNoteViewModel
+    private val viewModel: NewNoteViewModel by viewModels()
     private var noteNumber: Int = 0
     private var noteColor: Int = -24454
     private var isNew = true
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            NewNoteViewModelFactory(WhiteBoardApplication.instance!!.noteRepository)
-        ).get(NewNoteViewModel::class.java)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -212,9 +208,5 @@ class NewNoteFragment : Fragment() {
                 return
             }
         }
-    }
-
-    companion object {
-        val TAG = "NewNoteFragment"
     }
 }

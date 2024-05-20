@@ -8,18 +8,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.presentation.views.recyclerviews.MemoListAdapter
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentSearchBinding
 import com.thinkers.whiteboard.presentation.viewmodels.SearchViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.SearchViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SearchFragment : Fragment() {
+    companion object {
+        val TAG = "SearchFragment"
+    }
+
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: SearchViewModel
+    private val viewModel: SearchViewModel by viewModels()
     private lateinit var recyclerViewAdaper: MemoListAdapter
 
     private val queryTextListener = object: SearchView.OnQueryTextListener {
@@ -35,15 +41,6 @@ class SearchFragment : Fragment() {
             viewModel.searchMemos(p0)
             return true
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        viewModel = ViewModelProvider(
-            this,
-            SearchViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
-        ).get(SearchViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -80,9 +77,5 @@ class SearchFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
-    }
-
-    companion object {
-        val TAG = "SearchFragment"
     }
 }

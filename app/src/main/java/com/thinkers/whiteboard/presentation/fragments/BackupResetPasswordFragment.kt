@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.thinkers.whiteboard.databinding.FragmentBackupResetPasswordBinding
-import com.thinkers.whiteboard.presentation.viewmodels.BackupResetPasswordViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class BackupResetPasswordFragment : Fragment() {
-    private val viewModel: BackupResetPasswordViewModel by viewModels()
     private var _binding: FragmentBackupResetPasswordBinding? = null
     private val binding get() = _binding!!
 

@@ -14,11 +14,13 @@ import androidx.lifecycle.repeatOnLifecycle
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.HorizontalProgressbarFragmentBinding
 import com.thinkers.whiteboard.presentation.viewmodels.BackupHomeViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.system.exitProcess
 
+@AndroidEntryPoint
 class HorizontalProgressBarFragment: DialogFragment() {
     companion object {
         const val TAG = "HorizontalProgressBarFragment"

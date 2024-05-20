@@ -2,16 +2,18 @@ package com.thinkers.whiteboard.presentation.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.thinkers.whiteboard.data.enums.NoteUpdateState
 import com.thinkers.whiteboard.data.database.entities.Note
-import com.thinkers.whiteboard.data.database.repositories.NoteRepository
+import com.thinkers.whiteboard.domain.NoteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel() {
+@HiltViewModel
+class NewNoteViewModel @Inject constructor(private val noteRepository: NoteRepository) : ViewModel() {
     private val _saveNoteState = MutableSharedFlow<NoteUpdateState>()
     val saveNoteState: SharedFlow<NoteUpdateState> = _saveNoteState
 
@@ -46,18 +48,5 @@ class NewNoteViewModel(private val noteRepository: NoteRepository) : ViewModel()
 
     companion object {
         const val TAG = "NewNoteViewModel"
-    }
-}
-
-class NewNoteViewModelFactory(
-    private val noteRepository: NoteRepository
-)
-    : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(NewNoteViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return NewNoteViewModel(noteRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

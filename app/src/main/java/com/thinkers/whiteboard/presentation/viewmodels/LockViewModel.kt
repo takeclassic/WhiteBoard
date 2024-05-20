@@ -4,13 +4,19 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thinkers.whiteboard.data.utils.CryptoHelper
+import com.thinkers.whiteboard.utils.CryptoHelper
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
+@HiltViewModel
+class LockViewModel @Inject constructor() : ViewModel() {
+    companion object {
+        const val TAG = "LockViewModel"
+    }
 
-class LockViewModel: ViewModel() {
     var passcode = StringBuilder()
     val lockNumbers = arrayListOf<ImageView>()
     var lockTinted: Array<Boolean> = Array(4) { false }
@@ -33,9 +39,5 @@ class LockViewModel: ViewModel() {
         val decrypted = CryptoHelper.decryptPassCodeAesGcm()
         Log.i(TAG, "decrypted: $decrypted")
         passcode.toString() == decrypted
-    }
-
-    companion object {
-        const val TAG = "LockViewModel"
     }
 }

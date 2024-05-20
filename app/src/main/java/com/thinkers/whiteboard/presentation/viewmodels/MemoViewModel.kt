@@ -5,10 +5,13 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.data.database.entities.Memo
-import com.thinkers.whiteboard.data.database.repositories.MemoRepository
+import com.thinkers.whiteboard.domain.MemoRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
+@HiltViewModel
+class MemoViewModel @Inject constructor(private val memoRepository: MemoRepository) : ViewModel() {
     var memo: Memo? = null
     var isFavorite: Boolean = false
     var oldAlarmTime: Long? = null
@@ -47,16 +50,5 @@ class MemoViewModel(private val memoRepository: MemoRepository) : ViewModel() {
 
     companion object {
         const val TAG = "MemoViewModel"
-    }
-}
-
-class MemoViewModelFactory(private val memoRepository: MemoRepository)
-    : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MemoViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return MemoViewModel(memoRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

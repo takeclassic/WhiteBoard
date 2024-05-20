@@ -1,4 +1,4 @@
-package com.thinkers.whiteboard.presentation.notifications
+package com.thinkers.whiteboard.utils.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -10,6 +10,8 @@ import androidx.work.*
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.WhiteBoardApplication
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
+import javax.inject.Singleton
 
 class NotificationHelper {
     companion object {

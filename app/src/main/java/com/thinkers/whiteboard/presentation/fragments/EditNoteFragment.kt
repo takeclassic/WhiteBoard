@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.thinkers.whiteboard.presentation.MainActivity
@@ -21,15 +22,18 @@ import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.data.database.entities.Note
 import com.thinkers.whiteboard.databinding.FragmentEditNoteBinding
 import com.thinkers.whiteboard.presentation.viewmodels.EditNoteViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.EditNoteViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class EditNoteFragment : Fragment() {
+    companion object {
+        val TAG = "EditNoteFragment"
+    }
 
     private var _binding: FragmentEditNoteBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: EditNoteViewModel
+    private val viewModel: EditNoteViewModel by viewModels()
     private lateinit var recyclerViewAdaper: NoteListAdapter
 
     private var memoList: List<Memo>? = null
@@ -40,14 +44,6 @@ class EditNoteFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel = ViewModelProvider(
-            this,
-            EditNoteViewModelFactory(
-                WhiteBoardApplication.instance!!.noteRepository,
-                WhiteBoardApplication.instance!!.memoRepository
-            )
-        ).get(EditNoteViewModel::class.java)
-
         _binding = FragmentEditNoteBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -160,9 +156,5 @@ class EditNoteFragment : Fragment() {
     private fun setRecyclerViewAdapters() {
         recyclerViewAdaper = NoteListAdapter(this::onDelete, this::onEdit, this::onMove, isActionMode, noteName)
         binding.editNoteRecyclerview.recyclerView.adapter = recyclerViewAdaper
-    }
-
-    companion object {
-        val TAG = "EditNoteFragment"
     }
 }

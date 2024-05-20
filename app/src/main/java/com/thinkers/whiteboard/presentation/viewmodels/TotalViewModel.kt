@@ -2,22 +2,26 @@ package com.thinkers.whiteboard.presentation.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.*
-import androidx.paging.cachedIn
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.data.database.entities.Memo
-import com.thinkers.whiteboard.data.database.repositories.MemoRepository
+import com.thinkers.whiteboard.domain.MemoRepository
 import com.thinkers.whiteboard.presentation.fragments.TotalFragment
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
 
-class TotalViewModel(
+@HiltViewModel
+class TotalViewModel @Inject constructor(
     private val memoRepository: MemoRepository,
 ) : ViewModel() {
-    val allMemos = memoRepository.allMemos.asLiveData()
+    companion object {
+        const val TAG = "TotalViewModel"
+    }
 
-    val pagingMemos = memoRepository.getAllPagingMemos().cachedIn(viewModelScope).asLiveData().distinctUntilChanged()
+    val allMemos = memoRepository.getAllMemos().asLiveData()
 
     private var _memoList = mutableListOf<Memo>()
     val memoList: List<Memo> = _memoList
@@ -64,20 +68,12 @@ class TotalViewModel(
         }
     }
 
-    fun invalidateData() {
-        try {
-            memoRepository.dataSourceHolder.getDataSource().invalidate()
-        } catch (e: NullPointerException) {
-            Log.w(TAG, "${e.stackTrace}")
-        }
-    }
-
     fun getMemoById(memoId: Int): LiveData<Memo> {
         return memoRepository.getMemoById(memoId).asLiveData()
     }
 
     fun totalMemoCount(scope: CoroutineScope): StateFlow<Int> {
-        return memoRepository.totalMemoCount.stateIn(
+        return memoRepository.getTotalMemoCount().stateIn(
             scope = scope,
             started = SharingStarted.Lazily,
             initialValue = 0
@@ -121,22 +117,5 @@ class TotalViewModel(
                 _memoListLiveData.value = memoList
             }
         }
-    }
-
-    companion object {
-        const val TAG = "TotalViewModel"
-    }
-}
-
-class TotalViewModelFactory(
-    private val memoRepository: MemoRepository
-)
-    : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(TotalViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return TotalViewModel(memoRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

@@ -10,30 +10,33 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.thinkers.whiteboard.presentation.MainActivity
 import com.thinkers.whiteboard.R
-import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.presentation.views.ActionModeHandler
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.presentation.views.recyclerviews.MemoListAdapter
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentTotalBinding
 import com.thinkers.whiteboard.presentation.viewmodels.TotalViewModel
-import com.thinkers.whiteboard.presentation.viewmodels.TotalViewModelFactory
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-
+@AndroidEntryPoint
 class TotalFragment : Fragment() {
+    companion object {
+        val TAG = "TotalFragment"
+        const val PAGE_SIZE: Int = 30
+    }
 
     private var _binding: FragmentTotalBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var viewModel: TotalViewModel
+    private val viewModel: TotalViewModel by viewModels()
     private lateinit var recyclerViewAdaper: MemoListAdapter
     private lateinit var recyclerView: RecyclerView
 
@@ -60,14 +63,6 @@ class TotalFragment : Fragment() {
                 currentPage++
             }
         }
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            TotalViewModelFactory(WhiteBoardApplication.instance!!.memoRepository)
-        ).get(TotalViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -247,10 +242,5 @@ class TotalFragment : Fragment() {
             }
             builder.create().show()
         }
-    }
-
-    companion object {
-        val TAG = "TotalFragment"
-        const val PAGE_SIZE: Int = 30
     }
 }

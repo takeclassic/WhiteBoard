@@ -3,14 +3,13 @@ package com.thinkers.whiteboard.presentation.viewmodels
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.*
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.data.database.entities.Note
-import com.thinkers.whiteboard.data.database.repositories.MemoRepository
-import com.thinkers.whiteboard.data.database.repositories.NoteRepository
+import com.thinkers.whiteboard.domain.MemoRepository
+import com.thinkers.whiteboard.domain.NoteRepository
 import com.thinkers.whiteboard.presentation.fragments.CustomNoteFragment
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -19,11 +18,17 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
 
-class WasteBinViewModel(
+@HiltViewModel
+class WasteBinViewModel @Inject constructor(
     private val noteRepository: NoteRepository,
     private val memoRepository: MemoRepository
 ) : ViewModel() {
+    companion object {
+        const val TAG = "WasteBinViewModel"
+    }
+
     private var _memoList = mutableListOf<Memo>()
     val memoList: List<Memo> = _memoList
     private val _memoListLiveData = MutableLiveData<List<Memo>>()
@@ -67,10 +72,6 @@ class WasteBinViewModel(
                 MemoUpdateState.NONE -> {}
             }
         }
-    }
-
-    fun allPagingCustomNotes(noteName: String): LiveData<PagingData<Memo>> {
-        return memoRepository.getCustomPagingMemos(noteName).cachedIn(viewModelScope).asLiveData()
     }
 
     fun getNote(noteName: String): Flow<Note> {
@@ -158,23 +159,5 @@ class WasteBinViewModel(
         }
         actionModeSetMemoList = mutableListOf()
         actionModeSetViewList = mutableListOf()
-    }
-
-    companion object {
-        const val TAG = "WasteBinViewModel"
-    }
-}
-
-class WasteBinViewModelFactory(
-    private val noteRepository: NoteRepository,
-    private val memoRepository: MemoRepository
-)
-    : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(WasteBinViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return WasteBinViewModel(noteRepository, memoRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

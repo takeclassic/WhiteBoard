@@ -17,6 +17,7 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -28,15 +29,20 @@ import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.data.enums.AuthErrorCodes
 import com.thinkers.whiteboard.data.enums.AuthInfo
 import com.thinkers.whiteboard.data.enums.AuthType
-import com.thinkers.whiteboard.data.utils.Utils
+import com.thinkers.whiteboard.utils.Utils
 import com.thinkers.whiteboard.databinding.FragmentBackupLogInBinding
-import com.thinkers.whiteboard.presentation.viewmodels.BackUpLoginViewModelFactory
 import com.thinkers.whiteboard.presentation.viewmodels.BackupLoginViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 
+@AndroidEntryPoint
 class BackupLogInFragment : Fragment() {
-    private lateinit var viewModel: BackupLoginViewModel
+    companion object {
+        const val TAG = "BackupFragment"
+    }
+
+    private val viewModel: BackupLoginViewModel by viewModels()
     private var _binding: FragmentBackupLogInBinding? = null
     private val binding get() = _binding!!
     private lateinit var slideUp: Animation
@@ -207,12 +213,6 @@ class BackupLogInFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(
-            this,
-            BackUpLoginViewModelFactory(
-                WhiteBoardApplication.instance!!.backupUseCase
-            )
-        ).get(BackupLoginViewModel::class.java)
     }
 
     override fun onAttach(context: Context) {
@@ -285,9 +285,5 @@ class BackupLogInFragment : Fragment() {
             return true
         }
         return false
-    }
-
-    companion object {
-        const val TAG = "BackupFragment"
     }
 }

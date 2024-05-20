@@ -18,3 +18,8 @@ enum class AuthErrorCodes(code: Int) {
 enum class AuthType {
     LOGIN, REGISTER
 }
+
+enum class AuthAddress(val str: String) {
+    URL_VERIFY("https://whiteboard1.page.link/verify"),
+    REDIRECT_PACKAGE_NAME("https://www.thinkers/whiteboard/verify")
+}

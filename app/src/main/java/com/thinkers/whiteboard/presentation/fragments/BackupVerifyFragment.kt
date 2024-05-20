@@ -13,10 +13,17 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.FragmentBackupVerifyBinding
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@AndroidEntryPoint
 class BackupVerifyFragment : Fragment() {
+    companion object {
+        const val TAG = "BackupVerifyFragment"
+    }
+
+
     private var _binding: FragmentBackupVerifyBinding? = null
     private val binding get() = _binding!!
     private val auth = Firebase.auth
@@ -86,9 +93,4 @@ class BackupVerifyFragment : Fragment() {
         _binding = null
         auth.removeAuthStateListener(authStateListener)
     }
-
-    companion object {
-        const val TAG = "BackupVerifyFragment"
-    }
-
 }

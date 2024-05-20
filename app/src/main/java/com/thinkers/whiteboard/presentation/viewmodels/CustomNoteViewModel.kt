@@ -3,23 +3,24 @@ package com.thinkers.whiteboard.presentation.viewmodels
 import android.util.Log
 import android.view.View
 import androidx.lifecycle.*
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.data.database.entities.Note
-import com.thinkers.whiteboard.data.database.repositories.MemoRepository
-import com.thinkers.whiteboard.data.database.repositories.NoteRepository
+import com.thinkers.whiteboard.domain.MemoRepository
+import com.thinkers.whiteboard.domain.NoteRepository
 import com.thinkers.whiteboard.presentation.fragments.CustomNoteFragment
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import javax.inject.Inject
 
-class CustomNoteViewModel(
-    private val noteRepository: NoteRepository,
-    private val memoRepository: MemoRepository
+@HiltViewModel
+class CustomNoteViewModel @Inject constructor (
+    val noteRepository: NoteRepository,
+    val memoRepository: MemoRepository
     ) : ViewModel() {
     private var _memoList = mutableListOf<Memo>()
     val memoList: List<Memo> = _memoList
@@ -34,36 +35,16 @@ class CustomNoteViewModel(
     var actionModeSetMemoList = mutableListOf<Memo>()
     var actionModeSetViewList = mutableListOf<View>()
 
-    fun getNoteName(): String {
-        return noteRepository.customNoteName
-    }
-
-    fun checkDeletion(): Boolean {
-        return noteRepository.isDeletion
-    }
-
-    fun setDeletion(flag: Boolean) {
-        noteRepository.isDeletion = flag
-    }
-
-    fun getChangedNoteNumber(): Int {
-        return noteRepository.changedNoteNumber
-    }
-
-    fun setChangedNoteNumber(noteNumber: Int) {
-        noteRepository.changedNoteNumber = noteNumber
-    }
-
     fun init() {
-        Log.i(TAG, "state: ${memoRepository.memoState}")
-        if (memoRepository.memoState == MemoUpdateState.NONE) {
+        Log.i(TAG, "state: ${memoState}")
+        if (memoState == MemoUpdateState.NONE) {
             return
         }
         memoToUpdate = memoRepository.updatedMemo
         viewModelScope.launch {
-            when(memoRepository.memoState) {
+            when(memoState) {
                 MemoUpdateState.INSERT -> {
-                    getNextPage(0, getNoteName())
+                    getNextPage(0, getCustomNoteName())
                 }
                 MemoUpdateState.UPDATE -> {
                     if (memoMap.containsKey(memoToUpdate.memoId)) {
@@ -86,9 +67,23 @@ class CustomNoteViewModel(
         }
     }
 
-    fun allPagingCustomNotes(noteName: String): LiveData<PagingData<Memo>> {
-        return memoRepository.getCustomPagingMemos(noteName).cachedIn(viewModelScope).asLiveData()
+    fun isDeletion(): Boolean = noteRepository.isDeletion
+
+    fun setDeletion(deletion: Boolean) {
+        noteRepository.isDeletion = deletion
     }
+
+    fun setCustomNoteName(customNoteName: String) {
+        noteRepository.customNoteName = customNoteName
+    }
+
+    fun getCustomNoteName() = noteRepository.customNoteName
+
+    fun setChangedNoteNumber(noteNumber: Int) {
+        noteRepository.changedNoteNumber = noteNumber
+    }
+
+    fun getChangedNoteNumber() = noteRepository.changedNoteNumber
 
     fun getNote(noteName: String): Flow<Note> {
         return noteRepository.getNote(noteName)
@@ -167,19 +162,5 @@ class CustomNoteViewModel(
 
     companion object {
         const val TAG = "CustomNoteViewModel"
-    }
-}
-
-class CustomNoteViewModelFactory(
-    private val noteRepository: NoteRepository,
-    private val memoRepository: MemoRepository
-)
-    : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(CustomNoteViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return CustomNoteViewModel(noteRepository, memoRepository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
