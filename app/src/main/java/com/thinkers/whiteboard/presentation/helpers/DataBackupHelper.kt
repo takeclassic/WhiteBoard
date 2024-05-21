@@ -9,9 +9,13 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.ktx.storage
 import com.thinkers.whiteboard.data.database.AppDatabase
 import com.thinkers.whiteboard.data.enums.Constants
+import dagger.Binds
+import dagger.Module
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ActivityComponent
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import java.io.File
@@ -22,12 +26,12 @@ import kotlin.coroutines.resume
 
 @AssistedFactory
 interface DataBackupHelperFactory {
-    fun create(scope: CoroutineScope, resultCallback: (Pair<String, Double>) -> Unit): DataBackupHelper
+    fun create(scope: CoroutineScope, resultCallback: (Pair<String, Long>) -> Unit): DataBackupHelper
 }
 
 class DataBackupHelper @AssistedInject constructor(
     @Assisted private val scope: CoroutineScope,
-    @Assisted private val resultCallback: (Pair<String, Double>) -> Unit
+    @Assisted private val resultCallback: (Pair<String, Long>) -> Unit
 ) {
     companion object {
         const val TAG = "DataBackupHelper"
@@ -64,7 +68,12 @@ class DataBackupHelper @AssistedInject constructor(
                 dbFileTransferred = byteTransferred
             }
 
-            val result = (walFileTransferred.toDouble() + shmFileTransferred.toDouble() + dbFileTransferred.toDouble()) /  totalFileSize.toDouble() * 100
+            Log.i(TAG, "walFileTransferred: $walFileTransferred, shmFileTransferred: $shmFileTransferred, dbFileTransferred: $dbFileTransferred, add: ${walFileTransferred + shmFileTransferred + dbFileTransferred}, total: $totalFileSize")
+
+            val result = runCatching {
+                (walFileTransferred + shmFileTransferred + dbFileTransferred) * 100 / totalFileSize
+            }.getOrDefault(0)
+            Log.i(TAG, "result: $result")
             resultCallback.invoke(Pair(fileName, result))
         }
     }
@@ -156,7 +165,7 @@ class DataBackupHelper @AssistedInject constructor(
         return result
     }
 
-    suspend fun doRestore() {
+    fun doRestore() {
         val originalPath = dbInstance.openHelper.readableDatabase.path
         val originalFile = File(originalPath)
         Log.i(TAG, "original path: $originalPath, exist: ${originalFile.exists()}")

@@ -8,6 +8,7 @@ import com.thinkers.whiteboard.data.enums.Constants
 import com.thinkers.whiteboard.presentation.helpers.DataBackupHelper
 import com.thinkers.whiteboard.presentation.helpers.DataBackupHelperFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -23,8 +24,8 @@ class BackupHomeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private val resultCallback: (Pair<String, Double>) -> Unit = { result ->
-        val value = result.second.toLong()
+    private val resultCallback: (Pair<String, Long>) -> Unit = { result ->
+        val value = result.second
 
         if (result.first == Constants.backupFileName
             || result.first == Constants.backupWalFileName
@@ -52,13 +53,19 @@ class BackupHomeViewModel @Inject constructor() : ViewModel() {
     val uploadDate: SharedFlow<Long> = _uploadDate.asSharedFlow()
 
     @Inject lateinit var dataBackupHelperFactory: DataBackupHelperFactory
-    private val dataBackupHelper = dataBackupHelperFactory.create(viewModelScope, resultCallback)
+    private lateinit var dataBackupHelper:DataBackupHelper
 
     var dialogTitle = ""
     // none, backup, restore, delete
     var state = states.NONE
 
+    private fun provideDataBackupHelper(scope: CoroutineScope, resultCallback: (Pair<String, Long>) -> Unit) {
+        dataBackupHelper = dataBackupHelperFactory.create(viewModelScope, resultCallback)
+    }
+
     suspend fun backUpDbFiles() = withContext(viewModelScope.coroutineContext) {
+        provideDataBackupHelper(viewModelScope, resultCallback)
+
         val dbFile =
             WhiteBoardApplication.instance!!.applicationContext.getDatabasePath(Constants.originalFileName)
 
@@ -74,6 +81,13 @@ class BackupHomeViewModel @Inject constructor() : ViewModel() {
     }
 
     suspend fun restoreDbFiles(downloadPath: String) = withContext(viewModelScope.coroutineContext) {
+        provideDataBackupHelper(viewModelScope, resultCallback)
+
+        val dbFile =
+            WhiteBoardApplication.instance!!.applicationContext.getDatabasePath(Constants.originalFileName)
+
+        _totalSize.value = dataBackupHelper.getTotalSize(dbFile)
+
         val res1 = async { dataBackupHelper.doDownload(downloadPath, Constants.backupFileName) }
         val res2 = async { dataBackupHelper.doDownload(downloadPath, Constants.backupWalFileName) }
         val res3 = async { dataBackupHelper.doDownload(downloadPath, Constants.backupShmFileName) }
@@ -89,7 +103,8 @@ class BackupHomeViewModel @Inject constructor() : ViewModel() {
 
     suspend fun checkUpdates() {
         viewModelScope.launch {
-            Log.i(TAG, "in")
+            provideDataBackupHelper(viewModelScope, resultCallback)
+
             val dbMetadata = async { dataBackupHelper.checkFileUpdate(Constants.backupFileName) }.await()
             val walMetadata = async { dataBackupHelper.checkFileUpdate(Constants.backupWalFileName) }.await()
             val shmMetadata = async { dataBackupHelper.checkFileUpdate(Constants.backupShmFileName) }.await()
@@ -113,6 +128,8 @@ class BackupHomeViewModel @Inject constructor() : ViewModel() {
     }
 
     suspend fun deleteFilesOnServer() = withContext(viewModelScope.coroutineContext) {
+        provideDataBackupHelper(viewModelScope, resultCallback)
+
         val dbFileDeleteResult = async { dataBackupHelper.doDelete(Constants.backupFileName) }
         val walFileDeleteResult = async { dataBackupHelper.doDelete(Constants.backupWalFileName) }
         val shmFileDeleteResult = async { dataBackupHelper.doDelete(Constants.backupShmFileName) }
