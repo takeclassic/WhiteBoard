@@ -107,7 +107,6 @@ class LockFragment : Fragment() {
         this.isResume = false
         val isResume: Boolean? = arguments?.getBoolean("isResume")
         Log.i(TAG, "isResume: $isResume")
-        Log.i("KKKKK", "called 3")
         isResume?.let {
             if(it) {
                 this.isResume = true

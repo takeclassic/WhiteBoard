@@ -13,22 +13,15 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-@Singleton
-class DataStoreRepository @Inject constructor(@ApplicationContext var context: Context) {
-    companion object {
-        var instance: DataStoreRepository? = null
-    }
-    init {
-        instance = this
-    }
+object DataStoreRepository {
     suspend fun storeStringValue(key: DataStoreKeys, value: String) {
-        context.dataStore.edit {
+        WhiteBoardApplication.context().dataStore.edit {
             it[stringPreferencesKey(key.value)] = value
         }
     }
 
     fun getStringValue(key: DataStoreKeys): Flow<String> {
-        return context.dataStore.data.map { p ->
+        return WhiteBoardApplication.context().dataStore.data.map { p ->
             p[stringPreferencesKey(key.value)] ?: ""
         }
     }

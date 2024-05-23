@@ -28,7 +28,6 @@ class CryptoHelper @Inject constructor() {
     companion object {
         fun encryptStringAesGcm(plainString: String) {
             CoroutineScope(Dispatchers.Default).launch {
-                val dataStore = DataStoreRepository.instance ?: return@launch
                 val keyStore: KeyStore = KeyStore.getInstance(WhiteBoardApplication.AndroidKeyStore)
                 runCatching {
                     keyStore.load(null)
@@ -53,11 +52,11 @@ class CryptoHelper @Inject constructor() {
 
                 val encodedIv: String = Base64.encodeToString(iv, Base64.NO_WRAP)
                 val encodedAad: String = Base64.encodeToString(aad, Base64.NO_WRAP)
-                dataStore.storeStringValue(
+                DataStoreRepository.storeStringValue(
                     DataStoreKeys.STRING_KEY_IV,
                     encodedIv
                 )
-                dataStore.storeStringValue(
+                DataStoreRepository.storeStringValue(
                     DataStoreKeys.STRING_KEY_AAD,
                     encodedAad
                 )
@@ -74,7 +73,6 @@ class CryptoHelper @Inject constructor() {
         }
 
         suspend fun decryptPassCodeAesGcm(): String = withContext(Dispatchers.Default) {
-            val dataStore = DataStoreRepository.instance ?: return@withContext ""
             var encrypted = byteArrayOf()
             runCatching {
                 encrypted = readFile()
@@ -100,14 +98,14 @@ class CryptoHelper @Inject constructor() {
 
             val cipher = Cipher.getInstance(transformation)
             val ivStr: String =
-                dataStore.getStringValue(DataStoreKeys.STRING_KEY_IV)
+                DataStoreRepository.getStringValue(DataStoreKeys.STRING_KEY_IV)
                     .first()
             val iv = Base64.decode(ivStr, Base64.NO_WRAP)
             val ivSpec = GCMParameterSpec(CryptoConstants.gcmSpecSize, iv)
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivSpec)
 
             val aadStr: String =
-                dataStore.getStringValue(DataStoreKeys.STRING_KEY_AAD)
+                DataStoreRepository.getStringValue(DataStoreKeys.STRING_KEY_AAD)
                     .first()
             val aad = Base64.decode(aadStr, Base64.NO_WRAP)
             cipher.updateAAD(aad)

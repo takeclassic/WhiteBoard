@@ -50,7 +50,8 @@ class SettingsFragment : Fragment() {
     private val onLockToggleClicked: (SwitchCompat) -> Unit = { switch ->
         viewLifecycleOwner.lifecycleScope.launch {
             val res = CryptoHelper.decryptPassCodeAesGcm()
-            if (res == "failed") {
+            Log.i(TAG, "lock toggle touched res: $res")
+            if (res.isNullOrBlank() || res == "failed") {
                 Toast.makeText(requireContext(), R.string.settings_passcode_is_not_set, Toast.LENGTH_SHORT).show()
                 switch.toggle()
                 return@launch

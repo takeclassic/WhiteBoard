@@ -113,7 +113,7 @@ class BackupLogInFragment : Fragment() {
         Log.i(TAG, "sign in id: ${viewModel.id}, password: ${viewModel.password}")
         val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
-        
+
         addProgressBar()
         if (isAuthExceptions(it)) {
             removeProgressBar()
