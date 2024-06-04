@@ -1,5 +1,6 @@
 package com.thinkers.whiteboard.presentation.fragments
 
+import android.content.Context
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -7,6 +8,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -16,6 +18,10 @@ import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentSearchBinding
 import com.thinkers.whiteboard.presentation.viewmodels.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class SearchFragment : Fragment() {
@@ -52,13 +58,24 @@ class SearchFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        binding.searchToolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
+        binding.searchToolbar.setNavigationOnClickListener {
+            val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
+            requireActivity().onBackPressed()
+        }
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind, false)
         binding.searchRecyclerview.recyclerView.adapter = recyclerViewAdaper
         binding.searchSearchText.setOnQueryTextListener(queryTextListener)
         viewModel.searchResults.observe(viewLifecycleOwner) { list ->
             Log.i(TAG, "searched list: $list")
             recyclerViewAdaper.submitList(list)
+        }
+        MainScope().launch {
+            binding.searchSearchText.apply {
+                requestFocus()
+                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+            }
         }
     }
 
