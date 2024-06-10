@@ -17,6 +17,7 @@ import com.thinkers.whiteboard.presentation.views.recyclerviews.MemoListAdapter
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentSearchBinding
 import com.thinkers.whiteboard.presentation.viewmodels.SearchViewModel
+import com.thinkers.whiteboard.utils.Utils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -73,8 +74,7 @@ class SearchFragment : Fragment() {
         MainScope().launch {
             binding.searchSearchText.apply {
                 requestFocus()
-                val inputMethodManager = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+                Utils.showKeyboard(requireContext(), binding.searchSearchText)
             }
         }
     }

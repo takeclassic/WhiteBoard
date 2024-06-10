@@ -6,16 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.data.enums.AuthAddress
 import com.thinkers.whiteboard.databinding.FragmentBackupVerifyBinding
+import com.thinkers.whiteboard.domain.SendVerifyEmailUseCase
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BackupVerifyFragment : Fragment() {
@@ -23,11 +27,11 @@ class BackupVerifyFragment : Fragment() {
         const val TAG = "BackupVerifyFragment"
     }
 
-
     private var _binding: FragmentBackupVerifyBinding? = null
     private val binding get() = _binding!!
     private val auth = Firebase.auth
     private val user = auth.currentUser!!
+    @Inject lateinit var sendVerifyEmailUseCase: SendVerifyEmailUseCase
 
     private val authStateListener = FirebaseAuth.AuthStateListener {
         Log.i(TAG, "auth state changed")
@@ -65,7 +69,11 @@ class BackupVerifyFragment : Fragment() {
         }
         binding.backupVerifyRefresh.setOnClickListener(checkVerifiedListener)
         binding.backupVerifyRetry.setOnClickListener {
-
+            Log.i(TAG, "retry touched!")
+            sendVerifyEmailUseCase(AuthAddress.URL_VERIFY.str, AuthAddress.REDIRECT_PACKAGE_NAME.str) {
+                Log.i(TAG, "send completed")
+                Toast.makeText(requireContext(), "이메일 재전송 완료 되었습니다", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/register_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/register_empty_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ProgressBar
+            android:id="@+id/register_progressbar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:maxWidth="80dp"
+            android:maxHeight="80dp"
+            android:minWidth="80dp"
+            android:minHeight="80dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/register_success_check"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="false"
+            app:lottie_rawRes="@raw/check_mark_lottie"
+            tools:visibility="visible" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/register_view_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:passwordToggleEnabled="true">
+
+        <ImageView
+            android:id="@+id/register_back_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/ic_appbar_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/register_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/register_title_text"
+            android:textColor="@color/app_main_color"
+            android:textSize="22sp"
+            app:layout_constraintStart_toEndOf="@+id/register_back_button"
+            app:layout_constraintTop_toBottomOf="@+id/register_back_button" />
+
+        <TextView
+            android:id="@+id/register_email_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/register_email_text"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/register_title"
+            app:layout_constraintTop_toBottomOf="@+id/register_title" />
+
+        <TextView
+            android:id="@+id/register_id_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@string/id_text"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/register_email_textview"
+            app:layout_constraintTop_toBottomOf="@+id/register_email_textview" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/register_email_edittext_layout"
+            style="@style/LoginTextInputLayoutStyle"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="34dp"
+            android:textColorHint="@color/app_main_color"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/register_id_title"
+            app:layout_constraintTop_toBottomOf="@+id/register_id_title">
+
+        <com.thinkers.whiteboard.presentation.views.CustomMaterialEditText
+            android:id="@+id/register_email_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:ems="17"
+            android:hint="@string/hint_input_email"
+            android:inputType="textEmailAddress"
+            android:padding="8dp"
+            android:textSize="12sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/register_password_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/password_text"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/register_email_edittext_layout"
+            app:layout_constraintTop_toBottomOf="@+id/register_email_edittext_layout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/register_password_edittext_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="34dp"
+            app:boxStrokeWidth="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/register_password_title"
+            app:layout_constraintTop_toBottomOf="@+id/register_password_title"
+            app:passwordToggleEnabled="true"
+            app:hintAnimationEnabled="true"
+            app:hintEnabled="true">
+
+            <com.thinkers.whiteboard.presentation.views.CustomMaterialEditText
+                android:id="@+id/register_password_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/colored_rounder_corner_view"
+                android:ems="17"
+                android:hint="@string/backup_password_reset_new_password_hint"
+                android:inputType="textPassword"
+                android:padding="8dp"
+                android:textSize="12sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/register_re_password_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/re_password_text"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="@+id/register_password_edittext_layout"
+            app:layout_constraintTop_toBottomOf="@+id/register_password_edittext_layout" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/register_re_password_edittext_layout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="34dp"
+            app:boxStrokeWidth="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/register_re_password_title"
+            app:layout_constraintTop_toBottomOf="@+id/register_re_password_title"
+            app:passwordToggleEnabled="true"
+            app:hintAnimationEnabled="true"
+            app:hintEnabled="true">
+
+            <com.thinkers.whiteboard.presentation.views.CustomMaterialEditText
+                android:id="@+id/register_re_password_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/colored_rounder_corner_view"
+                android:ems="17"
+                android:hint="@string/backup_password_reset_new_password_hint"
+                android:inputType="textPassword"
+                android:padding="8dp"
+                android:textSize="12sp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+<!--        <com.thinkers.whiteboard.presentation.views.CustomEditText-->
+<!--            android:id="@+id/register_re_password_edittext"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:layout_marginEnd="34dp"-->
+<!--            android:background="@drawable/colored_rounder_corner_view"-->
+<!--            android:ems="17"-->
+<!--            android:hint="@string/backup_password_reset_new_password_hint"-->
+<!--            android:inputType="textPassword|textWebPassword"-->
+<!--            android:padding="8dp"-->
+<!--            android:textSize="12sp"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/register_re_password_title"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/register_re_password_title" />-->
+
+        <Button
+            android:id="@+id/register_confirm_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="34dp"
+            android:width="276dp"
+            android:backgroundTint="#FF5494E8"
+            android:text="@string/register"
+            android:textColor="@color/light_grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="@+id/register_re_password_edittext_layout"
+            app:layout_constraintTop_toBottomOf="@+id/register_re_password_edittext_layout" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

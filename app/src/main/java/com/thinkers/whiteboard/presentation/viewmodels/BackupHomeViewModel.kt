@@ -47,7 +47,7 @@ class BackupHomeViewModel @Inject constructor() : ViewModel() {
 
     private val _metaSize = MutableSharedFlow<Long>()
     val metaSize: SharedFlow<Long> = _metaSize.asSharedFlow()
-    var currentMetaSize = 0L
+    var currentMetaSize = -1L
 
     private val _uploadDate = MutableSharedFlow<Long>()
     val uploadDate: SharedFlow<Long> = _uploadDate.asSharedFlow()

@@ -125,19 +125,16 @@ class FavoritesFragment : Fragment() {
                 this.findNavController().navigate(action)
             }
             else -> {
-                view.background =
-                    requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                view.isSelected = true
 
                 if (actionModeSetMemoList.contains(memo)) {
                     actionModeSetMemoList.remove(memo)
                     actionModeSetViewList.remove(view)
-                    view.background =
-                        requireContext().getDrawable(R.drawable.rounder_corner_view)
+                    view.isSelected = false
                 } else {
                     actionModeSetMemoList.add(memo)
                     actionModeSetViewList.add(view)
-                    view.background =
-                        requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                    view.isSelected = false
                 }
 
                 if (actionModeSetMemoList.size > 0) {
@@ -159,8 +156,7 @@ class FavoritesFragment : Fragment() {
         when (actionMode) {
             null -> {
                 binding.favoritesToolBar.noteToolbarCollapsingLayout.visibility = View.GONE
-                view.background =
-                    requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                view.isSelected = true
 
                 actionModeSetMemoList = mutableListOf()
                 actionModeSetViewList = mutableListOf()
@@ -191,9 +187,9 @@ class FavoritesFragment : Fragment() {
     private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
         if (actionModeSetMemoList.contains(memo)) {
             Log.i(TAG, "onMemoItemBind:${memo.text}")
-            view.background = requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+            view.isSelected = true
         } else {
-            view.background = requireContext().getDrawable(R.drawable.rounder_corner_view)
+            view.isSelected = false
         }
     }
 
@@ -201,8 +197,6 @@ class FavoritesFragment : Fragment() {
         for (actionModeSetView in actionModeSetViewList) {
             Log.i(CustomNoteFragment.TAG, "actionModeSetView isSelected: ${actionModeSetView.isSelected}")
             actionModeSetView.isSelected = false
-            actionModeSetView.background =
-                requireContext().getDrawable(R.drawable.rounder_corner_view)
         }
         actionModeSetMemoList = mutableListOf()
         actionModeSetViewList = mutableListOf()

@@ -4,14 +4,13 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
-import android.view.ActionMode
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -24,6 +23,7 @@ import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.databinding.FragmentTotalBinding
 import com.thinkers.whiteboard.presentation.viewmodels.TotalViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 @AndroidEntryPoint
@@ -96,19 +96,21 @@ class TotalFragment : Fragment() {
             Log.i(TAG, "list: ${it.size}, ${viewModel.memoState}")
             recyclerViewAdaper.submitList(it.toList())
             if (viewModel.memoState == MemoUpdateState.INSERT) {
-                recyclerView.post{ recyclerView.scrollToPosition(0) }
+                MainScope().launch { recyclerView.scrollToPosition(0) }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-             viewModel.totalMemoCount(this).collectLatest {
-                 totalMemoCount = it
-                 if (totalMemoCount > 0) {
-                     binding.totalNoteEmptyText.visibility = View.GONE
-                 } else {
-                     binding.totalNoteEmptyText.visibility = View.VISIBLE
-                 }
-                 Log.i(TAG, "totalMemoCount: $totalMemoCount")
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.totalMemoCount(this).collectLatest {
+                    totalMemoCount = it
+                    if (totalMemoCount > 0) {
+                        binding.totalNoteEmptyText.visibility = View.GONE
+                    } else {
+                        binding.totalNoteEmptyText.visibility = View.VISIBLE
+                    }
+                    Log.i(TAG, "totalMemoCount: $totalMemoCount")
+                }
             }
         }
     }
@@ -122,8 +124,7 @@ class TotalFragment : Fragment() {
 
     private val onDestroyActionMode: () -> Unit = {
         for (actionModeSetView in actionModeSetViewList) {
-            actionModeSetView.background =
-                requireContext().getDrawable(R.drawable.rounder_corner_view)
+            actionModeSetView.isSelected = false
         }
         actionModeSetMemoList = mutableListOf()
         actionModeSetViewList = mutableListOf()
@@ -135,9 +136,9 @@ class TotalFragment : Fragment() {
     private val onMemoItemBind:(View, Memo) -> Unit = { view, memo ->
         if (actionModeSetMemoList.contains(memo)) {
             Log.i(TAG, "onMemoItemBind:${memo.text}")
-            view.background = requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+            view.isSelected = true
         } else {
-            view.background = requireContext().getDrawable(R.drawable.rounder_corner_view)
+            view.isSelected = false
         }
     }
 
@@ -163,19 +164,14 @@ class TotalFragment : Fragment() {
                 this.findNavController().navigate(action)
             }
             else -> {
-                view.background =
-                    requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
-
                 if (actionModeSetMemoList.contains(memo)) {
                     actionModeSetMemoList.remove(memo)
                     actionModeSetViewList.remove(view)
-                    view.background =
-                        requireContext().getDrawable(R.drawable.rounder_corner_view)
+                    view.isSelected = false
                 } else {
                     actionModeSetMemoList.add(memo)
                     actionModeSetViewList.add(view)
-                    view.background =
-                        requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                    view.isSelected = true
                 }
 
                 if (actionModeSetMemoList.size > 0) {
@@ -196,8 +192,8 @@ class TotalFragment : Fragment() {
         when (actionMode) {
             null -> {
                 binding.totalToolBar.noteToolbarCollapsingLayout.visibility = View.GONE
-                view.background =
-                    requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                view.isSelected = true
+                Log.i(TAG, "view.drawableState, ${view.drawableState}")
 
                 actionModeSetMemoList = mutableListOf()
                 actionModeSetViewList = mutableListOf()

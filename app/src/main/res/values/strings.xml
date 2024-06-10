@@ -50,6 +50,8 @@
     <string name="backup_login_duplicate_problem">이미 존재하는 id 입니다. 다른 id로 시도해 주세요</string>
     <string name="backup_login_default_problem">오류 발생. 잠시 후 다시 시도해주세요.</string>
     <string name="backup_login_not_exist_problem">존재하지 않는 id이거나 비밀번호를 잘못 입력했습니다.</string>
+    <string name="wrong_password_typing">잘못된 형식의 패스워드입니다. 다시 입력해 주세요.</string>
+    <string name="not_same_password_typing">패스워드가 일치하지 않습니다. 다시 입력해 주세요.</string>
 
     <string name="backup_verify_not_finished">이메일 확인이 완료되지 않았습니다. 메일함을 확인해 주세요.</string>
     <string name="backup_verify_address">%s</string>
@@ -81,4 +83,16 @@
     <string name="horizontal_progress_upload_text">업로드 진행 중...</string>
     <string name="horizontal_progress_restore_text">데이터베이스 복구 진행 중...</string>
     <string name="horizontal_progress_delete_text">삭제 진행 중...</string>
+
+    <string name="register_title_text">회원가입</string>
+    <string name="register_email_text">백업기능을 사용하시기 위해서는 \n회원가입이 필요합니다</string>
+
+    <string name="hint_input_email">E-Mail 입력</string>
+    <string name="hint_input_phone_number">휴대전화번호는 -없이 숫자만 입력해주세요</string>
+    <string name="register">등록</string>
+
+    <string name="id_text">ID</string>
+    <string name="password_text">비밀번호</string>
+    <string name="re_password_text">비밀번호 재입력</string>
+    <string name="phone_number_text">휴대전화번호</string>
 </resources>

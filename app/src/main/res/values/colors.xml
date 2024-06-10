@@ -11,6 +11,8 @@
     <color name="default_drawable">#A9A9A9</color>
     <color name="favorite_selected">#FFEB3B</color>
     <color name="app_main_color">#FF66A8FF</color>
+    <color name="app_main_variant_color">#FF3D6499</color>
+    <color name="app_main_complementary">#FFFFBD66</color>
     <color name="transparent">#00000000</color>
     <color name="light_grey">#F8F8FF</color>
 </resources>

@@ -166,19 +166,16 @@ class CustomNoteFragment : Fragment() {
                 this.findNavController().navigate(action)
             }
             else -> {
-                view.background =
-                    requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                view.isSelected = true
 
                 if (viewModel.actionModeSetMemoList.contains(memo)) {
                     viewModel.actionModeSetMemoList.remove(memo)
                     viewModel.actionModeSetViewList.remove(view)
-                    view.background =
-                        requireContext().getDrawable(R.drawable.white_rounder_corner_view)
+                    view.isSelected = false
                 } else {
                     viewModel.actionModeSetMemoList.add(memo)
                     viewModel.actionModeSetViewList.add(view)
-                    view.background =
-                        requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                    view.isSelected = true
                 }
 
                 if (viewModel.actionModeSetMemoList.size > 0) {
@@ -199,8 +196,7 @@ class CustomNoteFragment : Fragment() {
         when (actionMode) {
             null -> {
                 binding.customToolBar.noteToolbarCollapsingLayout.visibility = View.GONE
-                view.background =
-                    requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+                view.isSelected = true
 
                 viewModel.actionModeSetMemoList = mutableListOf()
                 viewModel.actionModeSetViewList = mutableListOf()
@@ -231,16 +227,15 @@ class CustomNoteFragment : Fragment() {
     private val onMemoItemBind: (View, Memo) -> Unit = { view, memo ->
         if (viewModel.actionModeSetMemoList.contains(memo)) {
             Log.i(TAG, "onMemoItemBind:${memo.text}")
-            view.background = requireContext().getDrawable(R.drawable.colored_rounder_corner_view)
+            view.isSelected = true
         } else {
-            view.background = requireContext().getDrawable(R.drawable.white_rounder_corner_view)
+            view.isSelected = false
         }
     }
 
     private val onDestroyActionMode: () -> Unit = {
         for (actionModeSetView in viewModel.actionModeSetViewList) {
-            actionModeSetView.background =
-                requireContext().getDrawable(R.drawable.white_rounder_corner_view)
+            actionModeSetView.isSelected = false
         }
         viewModel.clearActionModeList()
         actionMode?.finish()

@@ -19,32 +19,30 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
-import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.data.enums.AuthErrorCodes
 import com.thinkers.whiteboard.data.enums.AuthInfo
 import com.thinkers.whiteboard.data.enums.AuthType
 import com.thinkers.whiteboard.utils.Utils
-import com.thinkers.whiteboard.databinding.FragmentBackupLogInBinding
-import com.thinkers.whiteboard.presentation.viewmodels.BackupLoginViewModel
+import com.thinkers.whiteboard.databinding.FragmentLogInBinding
+import com.thinkers.whiteboard.presentation.viewmodels.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
-class BackupLogInFragment : Fragment() {
+class LogInFragment : Fragment() {
     companion object {
         const val TAG = "BackupFragment"
     }
 
-    private val viewModel: BackupLoginViewModel by viewModels()
-    private var _binding: FragmentBackupLogInBinding? = null
+    private val viewModel: LoginViewModel by viewModels()
+    private var _binding: FragmentLogInBinding? = null
     private val binding get() = _binding!!
     private lateinit var slideUp: Animation
     private lateinit var fadeIn: Animation
@@ -120,7 +118,7 @@ class BackupLogInFragment : Fragment() {
             return@OnClickListener
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            val res = viewModel.getAuthResult(AuthType.LOGIN)
+            val res = viewModel.doLogin()
             when (res) {
                 is AuthInfo.Success -> {
                     removeProgressBar()
@@ -147,57 +145,17 @@ class BackupLogInFragment : Fragment() {
                             Toast.LENGTH_SHORT
                         ).show()
                     } else if (res.errorCode == AuthErrorCodes.NOT_VERIFIED) {
-                        viewModel.sendVerifyEmail {
+                        viewModel.sendVerifyEmail { exception ->
+                            if (exception != null) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    R.string.backup_login_default_problem,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                return@sendVerifyEmail
+                            }
                             findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
                         }
-                    }
-                }
-            }
-        }
-    }
-
-    private val registerListener = OnClickListener {
-        addProgressBar()
-
-        Log.i(TAG, "register id: ${viewModel.id}, password: ${viewModel.password}")
-        if (isAuthExceptions(it)) {
-            removeProgressBar()
-            return@OnClickListener
-        }
-        viewLifecycleOwner.lifecycleScope.launch {
-            val res = viewModel.getAuthResult(AuthType.REGISTER)
-            when (res) {
-                is AuthInfo.Success -> {
-                    removeProgressBar()
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.backup_login_register_success,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    viewModel.sendVerifyEmail {
-                        findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
-                    }
-                }
-                is AuthInfo.Failure -> {
-                    removeProgressBar()
-                    if (res.errorCode == AuthErrorCodes.NETWORK) {
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.backup_login_network_problem,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if (res.errorCode == AuthErrorCodes.ALREADY_EXIST) {
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.backup_login_duplicate_problem,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if (res.errorCode == AuthErrorCodes.DEFAULT) {
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.backup_login_default_problem,
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
                 }
             }
@@ -234,7 +192,7 @@ class BackupLogInFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel.auth = Firebase.auth
-        _binding = FragmentBackupLogInBinding.inflate(inflater, container, false)
+        _binding = FragmentLogInBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -267,7 +225,9 @@ class BackupLogInFragment : Fragment() {
         }
 
         binding.backupLoginButton.setOnClickListener(signInListener)
-        binding.backupRegisterButton.setOnClickListener(registerListener)
+        binding.backupRegisterButton.setOnClickListener{
+            findNavController().navigate(R.id.action_nav_login_to_nav_register)
+        }
         binding.backupFindPassword.setOnClickListener {
             findNavController().navigate(R.id.action_nav_backup_login_to_nav_send_password_reset)
         }
