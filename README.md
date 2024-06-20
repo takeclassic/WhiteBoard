@@ -7,6 +7,16 @@
 기능: 
 메모 작성, 즐겨찾기, 노트 만들기, 비밀번호 잠금, 서버 백업, 검색 기능 등
 
+## 사용기술
+- Jetpack Libraries(Navigation, Lifecycle, Room, WorkManager)
+- CustomView, RecyclerView, DrawerLayout, CoordinatorLayout, NestedScrollView
+- MVVM, Clean Architecture
+- Kotlin Coroutines, Flow, StateFlow
+- Sqlite Full Text Search
+- Pagnation
+- Hilt Dependency Injection
+- Firebase Auth, Database, Analytics, Crashlytics
+
 --- 
 ## 스크린샷
 ### 랜딩페이지
@@ -39,14 +49,4 @@
 ### 설정 기능
 ![수정됨_9](https://github.com/takeclassic/WhiteBoard/assets/17875762/2867f5ff-338c-4e04-96e2-7a49a009a699)
 
---- 
-## 사용기술
-- Jetpack Libraries(Navigation, Lifecycle, Room, WorkManager)
-- CustomView, RecyclerView, DrawerLayout, CoordinatorLayout, NestedScrollView
-- MVVM, Clean Architecture
-- Kotlin Coroutines, Flow, StateFlow
-- Sqlite Full Text Search
-- Pagnation
-- Hilt Dependency Injection
-- Firebase Auth, Database, Analytics, Crashlytics
 
