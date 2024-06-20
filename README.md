@@ -46,15 +46,7 @@
 - MVVM, Clean Architecture
 - Kotlin Coroutines, Flow, StateFlow
 - Sqlite Full Text Search
-- Pagnation(Paging Library아님, 수동)
+- Pagnation
+- Hilt Dependency Injection
+- Firebase Auth, Database, Analytics, Crashlytics
 
-## 구현예정기능
-- 메모 추가, 수정, 삭제 (완료)
-- 노트 추가, 수정, 삭제 (완료)
-- 메모공유 및 노트변경 (완료)
-- 자동삭제 (완료)
-- 잠금설정 (*구현중*)
-- (firebase연동) 백업하기 (*미구현*)
-- 초성검색 (*미구현*)
-- 패키지 및 리소스 정리 (*다 만들고 할 예정*)
-- 안쓰는 코드 삭제 및 코드 다듬기 (*다 만들고 할 예정*)
