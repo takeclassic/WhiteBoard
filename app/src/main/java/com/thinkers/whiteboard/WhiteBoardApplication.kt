@@ -13,6 +13,7 @@ import androidx.work.Configuration
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.kakao.sdk.common.KakaoSdk
 import com.thinkers.whiteboard.data.database.AppDatabase
 import com.thinkers.whiteboard.data.database.DatabaseModule
 import com.thinkers.whiteboard.utils.notifications.NotificationHelper
@@ -63,6 +64,7 @@ class WhiteBoardApplication: Application(), Configuration.Provider {
         NotificationHelper.createNotificationChannel(this)
         startAutoRemove()
         createKey()
+        KakaoSdk.init(this, "ee5c661c5bf27b26a542524c6ea3642c")
     }
 
     fun startAutoRemove() {

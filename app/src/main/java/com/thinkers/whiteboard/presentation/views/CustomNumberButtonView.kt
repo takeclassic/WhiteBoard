@@ -78,7 +78,7 @@ class CustomNumberButtonView @JvmOverloads constructor(
         setMeasuredDimension(w, h);
     }
 
-    override fun onDraw(canvas: Canvas?) {
+    override fun onDraw(canvas: Canvas) {
         val viewWidthHalf = this.measuredWidth / 2
         val viewHeightHalf = this.measuredHeight / 2
 

@@ -13,21 +13,18 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
-import com.thinkers.whiteboard.data.enums.AuthErrorCodes
-import com.thinkers.whiteboard.data.enums.AuthInfo
-import com.thinkers.whiteboard.data.enums.AuthType
+import com.thinkers.whiteboard.data.common.types.LoginTypes
 import com.thinkers.whiteboard.utils.Utils
 import com.thinkers.whiteboard.databinding.FragmentLogInBinding
 import com.thinkers.whiteboard.presentation.viewmodels.LoginViewModel
@@ -38,7 +35,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class LogInFragment : Fragment() {
     companion object {
-        const val TAG = "BackupFragment"
+        const val TAG = "loginFragment"
     }
 
     private val viewModel: LoginViewModel by viewModels()
@@ -57,12 +54,10 @@ class LogInFragment : Fragment() {
         override fun onAnimationStart(animation: Animation?) {}
 
         override fun onAnimationEnd(animation: Animation?) {
-            binding.backupIdEdittext.startAnimation(fadeIn)
-            binding.backupPasswordEdittext.startAnimation(fadeIn)
-            binding.backupLoginButton.startAnimation(fadeIn)
-            binding.backupRegisterButton.startAnimation(fadeIn)
-            binding.backupAgreementText.startAnimation(fadeIn)
-            binding.backupFindPassword.startAnimation(fadeIn)
+            binding.loginKakaoButton.startAnimation(fadeIn)
+            binding.loginGoogleButton.startAnimation(fadeIn)
+            binding.loginAgreementText.startAnimation(fadeIn)
+            binding.loginFindPassword.startAnimation(fadeIn)
         }
 
         override fun onAnimationRepeat(animation: Animation?) {}
@@ -70,12 +65,10 @@ class LogInFragment : Fragment() {
 
     private val fadeInAnimationListener = object : AnimationListener {
         override fun onAnimationStart(animation: Animation?) {
-            binding.backupIdEdittext.visibility = View.VISIBLE
-            binding.backupPasswordEdittext.visibility = View.VISIBLE
-            binding.backupLoginButton.visibility = View.VISIBLE
-            binding.backupRegisterButton.visibility = View.VISIBLE
-            binding.backupAgreementText.visibility = View.VISIBLE
-            binding.backupFindPassword.visibility  = View.VISIBLE
+            binding.loginKakaoButton.visibility = View.VISIBLE
+            binding.loginGoogleButton.visibility = View.VISIBLE
+            binding.loginAgreementText.visibility = View.VISIBLE
+            binding.loginFindPassword.visibility  = View.VISIBLE
         }
 
         override fun onAnimationEnd(animation: Animation?) {}
@@ -107,70 +100,78 @@ class LogInFragment : Fragment() {
         }
     }
 
-    private val signInListener = OnClickListener {
+    private val kakaoSignInListener = OnClickListener {
         Log.i(TAG, "sign in id: ${viewModel.id}, password: ${viewModel.password}")
-        val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(it.windowToken, 0)
-
-        addProgressBar()
-        if (isAuthExceptions(it)) {
-            removeProgressBar()
-            return@OnClickListener
-        }
         viewLifecycleOwner.lifecycleScope.launch {
-            val res = viewModel.doLogin()
-            when (res) {
-                is AuthInfo.Success -> {
-                    removeProgressBar()
-                    findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
-                }
-                is AuthInfo.Failure -> {
-                    removeProgressBar()
-                    if (res.errorCode == AuthErrorCodes.NETWORK) {
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.backup_login_network_problem,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if (res.errorCode == AuthErrorCodes.NOT_EXIST) {
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.backup_login_not_exist_problem,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if (res.errorCode == AuthErrorCodes.DEFAULT) {
-                        Toast.makeText(
-                            requireContext(),
-                            R.string.backup_login_default_problem,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    } else if (res.errorCode == AuthErrorCodes.NOT_VERIFIED) {
-                        viewModel.sendVerifyEmail { exception ->
-                            if (exception != null) {
-                                Toast.makeText(
-                                    requireContext(),
-                                    R.string.backup_login_default_problem,
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                return@sendVerifyEmail
-                            }
-                            findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
-                        }
-                    }
-                }
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addProgressBar()
+                val res = viewModel.doLogin(LoginTypes.KaKaoLogin, requireContext())
+                Log.i(TAG, "kakao login result: $res")
+                removeProgressBar()
+            }
+//            when (res) {
+//                is AuthInfo.Success -> {
+//                    removeProgressBar()
+//                    findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
+//                }
+//                is AuthInfo.Failure -> {
+//                    removeProgressBar()
+//                    if (res.errorCode == AuthErrorCodes.NETWORK) {
+//                        Toast.makeText(
+//                            requireContext(),
+//                            R.string.backup_login_network_problem,
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    } else if (res.errorCode == AuthErrorCodes.NOT_EXIST) {
+//                        Toast.makeText(
+//                            requireContext(),
+//                            R.string.backup_login_not_exist_problem,
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    } else if (res.errorCode == AuthErrorCodes.DEFAULT) {
+//                        Toast.makeText(
+//                            requireContext(),
+//                            R.string.backup_login_default_problem,
+//                            Toast.LENGTH_SHORT
+//                        ).show()
+//                    } else if (res.errorCode == AuthErrorCodes.NOT_VERIFIED) {
+//                        viewModel.sendVerifyEmail { exception ->
+//                            if (exception != null) {
+//                                Toast.makeText(
+//                                    requireContext(),
+//                                    R.string.backup_login_default_problem,
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                                return@sendVerifyEmail
+//                            }
+//                            findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
+//                        }
+//                    }
+//                }
+//            }
+        }
+    }
+
+    private val googleSignInListener = OnClickListener {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addProgressBar()
+                val res = viewModel.doLogin(LoginTypes.GoogleLogin, requireContext())
+                Log.i(TAG, "google login result: $res")
+                removeProgressBar()
             }
         }
     }
 
     private fun addProgressBar() {
-        binding.backupProgressBar.visibility = View.VISIBLE
-        binding.backupEmptyLayout.translationZ = 10f
-        binding.backupViewLayout.alpha = 0.5f
+        binding.loginProgressBar.visibility = View.VISIBLE
+        binding.loginEmptyLayout.translationZ = 10f
+        binding.loginViewLayout.alpha = 0.5f
     }
 
     private fun removeProgressBar() {
-        binding.backupProgressBar.visibility = View.GONE
-        binding.backupViewLayout.alpha = 1f
+        binding.loginProgressBar.visibility = View.GONE
+        binding.loginViewLayout.alpha = 1f
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -199,8 +200,8 @@ class LogInFragment : Fragment() {
     @SuppressLint("ClickableViewAccessibility")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.backupCloseButton.setOnClickListener { findNavController().popBackStack() }
-        binding.backupLayout.setOnTouchListener { v, event ->
+        binding.loginCloseButton.setOnClickListener { findNavController().popBackStack() }
+        binding.loginLayout.setOnTouchListener { v, event ->
             Utils.hideKeyboard(requireContext(), v)
             v.clearFocus()
             false
@@ -211,25 +212,13 @@ class LogInFragment : Fragment() {
         slideUp.setAnimationListener(slideUpAnimationListener)
         fadeIn.setAnimationListener(fadeInAnimationListener)
 
-        binding.backupLogoImageview.startAnimation(slideUp)
-        binding.backupLogoTextview.startAnimation(slideUp)
+        binding.loginLogoImageview.startAnimation(slideUp)
+        binding.loginLogoTextview.startAnimation(slideUp)
 
-        binding.backupIdEdittext.addTextChangedListener(idTextWatcher)
-        binding.backupPasswordEdittext.addTextChangedListener(passwordTextWatcher)
-        binding.backupPasswordEdittext.setOnEditorActionListener { v, actionId, event ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                binding.backupLoginButton.callOnClick()
-                true
-            }
-            false
-        }
-
-        binding.backupLoginButton.setOnClickListener(signInListener)
-        binding.backupRegisterButton.setOnClickListener{
-            findNavController().navigate(R.id.action_nav_login_to_nav_register)
-        }
-        binding.backupFindPassword.setOnClickListener {
-            findNavController().navigate(R.id.action_nav_backup_login_to_nav_send_password_reset)
+        binding.loginKakaoButton.setOnClickListener(kakaoSignInListener)
+        binding.loginGoogleButton.setOnClickListener(googleSignInListener)
+        binding.loginFindPassword.setOnClickListener {
+            //findNavController().navigate(R.id.action_nav_backup_login_to_nav_send_password_reset))
         }
     }
 

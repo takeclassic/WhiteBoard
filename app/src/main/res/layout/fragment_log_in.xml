@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/backup_layout"
+    android:id="@+id/login_layout"
     android:focusable="true"
     android:focusableInTouchMode="true"
     tools:context=".presentation.fragments.LogInFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/backup_empty_layout"
+        android:id="@+id/login_empty_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/backup_progress_bar"
+            android:id="@+id/login_progress_bar"
             android:layout_width="150dp"
             android:layout_height="150dp"
             android:scaleType="fitCenter"
@@ -30,144 +30,105 @@
             app:layout_constraintTop_toTopOf="parent"
             app:lottie_autoPlay="true"
             app:lottie_loop="true"
-            app:lottie_speed="1.8"
             app:lottie_rawRes="@raw/loading_lottie"
-            tools:visibility="visible" />
+            app:lottie_speed="1.8" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/login_view_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout_editor_absoluteX="0dp"
+            tools:layout_editor_absoluteY="49dp">
+
+            <ImageView
+                android:id="@+id/login_close_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:src="@drawable/ic_close_36"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+            <ImageView
+                android:id="@+id/login_logo_imageview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_circle_48"
+                android:backgroundTint="#FF5494E8"
+                android:src="@drawable/icon_main_foreground"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.19999999" />
+
+            <TextView
+                android:id="@+id/login_logo_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="WhiteBoard Memo"
+                android:textSize="20sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/login_logo_imageview" />
+
+            <ImageButton
+                android:id="@+id/login_kakao_button"
+                android:layout_width="262dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="40dp"
+                android:background="@color/transparent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/kakao_login"
+                android:text="등록"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/login_logo_textview"
+                tools:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/login_google_button"
+                android:layout_width="265dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="40dp"
+                android:background="@color/transparent"
+                android:src="@drawable/google_login_button"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/login_kakao_button"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/login_agreement_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="48dp"
+                android:text="@string/backup_agreement_text"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="visible" />
+
+            <TextView
+                android:id="@+id/login_find_password"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/backup_find_password_text"
+                android:textSize="16sp"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/backup_view_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/backup_close_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/ic_close_36"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-
-        <ImageView
-            android:id="@+id/backup_logo_imageview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_circle_48"
-            android:backgroundTint="#FF5494E8"
-            android:src="@drawable/icon_main_foreground"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.19999999" />
-
-        <TextView
-            android:id="@+id/backup_logo_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="WhiteBoard Memo"
-            android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_logo_imageview" />
-
-        <com.thinkers.whiteboard.presentation.views.CustomEditText
-            android:id="@+id/backup_id_edittext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/colored_rounder_corner_view"
-            android:ems="17"
-            android:hint="E-MAIL"
-            android:inputType="textEmailAddress"
-            android:padding="8dp"
-            android:paddingStart="16dp"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_logo_textview"
-            tools:visibility="visible" />
-
-        <com.thinkers.whiteboard.presentation.views.CustomEditText
-            android:id="@+id/backup_password_edittext"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="@drawable/colored_rounder_corner_view"
-            android:ems="17"
-            android:hint="비밀번호"
-            android:inputType="textPassword"
-            android:padding="8dp"
-            android:paddingStart="16dp"
-            android:textSize="14sp"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_id_edittext"
-            tools:visibility="visible" />
-
-        <Button
-            android:id="@+id/backup_register_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:width="276dp"
-            android:backgroundTint="@color/light_grey"
-            android:text="등록"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_login_button"
-            tools:visibility="visible" />
-
-        <Button
-            android:id="@+id/backup_login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:width="276dp"
-            android:backgroundTint="#FF5494E8"
-            android:text="로그인"
-            android:textColor="@color/light_grey"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_password_edittext"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/backup_agreement_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:text="@string/backup_agreement_text"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/backup_register_button"
-            tools:visibility="visible" />
-
-        <TextView
-            android:id="@+id/backup_find_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/backup_find_password_text"
-            android:textSize="16sp"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@+id/backup_agreement_text"
-            app:layout_constraintTop_toBottomOf="@+id/backup_agreement_text" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

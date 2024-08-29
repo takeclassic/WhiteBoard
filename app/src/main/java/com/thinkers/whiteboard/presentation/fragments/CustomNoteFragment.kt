@@ -100,7 +100,6 @@ class CustomNoteFragment : Fragment() {
             viewModel.setChangedNoteNumber(-1)
         }
 
-
 //        if (!this.noteName.isNullOrBlank() &&
 //            noteName != this.noteName &&
 //            (viewModel.checkNameChanged()
