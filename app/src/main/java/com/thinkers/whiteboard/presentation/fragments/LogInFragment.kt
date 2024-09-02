@@ -13,6 +13,7 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.AnimationUtils
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -100,69 +101,6 @@ class LogInFragment : Fragment() {
         }
     }
 
-    private val kakaoSignInListener = OnClickListener {
-        Log.i(TAG, "sign in id: ${viewModel.id}, password: ${viewModel.password}")
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                addProgressBar()
-                val res = viewModel.doLogin(LoginTypes.KaKaoLogin, requireContext())
-                Log.i(TAG, "kakao login result: $res")
-                removeProgressBar()
-            }
-//            when (res) {
-//                is AuthInfo.Success -> {
-//                    removeProgressBar()
-//                    findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
-//                }
-//                is AuthInfo.Failure -> {
-//                    removeProgressBar()
-//                    if (res.errorCode == AuthErrorCodes.NETWORK) {
-//                        Toast.makeText(
-//                            requireContext(),
-//                            R.string.backup_login_network_problem,
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    } else if (res.errorCode == AuthErrorCodes.NOT_EXIST) {
-//                        Toast.makeText(
-//                            requireContext(),
-//                            R.string.backup_login_not_exist_problem,
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    } else if (res.errorCode == AuthErrorCodes.DEFAULT) {
-//                        Toast.makeText(
-//                            requireContext(),
-//                            R.string.backup_login_default_problem,
-//                            Toast.LENGTH_SHORT
-//                        ).show()
-//                    } else if (res.errorCode == AuthErrorCodes.NOT_VERIFIED) {
-//                        viewModel.sendVerifyEmail { exception ->
-//                            if (exception != null) {
-//                                Toast.makeText(
-//                                    requireContext(),
-//                                    R.string.backup_login_default_problem,
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-//                                return@sendVerifyEmail
-//                            }
-//                            findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_verify)
-//                        }
-//                    }
-//                }
-//            }
-        }
-    }
-
-    private val googleSignInListener = OnClickListener {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                addProgressBar()
-                val res = viewModel.doLogin(LoginTypes.GoogleLogin, requireContext())
-                Log.i(TAG, "google login result: $res")
-                removeProgressBar()
-            }
-        }
-    }
-
     private fun addProgressBar() {
         binding.loginProgressBar.visibility = View.VISIBLE
         binding.loginEmptyLayout.translationZ = 10f
@@ -215,8 +153,8 @@ class LogInFragment : Fragment() {
         binding.loginLogoImageview.startAnimation(slideUp)
         binding.loginLogoTextview.startAnimation(slideUp)
 
-        binding.loginKakaoButton.setOnClickListener(kakaoSignInListener)
-        binding.loginGoogleButton.setOnClickListener(googleSignInListener)
+        binding.loginKakaoButton.setOnClickListener { loginButtonClickListener(LoginTypes.KaKaoLogin) }
+        binding.loginGoogleButton.setOnClickListener { loginButtonClickListener(LoginTypes.GoogleLogin) }
         binding.loginFindPassword.setOnClickListener {
             //findNavController().navigate(R.id.action_nav_backup_login_to_nav_send_password_reset))
         }
@@ -238,5 +176,27 @@ class LogInFragment : Fragment() {
             return true
         }
         return false
+    }
+
+    private fun loginButtonClickListener(loginType: LoginTypes) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                addProgressBar()
+                viewModel
+                    .doLogin(loginType, requireContext())
+                    .onSuccess {
+                        removeProgressBar()
+                        findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
+                    }
+                    .onFailure {
+                        removeProgressBar()
+                        Toast.makeText(
+                            requireContext(),
+                            it.localizedMessage ?: "Something was wrong",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+            }
+        }
     }
 }

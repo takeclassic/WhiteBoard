@@ -24,9 +24,12 @@ import com.thinkers.whiteboard.data.enums.AuthAddress
 import com.thinkers.whiteboard.domain.SendVerifyEmailUseCase
 import com.thinkers.whiteboard.domain.SignInUseCase
 import com.thinkers.whiteboard.utils.safeResumeWith
+import com.thinkers.whiteboard.utils.safeResumeWithException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 
 @HiltViewModel
@@ -143,12 +146,13 @@ class LoginViewModel @Inject constructor(
 //        NaverIdLoginSDK.authenticate(context, oauthLoginCallback)
 //    }
 
-    suspend fun doLogin(loginType: LoginTypes, context: Context): Int {
-        val loginResult = when (loginType) {
-            is LoginTypes.KaKaoLogin -> loginKakao(context)
-            is LoginTypes.GoogleLogin -> loginGoogle(context)
+    suspend fun doLogin(loginType: LoginTypes, context: Context): Result<Int> {
+        return runCatching {
+            when (loginType) {
+                is LoginTypes.KaKaoLogin -> loginKakao(context)
+                is LoginTypes.GoogleLogin -> loginGoogle(context)
+            }
         }
-        return loginResult
     }
 
     private suspend fun loginKakao(context: Context): Int {
@@ -158,7 +162,7 @@ class LoginViewModel @Inject constructor(
             UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
                 if (error != null) {
                     Log.e(TAG, "로그인 실패", error)
-                    cont.safeResumeWith(Result.failure(LoginFailureException("")))
+                    cont.safeResumeWithException(LoginFailureException(""))
                 }
                 else if (token != null) {
                     token.idToken
@@ -177,7 +181,7 @@ class LoginViewModel @Inject constructor(
                         }
                         .addOnFailureListener { e ->
                             Log.i(TAG, "파이어베이스 로그인 실패: $e")
-                            cont.safeResumeWith(Result.failure(e))
+                            cont.safeResumeWithException(e)
                         }
                 }
             }
@@ -213,14 +217,14 @@ class LoginViewModel @Inject constructor(
                             }
                             .addOnFailureListener { e ->
                                 Log.i(TAG, "파이어베이스 로그인 실패: $e")
-                                cont.safeResumeWith(Result.failure(LoginFailureException("google login is failed! please try again later.")))
+                                cont.safeResumeWithException(LoginFailureException("google login is failed! please try again later."))
                             }
                     } else {
-                        cont.safeResumeWith(Result.failure(CredentialTypeNotExistException("credential type is not google_id_token_credential")))
+                        cont.safeResumeWithException(CredentialTypeNotExistException("credential type is not google_id_token_credential"))
                     }
                 }
                 else -> {
-                    cont.safeResumeWith(Result.failure(CredentialTypeNotExistException("credential is not CustomCredential")))
+                    cont.safeResumeWithException(CredentialTypeNotExistException("credential is not CustomCredential"))
                 }
             }
         }
