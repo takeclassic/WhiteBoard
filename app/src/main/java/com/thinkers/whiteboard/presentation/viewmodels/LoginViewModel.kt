@@ -16,9 +16,13 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingExcept
 import com.google.firebase.auth.*
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.auth.model.OAuthToken
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.thinkers.whiteboard.data.common.exceptions.CredentialTypeNotExistException
 import com.thinkers.whiteboard.data.common.exceptions.LoginFailureException
+import com.thinkers.whiteboard.data.common.exceptions.UserCancelException
 import com.thinkers.whiteboard.data.common.types.LoginTypes
 import com.thinkers.whiteboard.data.enums.AuthAddress
 import com.thinkers.whiteboard.domain.SendVerifyEmailUseCase
@@ -44,8 +48,6 @@ class LoginViewModel @Inject constructor(
         private const val WEB_CLIENT_ID = "441355248374-gn98uuho9g4im7piamebpl38j3u91n16.apps.googleusercontent.com"
 
         const val TAG = "BackupViewModel"
-        const val LOGIN_TYPE_KAKAO = 0
-        const val LOGIN_TYPE_GOOGLE = 1
     }
 
     var id: String = ""
@@ -76,76 +78,6 @@ class LoginViewModel @Inject constructor(
         )
     }
 
-//    suspend fun doLogin(): AuthInfo<AuthResult> =
-//        suspendCancellableCoroutine { cont ->
-//            val listener = OnCompleteListener {
-//                if (it.isSuccessful) {
-//                    FirebaseAuth.getInstance().currentUser?.let { user ->
-//                        if (user.isEmailVerified) {
-//                            cont.resume(AuthInfo.Success(it.result), null)
-//                            return@OnCompleteListener
-//                        }
-//                    }
-//                    cont.resume(AuthInfo.Failure(AuthErrorCodes.NOT_VERIFIED), null)
-//                } else {
-//                    when (it.exception!!) {
-//                        is FirebaseAuthUserCollisionException -> {
-//                            cont.resume(AuthInfo.Failure(AuthErrorCodes.ALREADY_EXIST), null)
-//                        }
-//                        is FirebaseAuthInvalidUserException -> {
-//                            cont.resume(AuthInfo.Failure(AuthErrorCodes.NOT_EXIST), null)
-//                        }
-//                        is FirebaseAuthWebException -> {
-//                            cont.resume(AuthInfo.Failure(AuthErrorCodes.NETWORK), null)
-//                        }
-//                        else -> {
-//                            cont.resume(AuthInfo.Failure(AuthErrorCodes.DEFAULT), null)
-//                        }
-//                    }
-//                }
-//            }
-//            signInUseCase(id, password, listener)
-//        }
-
-//    fun doLogin(context: Context) {
-//        NaverIdLoginSDK.initialize(
-//            context,
-//            "l_9zzP0DgcqEgP0FQk29",
-//            "fz6ibpWxhf",
-//            "Whiteboard"
-//        )
-//
-//        val oauthLoginCallback = object : OAuthLoginCallback {
-//            override fun onSuccess() {
-//                // 네이버 로그인 인증이 성공했을 때 수행할 코드 추가
-//                val accessToken = NaverIdLoginSDK.getAccessToken()
-//                NidOAuthLogin().callProfileApi(object : NidProfileCallback<NidProfileResponse> {
-//                    override fun onSuccess(response: NidProfileResponse) {
-//                        response.profile?.id
-//                        Log.i(TAG, "id: ${response.profile?.id}, token: $accessToken")
-//                    }
-//                    override fun onFailure(httpStatus: Int, message: String) {
-//                        Log.i(TAG, "failed2!")
-//                    }
-//                    override fun onError(errorCode: Int, message: String) {
-//                        Log.i(TAG, "error2!")
-//                    }
-//                })
-//            }
-//            override fun onFailure(httpStatus: Int, message: String) {
-//                val errorCode = NaverIdLoginSDK.getLastErrorCode().code
-//                val errorDescription = NaverIdLoginSDK.getLastErrorDescription()
-//                Log.i(TAG, "failed1!")
-//            }
-//            override fun onError(errorCode: Int, message: String) {
-//                onFailure(errorCode, message)
-//                Log.i(TAG, "error1!")
-//            }
-//        }
-//
-//        NaverIdLoginSDK.authenticate(context, oauthLoginCallback)
-//    }
-
     suspend fun doLogin(loginType: LoginTypes, context: Context): Result<Int> {
         return runCatching {
             when (loginType) {
@@ -156,37 +88,62 @@ class LoginViewModel @Inject constructor(
     }
 
     private suspend fun loginKakao(context: Context): Int {
-        val loginResult = suspendCancellableCoroutine { cont ->
-            val res = UserApiClient.instance.isKakaoTalkLoginAvailable(context)
-            Log.i(TAG, "is kakao available: $res")
-            UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
-                if (error != null) {
-                    Log.e(TAG, "로그인 실패", error)
-                    cont.safeResumeWithException(LoginFailureException(""))
-                }
-                else if (token != null) {
-                    token.idToken
-                    Log.i(TAG, "로그인 성공 ${token.accessToken}, id: ${token.idToken}")
+        return suspendCancellableCoroutine { cont ->
+            fun firebaseLogin(token: OAuthToken) {
+                Log.i(TAG, "로그인 성공 ${token.accessToken}, id: ${token.idToken}")
 
-                    val providerId = "oidc.kakao-provider"
-                    val credential = OAuthProvider
-                        .newCredentialBuilder(providerId)
-                        .setIdToken(token.idToken!!)
-                        .build()
-                    Firebase.auth
-                        .signInWithCredential(credential)
-                        .addOnSuccessListener { authResult ->
-                            Log.i(TAG, "파이어베이스 로그인 성공: ${authResult}")
-                            cont.safeResumeWith(Result.success(200))
-                        }
-                        .addOnFailureListener { e ->
-                            Log.i(TAG, "파이어베이스 로그인 실패: $e")
-                            cont.safeResumeWithException(e)
-                        }
+                val providerId = "oidc.kakao-provider"
+                val credential = OAuthProvider
+                    .newCredentialBuilder(providerId)
+                    .setIdToken(token.idToken!!)
+                    .build()
+                Firebase.auth
+                    .signInWithCredential(credential)
+                    .addOnSuccessListener { authResult ->
+                        Log.i(TAG, "파이어베이스 로그인 성공: $authResult")
+                        cont.safeResumeWith(Result.success(200))
+                    }
+                    .addOnFailureListener { e ->
+                        Log.i(TAG, "파이어베이스 로그인 실패: $e")
+                        cont.safeResumeWithException(e)
+                    }
+            }
+
+            fun kakaoAccountLogin() {
+                UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
+                    Log.i(TAG, "kakao web login result: $token, $error")
+                    if (error != null) {
+                        Log.e(TAG, "로그인 실패", error)
+                        cont.safeResumeWithException(LoginFailureException(""))
+                    } else if (token != null) {
+                        firebaseLogin(token)
+                    }
                 }
             }
+
+            val isKakaoAppAvailable = UserApiClient.instance.isKakaoTalkLoginAvailable(context)
+            Log.i(TAG, "is kakao available: $isKakaoAppAvailable")
+
+            if (isKakaoAppAvailable) {
+                UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
+                    Log.i(TAG, "kakao app login result: $token, $error")
+                    if (error != null) {
+                        Log.e(TAG, "로그인 실패", error)
+
+                        if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                            cont.safeResumeWithException(UserCancelException())
+                            return@loginWithKakaoTalk
+                        }
+
+                        kakaoAccountLogin()
+                    } else if (token != null) {
+                        firebaseLogin(token)
+                    }
+                }
+            } else {
+                kakaoAccountLogin()
+            }
         }
-        return loginResult
     }
 
     private suspend fun loginGoogle(context: Context): Int {
@@ -195,12 +152,17 @@ class LoginViewModel @Inject constructor(
             .addCredentialOption(signInWithGoogleOption)
             .build()
         val credentialManager = CredentialManager.create(context)
-        val result = credentialManager.getCredential(
-            request = request,
-            context = context,
-        )
+        val result =
+            runCatching {
+                credentialManager.getCredential(
+                    request = request,
+                    context = context,
+                )
+            }.onFailure {
+                Log.i(TAG, "exception: $it")
+            }.getOrElse { throw UserCancelException() }
 
-        val loginResult = suspendCancellableCoroutine { cont ->
+        return suspendCancellableCoroutine { cont ->
             when (val credential = result.credential) {
                 is CustomCredential -> {
                     if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
@@ -228,6 +190,5 @@ class LoginViewModel @Inject constructor(
                 }
             }
         }
-        return loginResult
     }
 }

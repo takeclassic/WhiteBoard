@@ -25,6 +25,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.data.common.exceptions.UserCancelException
 import com.thinkers.whiteboard.data.common.types.LoginTypes
 import com.thinkers.whiteboard.utils.Utils
 import com.thinkers.whiteboard.databinding.FragmentLogInBinding
@@ -75,30 +76,6 @@ class LogInFragment : Fragment() {
         override fun onAnimationEnd(animation: Animation?) {}
 
         override fun onAnimationRepeat(animation: Animation?) {}
-    }
-
-    private val idTextWatcher = object: TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-        override fun afterTextChanged(p0: Editable?) {
-            p0?.let {
-                viewModel.id = Editable.Factory.getInstance().newEditable(p0).toString()
-            }
-        }
-    }
-
-    private val passwordTextWatcher = object: TextWatcher {
-        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
-
-        override fun afterTextChanged(p0: Editable?) {
-            p0?.let {
-                viewModel.password = Editable.Factory.getInstance().newEditable(p0).toString()
-            }
-        }
     }
 
     private fun addProgressBar() {
@@ -155,9 +132,6 @@ class LogInFragment : Fragment() {
 
         binding.loginKakaoButton.setOnClickListener { loginButtonClickListener(LoginTypes.KaKaoLogin) }
         binding.loginGoogleButton.setOnClickListener { loginButtonClickListener(LoginTypes.GoogleLogin) }
-        binding.loginFindPassword.setOnClickListener {
-            //findNavController().navigate(R.id.action_nav_backup_login_to_nav_send_password_reset))
-        }
     }
 
     override fun onDestroy() {
@@ -166,37 +140,28 @@ class LogInFragment : Fragment() {
         _binding = null
     }
 
-    private fun isAuthExceptions(view: View): Boolean {
-        if(!viewModel.isEmailCorrect()) {
-            Snackbar.make(view, R.string.backup_id_info_text, Snackbar.LENGTH_SHORT).show()
-            return true
-        }
-        if (!viewModel.isPasswordCorrect()) {
-            Snackbar.make(view, R.string.backup_password_info_text, Snackbar.LENGTH_LONG).show()
-            return true
-        }
-        return false
-    }
-
     private fun loginButtonClickListener(loginType: LoginTypes) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                addProgressBar()
-                viewModel
-                    .doLogin(loginType, requireContext())
-                    .onSuccess {
-                        removeProgressBar()
-                        findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
+            addProgressBar()
+            viewModel
+                .doLogin(loginType, requireContext())
+                .onSuccess {
+                    removeProgressBar()
+                    findNavController().navigate(R.id.action_nav_backup_login_to_nav_backup_home)
+                }
+                .onFailure {
+                    removeProgressBar()
+
+                    if (it is UserCancelException) {
+                        return@onFailure
                     }
-                    .onFailure {
-                        removeProgressBar()
-                        Toast.makeText(
-                            requireContext(),
-                            it.localizedMessage ?: "Something was wrong",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-            }
+
+                    Toast.makeText(
+                        requireContext(),
+                        it.localizedMessage ?: "Something was wrong",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
         }
     }
 }
