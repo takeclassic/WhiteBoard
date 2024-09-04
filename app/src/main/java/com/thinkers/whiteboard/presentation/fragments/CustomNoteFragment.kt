@@ -1,6 +1,8 @@
 package com.thinkers.whiteboard.presentation.fragments
 
+import android.content.Context
 import android.content.DialogInterface
+import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
@@ -14,16 +16,15 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
-import com.thinkers.whiteboard.presentation.MainActivity
 import com.thinkers.whiteboard.R
-
-import com.thinkers.whiteboard.presentation.views.ActionModeHandler
-import com.thinkers.whiteboard.data.enums.MemoUpdateState
-import com.thinkers.whiteboard.presentation.views.recyclerviews.MemoListAdapter
 import com.thinkers.whiteboard.data.database.entities.Memo
 import com.thinkers.whiteboard.data.database.entities.Note
+import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.databinding.FragmentCustomNoteBinding
+import com.thinkers.whiteboard.presentation.MainActivity
 import com.thinkers.whiteboard.presentation.viewmodels.CustomNoteViewModel
+import com.thinkers.whiteboard.presentation.views.ActionModeHandler
+import com.thinkers.whiteboard.presentation.views.recyclerviews.MemoListAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
@@ -120,7 +121,9 @@ class CustomNoteFragment : Fragment() {
             viewModel.getNote(noteName).collect {
                 note = it
                 noteNumber = note.noteNumber
-                binding.customNoteMainLayout.setBackgroundColor(note.noteColor)
+                if (!isNightMode(requireContext())) {
+                    binding.customNoteMainLayout.setBackgroundColor(note.noteColor)
+                }
                 Log.i(TAG, "note: $note")
             }
         }
@@ -274,6 +277,12 @@ class CustomNoteFragment : Fragment() {
             }
             builder.create().show()
         }
+    }
+
+    private fun isNightMode(context: Context): Boolean {
+        val nightModeFlags: Int =
+            context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
+        return nightModeFlags == Configuration.UI_MODE_NIGHT_YES
     }
 
     override fun onDestroyView() {

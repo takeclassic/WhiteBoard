@@ -1,16 +1,21 @@
 package com.thinkers.whiteboard.presentation
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.annotation.AttrRes
+import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
@@ -23,6 +28,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.ActivityMainBinding
+import com.thinkers.whiteboard.utils.getColorResCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -36,101 +42,113 @@ class MainActivity : AppCompatActivity() {
     var isMoved = false
 
     private var menuItemCache: MenuItem? = null
-    private val navigationViewListener = NavigationView.OnNavigationItemSelectedListener { menuItem ->
+    private val navigationViewListener =
+        NavigationView.OnNavigationItemSelectedListener { menuItem ->
 
-        when(menuItem.itemId) {
-            R.id.nav_total -> {
-                restoreCustomMenuItemColor()
-                binding.appbarFavoritesButton.visibility = View.VISIBLE
-                binding.appbarTotalButton.visibility = View.GONE
-                viewModel.setMemoBelongNote("my_memo")
-                navController.navigate(R.id.nav_total)
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                true
-            }
-            R.id.nav_favorites -> {
-                restoreCustomMenuItemColor()
-                binding.appbarFavoritesButton.visibility = View.GONE
-                binding.appbarTotalButton.visibility = View.VISIBLE
-                navController.navigate(R.id.nav_favorites)
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                true
-            }
-            R.id.nav_custom_note -> {
-                restoreCustomMenuItemColor()
-                binding.appbarFavoritesButton.visibility = View.VISIBLE
-                binding.appbarTotalButton.visibility = View.GONE
-                viewModel.setMemoBelongNote(menuItem.title.toString())
-                menuItemCache?.setCheckable(false)
-                menuItem.setCheckable(true)
-                val title = menuItem.title
-                val s = SpannableString(title)
-                s.setSpan(ForegroundColorSpan(resources.getColor(R.color.app_main_color, null)), 0, s.length, 0)
-                menuItem.title = s
-                menuItemCache = menuItem
+            when (menuItem.itemId) {
+                R.id.nav_total -> {
+                    restoreCustomMenuItemColor()
+                    binding.appbarFavoritesButton.visibility = View.VISIBLE
+                    binding.appbarTotalButton.visibility = View.GONE
+                    viewModel.setMemoBelongNote("my_memo")
+                    navController.navigate(R.id.nav_total)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
 
-                viewModel.setCustomNoteName(menuItem.title.toString())
-                val bundle = bundleOf("noteName" to menuItem.title.toString())
-                navController.navigate(R.id.nav_custom_note, bundle)
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                true
-            }
-            R.id.nav_add_note -> {
-                val navOptions = NavOptions
-                    .Builder()
-                    //.setEnterAnim(R.anim.fade_in)
-                    //.setExitAnim(R.anim.fade_out)
-                    .setPopExitAnim(R.anim.fade_out)
-                    //.setPopEnterAnim(R.anim.fade_in)
-                    .build()
+                R.id.nav_favorites -> {
+                    restoreCustomMenuItemColor()
+                    binding.appbarFavoritesButton.visibility = View.GONE
+                    binding.appbarTotalButton.visibility = View.VISIBLE
+                    navController.navigate(R.id.nav_favorites)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
 
-                navController.navigate(R.id.nav_add_note, null, navOptions)
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                true
-            }
-            R.id.nav_edit_note -> {
-                val navOptions = NavOptions
-                    .Builder()
-                    //.setEnterAnim(R.anim.fade_in)
-                    //.setExitAnim(R.anim.fade_out)
-                    .setPopExitAnim(R.anim.fade_out)
-                    //.setPopEnterAnim(R.anim.fade_in)
-                    .build()
+                R.id.nav_custom_note -> {
+                    restoreCustomMenuItemColor()
+                    binding.appbarFavoritesButton.visibility = View.VISIBLE
+                    binding.appbarTotalButton.visibility = View.GONE
+                    viewModel.setMemoBelongNote(menuItem.title.toString())
+                    menuItemCache?.setCheckable(false)
+                    menuItem.setCheckable(true)
+                    val title = menuItem.title
+                    val s = SpannableString(title)
+                    s.setSpan(
+                        ForegroundColorSpan(resources.getColor(R.color.app_main_color, null)),
+                        0,
+                        s.length,
+                        0
+                    )
+                    menuItem.title = s
+                    menuItemCache = menuItem
 
-                val args = bundleOf("isActionMode" to false)
-                navController.navigate(R.id.nav_edit_note, args, navOptions)
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                true
-            }
-            R.id.nav_waste_bin -> {
-                restoreCustomMenuItemColor()
-                menuItemCache?.setCheckable(false)
-                menuItem.setCheckable(true)
-                menuItem.title = "휴지통"
-                menuItemCache = menuItem
-                navController.navigate(R.id.nav_waste_bin)
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                true
-            }
-            R.id.nav_settings -> {
-                val navOptions = NavOptions
-                    .Builder()
-                    //.setExitAnim(R.anim.fade_out)
-                    .setPopExitAnim(R.anim.fade_out)
-                    .build()
+                    viewModel.setCustomNoteName(menuItem.title.toString())
+                    val bundle = bundleOf("noteName" to menuItem.title.toString())
+                    navController.navigate(R.id.nav_custom_note, bundle)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
 
-                restoreCustomMenuItemColor()
-                menuItemCache?.setCheckable(false)
-                menuItem.setCheckable(true)
-                menuItem.title = "설정"
-                menuItemCache = menuItem
-                navController.navigate(R.id.settings_navigation, null, navOptions)
-                binding.drawerLayout.closeDrawer(GravityCompat.START)
-                true
+                R.id.nav_add_note -> {
+                    val navOptions = NavOptions
+                        .Builder()
+                        //.setEnterAnim(R.anim.fade_in)
+                        //.setExitAnim(R.anim.fade_out)
+                        .setPopExitAnim(R.anim.fade_out)
+                        //.setPopEnterAnim(R.anim.fade_in)
+                        .build()
+
+                    navController.navigate(R.id.nav_add_note, null, navOptions)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+
+                R.id.nav_edit_note -> {
+                    val navOptions = NavOptions
+                        .Builder()
+                        //.setEnterAnim(R.anim.fade_in)
+                        //.setExitAnim(R.anim.fade_out)
+                        .setPopExitAnim(R.anim.fade_out)
+                        //.setPopEnterAnim(R.anim.fade_in)
+                        .build()
+
+                    val args = bundleOf("isActionMode" to false)
+                    navController.navigate(R.id.nav_edit_note, args, navOptions)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+
+                R.id.nav_waste_bin -> {
+                    restoreCustomMenuItemColor()
+                    menuItemCache?.setCheckable(false)
+                    menuItem.setCheckable(true)
+                    menuItem.title = "휴지통"
+                    menuItemCache = menuItem
+                    navController.navigate(R.id.nav_waste_bin)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
+
+                R.id.nav_settings -> {
+                    val navOptions = NavOptions
+                        .Builder()
+                        //.setExitAnim(R.anim.fade_out)
+                        .setPopExitAnim(R.anim.fade_out)
+                        .build()
+
+                    restoreCustomMenuItemColor()
+                    menuItemCache?.setCheckable(false)
+                    menuItem.setCheckable(true)
+                    menuItem.title = "설정"
+                    menuItemCache = menuItem
+                    navController.navigate(R.id.settings_navigation, null, navOptions)
+                    binding.drawerLayout.closeDrawer(GravityCompat.START)
+                    true
+                }
             }
+            false
         }
-        false
-    }
     private val appBarMenuButtonClickListener = View.OnClickListener {
         if (!binding.drawerLayout.isDrawerOpen(GravityCompat.START)) {
             binding.drawerLayout.openDrawer(GravityCompat.START)
@@ -202,11 +220,12 @@ class MainActivity : AppCompatActivity() {
 
     private val mainDestinationChangedListener =
         NavController.OnDestinationChangedListener { controller, destination, arguments ->
-            when(controller.currentDestination?.id) {
+            when (controller.currentDestination?.id) {
                 R.id.nav_total, R.id.nav_custom_note, R.id.nav_favorites, R.id.nav_waste_bin -> {
                     binding.appBar.visibility = View.VISIBLE
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
                 }
+
                 else -> {
                     binding.appBar.visibility = View.GONE
                     binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
@@ -255,15 +274,21 @@ class MainActivity : AppCompatActivity() {
                         order++,
                         note.noteName
                     ).apply {
-                            val normalDrawable: Drawable = resources.getDrawable(R.drawable.ic_navview_circle, null)
-                            val wrapDrawable = DrawableCompat.wrap(normalDrawable)
-                            DrawableCompat.setTint(wrapDrawable, note.noteColor)
-                            this.setIcon(wrapDrawable)
+                        val normalDrawable: Drawable =
+                            resources.getDrawable(R.drawable.ic_navview_circle, null)
+                        val wrapDrawable = DrawableCompat.wrap(normalDrawable)
+                        DrawableCompat.setTint(wrapDrawable, note.noteColor)
+                        this.setIcon(wrapDrawable)
 
-                            val s = SpannableString(note.noteName)
-                            s.setSpan(ForegroundColorSpan(resources.getColor(R.color.black, null)), 0, s.length, 0)
-                            this.title = s
-                        }
+                        val s = SpannableString(note.noteName)
+                        s.setSpan(
+                            ForegroundColorSpan(baseContext.getColorResCompat(android.R.attr.colorPrimary)),
+                            0,
+                            s.length,
+                            0
+                        )
+                        this.title = s
+                    }
                 }
             }
         }
@@ -290,7 +315,7 @@ class MainActivity : AppCompatActivity() {
         if (binding.drawerLayout.isDrawerVisible(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         } else {
-            when(navController.currentDestination?.id) {
+            when (navController.currentDestination?.id) {
                 R.id.nav_total, R.id.nav_favorites, R.id.nav_custom_note -> {
                     if (System.currentTimeMillis() - time > 1000L) {
                         time = System.currentTimeMillis()
@@ -303,6 +328,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     finish()
                 }
+
                 else -> {
                     super.onBackPressed()
                 }
@@ -316,7 +342,10 @@ class MainActivity : AppCompatActivity() {
         val lockKey = getString(R.string.key_lock)
         val isLockModeOn = viewModel.getSwtichStatus(fileName, lockKey)
 
-        Log.i(TAG, "isLockModeOn: $isLockModeOn, processLifeCycleObserver is null: ${processLifeCycleObserver == null}")
+        Log.i(
+            TAG,
+            "isLockModeOn: $isLockModeOn, processLifeCycleObserver is null: ${processLifeCycleObserver == null}"
+        )
 
         if (!isLockModeOn && processLifeCycleObserver != null) {
             ProcessLifecycleOwner.get().lifecycle.removeObserver(processLifeCycleObserver!!)
@@ -335,7 +364,12 @@ class MainActivity : AppCompatActivity() {
         menuItemCache?.let {
             val title = it.title
             val s = SpannableString(title)
-            s.setSpan(ForegroundColorSpan(resources.getColor(R.color.black, null)), 0, s.length, 0)
+            s.setSpan(
+                ForegroundColorSpan(baseContext.getColorResCompat(android.R.attr.colorPrimary)),
+                0,
+                s.length,
+                0
+            )
             it.title = s
         }
     }
@@ -350,10 +384,10 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-class ProcessLifeCycleObserver(private val navController: NavController): LifecycleEventObserver {
+class ProcessLifeCycleObserver(private val navController: NavController) : LifecycleEventObserver {
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         if (event == Lifecycle.Event.ON_RESUME) {
-            if(navController.currentDestination?.id != R.id.nav_lock) {
+            if (navController.currentDestination?.id != R.id.nav_lock) {
                 Log.i("KKKKK", "called 1")
                 val bundle = bundleOf("isResume" to true)
                 navController.navigate(R.id.settings_navigation, bundle)
