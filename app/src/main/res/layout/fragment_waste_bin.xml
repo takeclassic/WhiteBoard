@@ -15,7 +15,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:text="휴지통"
-        android:textColor="@color/black"
+        android:textColor="@color/default_text_color"
         android:textSize="34sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

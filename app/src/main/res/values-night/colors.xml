@@ -15,5 +15,5 @@
     <color name="app_main_complementary">#FFFFBD66</color>
     <color name="transparent">#00000000</color>
     <color name="light_grey">#F8F8FF</color>
-    <color name="default_text_color">#FF000000</color>
+    <color name="default_text_color">#FFFFFFFF</color>
 </resources>

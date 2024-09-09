@@ -282,7 +282,7 @@ class MainActivity : AppCompatActivity() {
 
                         val s = SpannableString(note.noteName)
                         s.setSpan(
-                            ForegroundColorSpan(baseContext.getColorResCompat(android.R.attr.colorPrimary)),
+                            ForegroundColorSpan(resources.getColor(R.color.default_text_color, null)),
                             0,
                             s.length,
                             0
@@ -365,7 +365,7 @@ class MainActivity : AppCompatActivity() {
             val title = it.title
             val s = SpannableString(title)
             s.setSpan(
-                ForegroundColorSpan(baseContext.getColorResCompat(android.R.attr.colorPrimary)),
+                ForegroundColorSpan(resources.getColor(R.color.default_text_color, null)),
                 0,
                 s.length,
                 0
