@@ -16,4 +16,5 @@
     <color name="transparent">#00000000</color>
     <color name="light_grey">#F8F8FF</color>
     <color name="default_text_color">#FFFFFFFF</color>
+    <color name="backup_layout_background_color">#696969</color>
 </resources>

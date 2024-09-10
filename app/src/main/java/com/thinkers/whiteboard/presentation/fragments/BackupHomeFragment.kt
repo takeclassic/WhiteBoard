@@ -104,7 +104,7 @@ class BackupHomeFragment : Fragment() {
                         Log.i(TAG, "uploadDate: $it")
                         binding.backupHomeProgressbar.visibility = View.GONE
                         if (it == 0L) {
-                            binding.backupHomeHistoryLayout.setBackgroundColor(resources.getColor(R.color.light_grey, null))
+                            binding.backupHomeHistoryLayout.setBackgroundColor(resources.getColor(R.color.backup_layout_background_color, null))
                             binding.backupHomeEmptyText.visibility = View.VISIBLE
                             binding.backupHomeHistoryDateTitle.visibility = View.GONE
                             binding.backupHomeHistoryDateContent.visibility = View.GONE

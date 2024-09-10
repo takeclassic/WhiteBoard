@@ -3,11 +3,13 @@ package com.thinkers.whiteboard.presentation.views
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Rect
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.utils.convertDpToPixel
+
 
 class CustomNumberButtonView @JvmOverloads constructor(
     context: Context,
@@ -18,26 +20,35 @@ class CustomNumberButtonView @JvmOverloads constructor(
     var buttonColor: Int = 0
         set(value) {
             field = value
-            requestLayout()
+            invalidate()
         }
     var buttonTextColor: Int = 0
         set(value) {
             field = value
-            requestLayout()
+            invalidate()
         }
     var buttonText: String = "1"
         set(value) {
             field = value
-            requestLayout()
+            invalidate()
         }
     private var buttonPaint: Paint
+    private var textBounds: Rect
 
     init {
-        val typedArray = context.obtainStyledAttributes(attrs, R.styleable.custom_number_button_view)
+        val typedArray =
+            context.obtainStyledAttributes(attrs, R.styleable.custom_number_button_view)
         buttonPaint = Paint()
+        textBounds = Rect()
         try {
-            buttonColor = typedArray.getInt(R.styleable.custom_number_button_view_button_color, context.getColor(R.color.default_icon))
-            buttonTextColor = typedArray.getInt(R.styleable.custom_number_button_view_button_text_color, context.getColor(R.color.default_icon))
+            buttonColor = typedArray.getInt(
+                R.styleable.custom_number_button_view_button_color,
+                context.getColor(R.color.default_icon)
+            )
+            buttonTextColor = typedArray.getInt(
+                R.styleable.custom_number_button_view_button_text_color,
+                context.getColor(R.color.default_icon)
+            )
             buttonText = typedArray.getString(R.styleable.custom_number_button_view_button_text)!!
         } catch (e: Exception) {
 
@@ -56,8 +67,6 @@ class CustomNumberButtonView @JvmOverloads constructor(
         val desiredWidth = this.convertDpToPixel(60f)
         val desiredHeight = this.convertDpToPixel(60f)
 
-        Log.i(TAG, "widthSize: $widthSize, heightSize: $heightSize, desiredWidth: $desiredWidth, desiredHeight: $desiredHeight")
-
         if (widthMode == MeasureSpec.EXACTLY) {
             w = widthSize
         } else if (widthMode == MeasureSpec.AT_MOST) {
@@ -74,7 +83,6 @@ class CustomNumberButtonView @JvmOverloads constructor(
             h = desiredHeight
         }
 
-        Log.i(TAG, "w: $w, h: $h")
         setMeasuredDimension(w, h);
     }
 
@@ -82,11 +90,14 @@ class CustomNumberButtonView @JvmOverloads constructor(
         val viewWidthHalf = this.measuredWidth / 2
         val viewHeightHalf = this.measuredHeight / 2
 
+        Log.i(TAG, "measuredWidth: $measuredWidth, half: $viewWidthHalf")
+        Log.i(TAG, "measuredHeight: $measuredHeight, half: $viewHeightHalf")
+
         val radius = if (viewWidthHalf > viewHeightHalf) viewHeightHalf - 10 else viewWidthHalf - 10
         buttonPaint.style = Paint.Style.FILL
         buttonPaint.isAntiAlias = true
         buttonPaint.color = buttonColor
-        canvas?.drawCircle(
+        canvas.drawCircle(
             viewWidthHalf.toFloat(),
             viewHeightHalf.toFloat(),
             radius.toFloat(),
@@ -94,12 +105,13 @@ class CustomNumberButtonView @JvmOverloads constructor(
         )
 
         buttonPaint.color = buttonTextColor
-        buttonPaint.textAlign = Paint.Align.CENTER
         buttonPaint.textSize = 80f
-        canvas?.drawText(
+
+        buttonPaint.getTextBounds(buttonText, 0, buttonText.length, textBounds)
+        canvas.drawText(
             buttonText,
-            viewWidthHalf.toFloat(),
-            viewHeightHalf.toFloat() + 16f,
+            viewWidthHalf - textBounds.exactCenterX(),
+            viewHeightHalf - textBounds.exactCenterY(),
             buttonPaint
         )
     }
