@@ -1,26 +1,27 @@
 package com.thinkers.whiteboard.presentation
 
-import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.Log
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.Window
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.annotation.AttrRes
-import androidx.annotation.ColorInt
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.lifecycle.*
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.coroutineScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
@@ -28,12 +29,16 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.thinkers.whiteboard.R
 import com.thinkers.whiteboard.databinding.ActivityMainBinding
-import com.thinkers.whiteboard.utils.getColorResCompat
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+    companion object {
+        val TAG = "MainActivity"
+    }
+
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private val viewModel: MainActivityViewModel by viewModels()
@@ -282,7 +287,12 @@ class MainActivity : AppCompatActivity() {
 
                         val s = SpannableString(note.noteName)
                         s.setSpan(
-                            ForegroundColorSpan(resources.getColor(R.color.default_text_color, null)),
+                            ForegroundColorSpan(
+                                resources.getColor(
+                                    R.color.default_text_color,
+                                    null
+                                )
+                            ),
                             0,
                             s.length,
                             0
@@ -379,8 +389,13 @@ class MainActivity : AppCompatActivity() {
         isMoved = false
     }
 
-    companion object {
-        val TAG = "MainActivity"
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        } else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+        }
     }
 }
 
