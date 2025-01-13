@@ -62,8 +62,6 @@ class WhiteBoardApplication: Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         NotificationHelper.createNotificationChannel(this)
-        startAutoRemove()
-        createKey()
         KakaoSdk.init(this, "ee5c661c5bf27b26a542524c6ea3642c")
     }
 

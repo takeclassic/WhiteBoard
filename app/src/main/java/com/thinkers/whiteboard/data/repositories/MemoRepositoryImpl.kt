@@ -7,6 +7,7 @@ import com.thinkers.whiteboard.WhiteBoardApplication
 import com.thinkers.whiteboard.data.enums.MemoUpdateState
 import com.thinkers.whiteboard.data.database.daos.MemoDao
 import com.thinkers.whiteboard.data.database.entities.Memo
+import com.thinkers.whiteboard.dataStore
 import com.thinkers.whiteboard.domain.MemoRepository
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*

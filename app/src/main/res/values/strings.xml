@@ -31,7 +31,7 @@
     <string name="key_lock">lock</string>
 
     <string name="item_settings_text">메모의 최종 작성 / 수정일부터 2주가 지나면 자동으로 메모를 휴지통에 버립니다. 메모를 즐겨찾기 하실 경우 자동삭제 대상에서 제외됩니다.</string>
-    <string name="lock_caution_text">비밀번호를 잊으실 경우 \n복구가 불가능하니\n반드시 기억해주세요.</string>
+    <string name="lock_caution_text">잠금 해제 이후 사용이 가능합니</string>
     <string name="lock_passcode_is_wrong">입력하신 암호가 틀립니다. 다시 입력해주세요.</string>
 
     <string name="settings_passcode_is_not_set">잠금 기능을 사용하시려면 먼저 비밀번호를 설정해 주세요.</string>
@@ -95,4 +95,9 @@
     <string name="password_text">비밀번호</string>
     <string name="re_password_text">비밀번호 재입력</string>
     <string name="phone_number_text">휴대전화번호</string>
+    
+    <string name="error_no_device_authentication">휴대전화의 잠금 수단이 설정되지 않았습니다. 잠금 수단 설정 후 이용 가능합니다.</string>
+    <string name="lock_authentication_title">메모 잠금 기능 사용을 위한 인증입니다</string>
+    <string name="lock_authentication_subtitle">지문 혹은 휴대전화 비밀번호를 입력하세요</string>
+    <string name="lock_authentication_background_title_bio">지문 혹은 비밀번호 인증</string>
 </resources>

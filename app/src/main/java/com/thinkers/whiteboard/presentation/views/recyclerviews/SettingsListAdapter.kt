@@ -15,19 +15,13 @@ import com.thinkers.whiteboard.databinding.ItemSettingsBinding
 
 class SettingsListAdapter(
     val onBackupButtonClicked: () -> Unit,
-    val onPasscodeSetButtonClicked:() -> Unit,
-    val onAutoRemoveToggleClicked: () -> Unit,
     val onLockToggleClicked: (SwitchCompat) -> Unit,
-    val autoRemoveStatus: Boolean,
     val lockStatus: Boolean
 ): ListAdapter<String, SettingsListAdapter.SettingsViewHolder>(SettingsAdapterDiffCallback) {
     class SettingsViewHolder(
         val binding: ItemSettingsBinding,
         val onBackupButtonClicked: () -> Unit,
-        val onPasscodeSetButtonClicked:() -> Unit,
-        val onAutoRemoveToggleClicked: () -> Unit,
         val onLockToggleClicked: (SwitchCompat) -> Unit,
-        val autoRemoveStatus: Boolean,
         val lockStatus: Boolean
     ): RecyclerView.ViewHolder(binding.root) {
         private val settingName: TextView = binding.itemSettingsName
@@ -46,21 +40,6 @@ class SettingsListAdapter(
                     Log.i(TAG, "lockStatus: $lockStatus")
                     binding.itemSettingsSwitch.setOnClickListener{ onLockToggleClicked(binding.itemSettingsSwitch) }
                 }
-                "비밀번호 설정" -> {
-                    itemView.setOnClickListener{ onPasscodeSetButtonClicked() }
-                }
-                "자동삭제" -> {
-                    binding.itemSettingsArrow.visibility = View.GONE
-
-                    binding.itemSettingsSwitch.visibility = View.VISIBLE
-                    binding.itemSettingsSwitch.isChecked = autoRemoveStatus
-                    Log.i(TAG, "autoRemoveStatus: $autoRemoveStatus")
-                    binding.itemSettingsSwitch.setOnClickListener{ onAutoRemoveToggleClicked() }
-
-                    binding.itemSettingsText.visibility = View.VISIBLE
-                    val applicationContext = WhiteBoardApplication.context()
-                    binding.itemSettingsText.text = applicationContext.getText(R.string.item_settings_text)
-                }
             }
         }
     }
@@ -74,10 +53,7 @@ class SettingsListAdapter(
         return SettingsViewHolder(
             binding,
             onBackupButtonClicked,
-            onPasscodeSetButtonClicked,
-            onAutoRemoveToggleClicked,
             onLockToggleClicked,
-            autoRemoveStatus,
             lockStatus
         )
     }

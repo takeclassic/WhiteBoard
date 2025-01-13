@@ -60,7 +60,7 @@ class BackupHomeViewModel @Inject constructor() : ViewModel() {
     var state = states.NONE
 
     private fun provideDataBackupHelper(scope: CoroutineScope, resultCallback: (Pair<String, Long>) -> Unit) {
-        dataBackupHelper = dataBackupHelperFactory.create(viewModelScope, resultCallback)
+        dataBackupHelper = dataBackupHelperFactory.create(scope, resultCallback)
     }
 
     suspend fun backUpDbFiles() = withContext(viewModelScope.coroutineContext) {

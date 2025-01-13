@@ -2,11 +2,15 @@ package com.thinkers.whiteboard.presentation
 
 import androidx.lifecycle.ViewModel
 import com.thinkers.whiteboard.data.database.entities.Note
+import com.thinkers.whiteboard.data.repositories.DataStoreKeys
+import com.thinkers.whiteboard.data.repositories.DataStoreRepository
 import com.thinkers.whiteboard.domain.MemoRepository
 import com.thinkers.whiteboard.domain.NoteRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,11 +35,7 @@ class MainActivityViewModel @Inject constructor(
         noteRepository.customNoteName = noteName
     }
 
-    fun getSwtichStatus(fileName: String, key: String): Boolean {
-            return memoRepository.readBooleanPreference(
-                fileName,
-                key,
-                false
-            )
+    suspend fun getSwtichStatus(key: DataStoreKeys): Flow<Boolean> =  withContext(Dispatchers.IO) {
+        DataStoreRepository.getBooleanValue(key, false)
     }
 }

@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.Window
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -21,13 +20,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ProcessLifecycleOwner
-import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationView
 import com.thinkers.whiteboard.R
+import com.thinkers.whiteboard.data.repositories.DataStoreKeys
 import com.thinkers.whiteboard.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -42,9 +43,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var navController: NavController
     private val viewModel: MainActivityViewModel by viewModels()
-    private var time: Long = 0
+    private var lastBackPressedTime: Long = 0
     var isFavorite: Boolean = false
     var isMoved = false
+    var isLockMode = false
 
     private var menuItemCache: MenuItem? = null
     private val navigationViewListener =
@@ -259,16 +261,19 @@ class MainActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener(navigationViewListener)
         navController.addOnDestinationChangedListener(mainDestinationChangedListener)
 
-        val fileName = getString(R.string.file_name_shared_preference)
-        val lockKey = getString(R.string.key_lock)
-        val isLockModeOn = viewModel.getSwtichStatus(fileName, lockKey)
-
-        if (processLifeCycleObserver == null && isLockModeOn) {
-            processLifeCycleObserver = ProcessLifeCycleObserver(navController)
-            ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.RESUMED) {
+                viewModel.getSwtichStatus(DataStoreKeys.BOOLEAN_KEY_LOCK_MODE).collect {
+                    isLockMode = it
+                    if (processLifeCycleObserver == null && isLockMode) {
+                        processLifeCycleObserver = ProcessLifeCycleObserver(navController)
+                        ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
+                    }
+                }
+            }
         }
 
-        lifecycle.coroutineScope.launch {
+        lifecycleScope.launch {
             viewModel.getAllCustomNotes.collect { list ->
                 navView.menu.removeGroup(R.id.nav_view_note_group)
                 var order = 3
@@ -311,13 +316,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.main, menu)
         return true
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        //val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp() || super.onSupportNavigateUp()
     }
 
@@ -327,8 +330,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             when (navController.currentDestination?.id) {
                 R.id.nav_total, R.id.nav_favorites, R.id.nav_custom_note -> {
-                    if (System.currentTimeMillis() - time > 1000L) {
-                        time = System.currentTimeMillis()
+                    if (System.currentTimeMillis() - lastBackPressedTime > 1000L) {
+                        lastBackPressedTime = System.currentTimeMillis()
                         Toast.makeText(
                             applicationContext,
                             "뒤로 버튼을 한번 더 누르시면 종료됩니다",
@@ -348,21 +351,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val fileName = getString(R.string.file_name_shared_preference)
-        val lockKey = getString(R.string.key_lock)
-        val isLockModeOn = viewModel.getSwtichStatus(fileName, lockKey)
-
         Log.i(
             TAG,
-            "isLockModeOn: $isLockModeOn, processLifeCycleObserver is null: ${processLifeCycleObserver == null}"
+            "isLockModeOn: $isLockMode, processLifeCycleObserver is null: ${processLifeCycleObserver == null}"
         )
 
-        if (!isLockModeOn && processLifeCycleObserver != null) {
+        if (!isLockMode && processLifeCycleObserver != null) {
             ProcessLifecycleOwner.get().lifecycle.removeObserver(processLifeCycleObserver!!)
             processLifeCycleObserver = null
         }
 
-        if (isLockModeOn) {
+        if (isLockMode) {
             if (processLifeCycleObserver == null) {
                 processLifeCycleObserver = ProcessLifeCycleObserver(navController)
                 ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
@@ -394,7 +393,9 @@ class MainActivity : AppCompatActivity() {
         if (hasFocus) {
             window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
         } else {
-            window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            if (isLockMode) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
+            }
         }
     }
 }
@@ -402,8 +403,9 @@ class MainActivity : AppCompatActivity() {
 class ProcessLifeCycleObserver(private val navController: NavController) : LifecycleEventObserver {
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         if (event == Lifecycle.Event.ON_RESUME) {
-            if (navController.currentDestination?.id != R.id.nav_lock) {
-                Log.i("KKKKK", "called 1")
+            if (navController.currentDestination?.id != R.id.nav_lock &&
+                navController.currentDestination?.id != R.id.nav_login
+            ) {
                 val bundle = bundleOf("isResume" to true)
                 navController.navigate(R.id.settings_navigation, bundle)
             }

@@ -92,6 +92,9 @@ dependencies {
     implementation "androidx.credentials:credentials:$google_sign_in_version"
     implementation "androidx.credentials:credentials-play-services-auth:$google_sign_in_version"
     implementation "com.google.android.libraries.identity.googleid:googleid:1.1.0"
+
+    // 생체인증
+    implementation "androidx.biometric:biometric:1.1.0"
 }
 
 kapt {
