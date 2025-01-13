@@ -19,6 +19,7 @@ import com.thinkers.whiteboard.data.repositories.DataStoreKeys
 import com.thinkers.whiteboard.presentation.views.recyclerviews.SettingsListAdapter
 import com.thinkers.whiteboard.presentation.views.CustomDecoration
 import com.thinkers.whiteboard.databinding.FragmentSettingsBinding
+import com.thinkers.whiteboard.presentation.MainActivity
 import com.thinkers.whiteboard.presentation.viewmodels.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -57,6 +58,7 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as MainActivity).init()
 
         val isResume = arguments?.getBoolean("isResume")
         isResume?.let {

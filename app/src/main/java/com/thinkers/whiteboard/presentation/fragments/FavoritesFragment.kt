@@ -50,10 +50,6 @@ class FavoritesFragment : Fragment() {
     private var actionModeSetMemoList = mutableListOf<Memo>()
     private var actionModeSetViewList = mutableListOf<View>()
 
-    private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
-        binding.favoritesSwipeLayout.isRefreshing = false
-    }
-
     private val onScrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -83,7 +79,6 @@ class FavoritesFragment : Fragment() {
         binding.favoritesToolBar.noteToolbarCollapsingLayout.title = "즐겨찾기"
 
         recyclerView = binding.favoritesRecyclerview.recyclerView
-        binding.favoritesSwipeLayout.setOnRefreshListener(onSwipeRefresh)
         recyclerView.addOnScrollListener(onScrollListener)
 
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind, false)

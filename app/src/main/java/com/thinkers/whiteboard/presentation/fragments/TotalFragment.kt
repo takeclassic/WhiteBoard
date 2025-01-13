@@ -47,10 +47,6 @@ class TotalFragment : Fragment() {
     private var actionModeSetMemoList = mutableListOf<Memo>()
     private var actionModeSetViewList = mutableListOf<View>()
 
-    private val onSwipeRefresh = SwipeRefreshLayout.OnRefreshListener {
-        binding.totalSwipeLayout.isRefreshing = false
-    }
-
     private val onScrollListener = object: RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
@@ -81,7 +77,6 @@ class TotalFragment : Fragment() {
 
         recyclerView = binding.totalRecyclerview.recyclerView
 
-        binding.totalSwipeLayout.setOnRefreshListener(onSwipeRefresh)
         recyclerView.addOnScrollListener(onScrollListener)
 
         recyclerViewAdaper = MemoListAdapter(memoItemOnClick, memoItemLongClick, onMemoItemBind, false)

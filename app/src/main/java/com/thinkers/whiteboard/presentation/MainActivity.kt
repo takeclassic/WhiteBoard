@@ -265,10 +265,6 @@ class MainActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 viewModel.getSwtichStatus(DataStoreKeys.BOOLEAN_KEY_LOCK_MODE).collect {
                     isLockMode = it
-                    if (processLifeCycleObserver == null && isLockMode) {
-                        processLifeCycleObserver = ProcessLifeCycleObserver(navController)
-                        ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
-                    }
                 }
             }
         }
@@ -315,6 +311,23 @@ class MainActivity : AppCompatActivity() {
         binding.appbarWriteButton.setOnClickListener(appBarWriteButtonClickListener)
     }
 
+    override fun onStop() {
+        super.onStop()
+        Log.i(
+            TAG,
+            "isLockModeOn: $isLockMode, processLifeCycleObserver is null: ${processLifeCycleObserver == null}"
+        )
+
+        if (processLifeCycleObserver == null && isLockMode) {
+            processLifeCycleObserver = ProcessLifeCycleObserver(navController)
+            ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
+            Log.i(
+                TAG,
+                "process observer is registered."
+            )
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main, menu)
         return true
@@ -349,26 +362,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Log.i(
-            TAG,
-            "isLockModeOn: $isLockMode, processLifeCycleObserver is null: ${processLifeCycleObserver == null}"
-        )
-
-        if (!isLockMode && processLifeCycleObserver != null) {
-            ProcessLifecycleOwner.get().lifecycle.removeObserver(processLifeCycleObserver!!)
-            processLifeCycleObserver = null
-        }
-
-        if (isLockMode) {
-            if (processLifeCycleObserver == null) {
-                processLifeCycleObserver = ProcessLifeCycleObserver(navController)
-                ProcessLifecycleOwner.get().lifecycle.addObserver(processLifeCycleObserver!!)
-            }
-        }
-    }
-
     private fun restoreCustomMenuItemColor() {
         menuItemCache?.let {
             val title = it.title
@@ -386,6 +379,14 @@ class MainActivity : AppCompatActivity() {
     fun init() {
         isFavorite = false
         isMoved = false
+        removeProcessObserver()
+    }
+
+    private fun removeProcessObserver() {
+        if (processLifeCycleObserver != null) {
+            ProcessLifecycleOwner.get().lifecycle.removeObserver(processLifeCycleObserver!!)
+            processLifeCycleObserver = null
+        }
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {
@@ -403,9 +404,8 @@ class MainActivity : AppCompatActivity() {
 class ProcessLifeCycleObserver(private val navController: NavController) : LifecycleEventObserver {
     override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
         if (event == Lifecycle.Event.ON_RESUME) {
-            if (navController.currentDestination?.id != R.id.nav_lock &&
-                navController.currentDestination?.id != R.id.nav_login
-            ) {
+            // 무한 재귀를 방지하기 위해 로직의 시작 화면은 걸러 냄
+            if (navController.currentDestination?.id != R.id.nav_lock) {
                 val bundle = bundleOf("isResume" to true)
                 navController.navigate(R.id.settings_navigation, bundle)
             }
